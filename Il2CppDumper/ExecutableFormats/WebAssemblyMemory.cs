@@ -1,0 +1,59 @@
+﻿using System.IO;
+
+namespace Il2CppDumper
+{
+    public sealed class WebAssemblyMemory : Il2Cpp
+    {
+        public WebAssemblyMemory(Stream stream, bool is32Bit) : base(stream)
+        {
+            Is32Bit = is32Bit;
+        }
+
+        public override ulong MapVATR(ulong addr)
+        {
+            return addr;
+        }
+
+        public override bool PlusSearch(int methodCount, int typeDefinitionsCount)
+        {
+            var exec = new SearchSection
+            {
+                offset = 0,
+                offsetEnd = (ulong)methodCount, //hack
+                address = 0,
+                addressEnd = (ulong)methodCount //hack
+            };
+            var data = new SearchSection
+            {
+                offset = 1024,
+                offsetEnd = Length,
+                address = 1024,
+                addressEnd = Length
+            };
+            var bss = new SearchSection
+            {
+                offset = Length,
+                offsetEnd = 1024 + 2159056, //STATICTOP
+                address = Length,
+                addressEnd = 1024 + 2159056 //STATICTOP
+            };
+            var plusSearch = new PlusSearch(this, methodCount, typeDefinitionsCount, maxMetadataUsages);
+            plusSearch.SetSection(SearchSectionType.Exec, exec);
+            plusSearch.SetSection(SearchSectionType.Data, data);
+            plusSearch.SetSection(SearchSectionType.Bss, bss);
+            var codeRegistration = plusSearch.FindCodeRegistration();
+            var metadataRegistration = plusSearch.FindMetadataRegistration();
+            return AutoPlusInit(codeRegistration, metadataRegistration);
+        }
+
+        public override bool Search()
+        {
+            return false;
+        }
+
+        public override bool SymbolSearch()
+        {
+            return false;
+        }
+    }
+}
