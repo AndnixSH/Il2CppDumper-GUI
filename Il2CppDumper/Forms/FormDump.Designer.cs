@@ -33,7 +33,7 @@
             this.closeBtn = new Bunifu.Framework.UI.BunifuImageButton();
             this.TitleLbl = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.label9 = new System.Windows.Forms.Label();
+            this.dumpNoteLbl = new System.Windows.Forms.Label();
             this.dumpAdrTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
             this.Ok = new Bunifu.Framework.UI.BunifuFlatButton();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -82,18 +82,17 @@
             this.panel1.Size = new System.Drawing.Size(475, 33);
             this.panel1.TabIndex = 17;
             // 
-            // label9
+            // dumpNoteLbl
             // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Century Gothic", 9.75F);
-            this.label9.ForeColor = System.Drawing.Color.White;
-            this.label9.Location = new System.Drawing.Point(34, 47);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(411, 51);
-            this.label9.TabIndex = 25;
-            this.label9.Text = "Detected this may be a dump file. If not, it must be protected.\r\n\r\nInput dump add" +
+            this.dumpNoteLbl.Font = new System.Drawing.Font("Century Gothic", 9.75F);
+            this.dumpNoteLbl.ForeColor = System.Drawing.Color.White;
+            this.dumpNoteLbl.Location = new System.Drawing.Point(36, 48);
+            this.dumpNoteLbl.Name = "dumpNoteLbl";
+            this.dumpNoteLbl.Size = new System.Drawing.Size(411, 51);
+            this.dumpNoteLbl.TabIndex = 25;
+            this.dumpNoteLbl.Text = "Detected this may be a dump file. If not, it must be protected.\r\n\r\nInput dump add" +
     "ress or input 0 to force continue:";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.dumpNoteLbl.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // dumpAdrTxtBox
             // 
@@ -196,7 +195,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.Ok);
             this.Controls.Add(this.dumpAdrTxtBox);
-            this.Controls.Add(this.label9);
+            this.Controls.Add(this.dumpNoteLbl);
             this.Controls.Add(this.panel1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -208,7 +207,6 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -217,12 +215,12 @@
         private Bunifu.Framework.UI.BunifuImageButton closeBtn;
         private System.Windows.Forms.Label TitleLbl;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label9;
         private Bunifu.Framework.UI.BunifuMetroTextbox dumpAdrTxtBox;
         private Bunifu.Framework.UI.BunifuFlatButton Ok;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
         private Bunifu.Framework.UI.BunifuDragControl bunifuDragControl1;
+        internal System.Windows.Forms.Label dumpNoteLbl;
     }
 }

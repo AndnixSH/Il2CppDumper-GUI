@@ -400,8 +400,8 @@
             this.winPosCheckBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.winPosCheckBox.BindingControlPosition = Bunifu.UI.WinForms.BunifuCheckBox.BindingControlPositions.Right;
             this.winPosCheckBox.BorderRadius = 12;
-            this.winPosCheckBox.Checked = true;
-            this.winPosCheckBox.CheckState = Bunifu.UI.WinForms.BunifuCheckBox.CheckStates.Checked;
+            this.winPosCheckBox.Checked = false;
+            this.winPosCheckBox.CheckState = Bunifu.UI.WinForms.BunifuCheckBox.CheckStates.Unchecked;
             this.winPosCheckBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.winPosCheckBox.CustomCheckmarkImage = null;
             this.winPosCheckBox.Location = new System.Drawing.Point(289, 103);

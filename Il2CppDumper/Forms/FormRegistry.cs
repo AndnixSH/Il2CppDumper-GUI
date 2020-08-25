@@ -79,7 +79,7 @@ namespace Il2CppDumper
 			}
 		}
 
-		private static bool autoSetDir;
+		private static bool autoSetDir = true;
 		public static bool AutoSetDir
 		{
 			get
@@ -92,7 +92,7 @@ namespace Il2CppDumper
 			}
 		}
 
-		private static bool checkForUpdate;
+		private static bool checkForUpdate = true;
 		public static bool CheckForUpdate
 		{
 			get
@@ -105,7 +105,7 @@ namespace Il2CppDumper
 			}
 		}
 
-		private static bool extBinaryChkBox;
+		private static bool extBinaryChkBox = true;
 		public static bool ExtBinaryChkBox
 		{
 			get

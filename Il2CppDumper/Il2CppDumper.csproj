@@ -217,6 +217,7 @@
     </Compile>
     <Compile Include="Utils\ArmUtils.cs" />
     <Compile Include="Utils\DummyAssemblyGenerator.cs" />
+    <Compile Include="ExecutableFormats\ElfBase.cs" />
     <Compile Include="Utils\Il2CppDummyDll.cs" />
     <Compile Include="IO\Lz4DecoderStream.cs" />
     <Compile Include="ExecutableFormats\NSO.cs" />

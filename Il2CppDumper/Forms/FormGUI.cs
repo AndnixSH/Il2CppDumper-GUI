@@ -16,6 +16,7 @@ using System.Threading;
 
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 //Note: Rename the assembly name every update to bypass false positives by anti-virus
 
@@ -40,7 +41,7 @@ namespace Il2CppDumper
         string RealPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
         string TempPath = Path.GetTempPath() + "\\";
 
-        string Version = "1.3.2";
+        string Version = "1.3.3";
 
         public FormGUI()
         {
@@ -171,16 +172,31 @@ namespace Il2CppDumper
             var version = config.ForceIl2CppVersion ? config.ForceVersion : metadata.Version;
             il2Cpp.SetProperties(version, metadata.maxMetadataUsages);
             LogOutput($"Il2Cpp Version: {il2Cpp.Version}");
+            if (il2Cpp.Version >= 27 && il2Cpp is ElfBase elf && elf.IsDumped)
+            {
+                FormDump form = new FormDump();
+                form.dumpNoteLbl.Text = "Input global-metadata.dat dump address:";
+                form.Message = 0;
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    metadata.Address = Convert.ToUInt64(Console.ReadLine(), 16);
+                    LogOutput("Inputted address: " + metadata.Address.ToString("X"));
+                }
+            }
+
             LogOutput("Searching...");
             try
             {
                 var flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length);
-                if (!flag && il2Cpp is PE)
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    LogOutput("Use custom PE loader");
-                    il2Cpp = PELoader.Load(il2cppPath);
-                    il2Cpp.SetProperties(version, metadata.maxMetadataUsages);
-                    flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length);
+                    if (!flag && il2Cpp is PE)
+                    {
+                        LogOutput("Use custom PE loader");
+                        il2Cpp = PELoader.Load(il2cppPath);
+                        il2Cpp.SetProperties(version, metadata.maxMetadataUsages);
+                        flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length);
+                    }
                 }
                 if (!flag)
                 {
@@ -325,7 +341,7 @@ namespace Il2CppDumper
                 using (ZipArchive archive = ZipFile.OpenRead(file))
                 {
                     var binaryFile = archive.Entries.FirstOrDefault(f => f.Name.Contains("libil2cpp.so"));
-                    var metadataPath = archive.Entries.FirstOrDefault(f => f.FullName.Contains("assets/bin/Data/Managed/etc/"));
+                    var metadataPath = archive.Entries.FirstOrDefault(f => f.FullName.Contains("assets/bin/Data/Managed/Resources/"));
                     var metadataFile = archive.Entries.FirstOrDefault(f => f.FullName == "assets/bin/Data/Managed/Metadata/global-metadata.dat");
 
                     if (binaryFile == null && metadataPath != null)
@@ -452,17 +468,15 @@ namespace Il2CppDumper
                     DeleteFile(TempPath + "global-metadata.dat");
                     DeleteFile(TempPath + "libil2cpp.so");
                 }
-                string outputPath = Path.GetDirectoryName(files[0]) + "\\" + Path.GetFileNameWithoutExtension(files[0]) + "_dumped";
+                string outputPath;
                 if (FormRegistry.AutoSetDir)
                 {
-                    outputTxtBox.Text = outputPath;
+                    outputPath = Path.GetDirectoryName(files[0]) + "\\" + Path.GetFileNameWithoutExtension(files[0]) + "_dumped\\";
                 }
                 else
                 {
-                    outputPath = outputTxtBox.Text + Path.GetFileNameWithoutExtension(files[0]) + "_dumped";
+                    outputPath = outputTxtBox.Text + Path.GetFileNameWithoutExtension(files[0]) + "_dumped\\";
                 }
-
-                FileDir(outputPath);
 
                 foreach (var file in files)
                 {
@@ -493,7 +507,7 @@ namespace Il2CppDumper
                     }
 
                     if (FormRegistry.AutoSetDir)
-                        outputTxtBox.Text = Path.GetDirectoryName(file);
+                        outputTxtBox.Text = Path.GetDirectoryName(file) + "\\";
                 }
             }
 

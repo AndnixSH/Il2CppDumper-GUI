@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using static Il2CppDumper.ElfConstants;
 
 namespace Il2CppDumper
 {
-    public sealed class Elf : Il2Cpp
+    public sealed class Elf : ElfBase
     {
         private Elf32_Ehdr elfHeader;
         private Elf32_Phdr[] programSegment;
@@ -16,8 +14,6 @@ namespace Il2CppDumper
         private Elf32_Sym[] symbolTable;
         private Elf32_Shdr[] sectionTable;
         private Elf32_Phdr pt_dynamic;
-        private bool isDumped;
-        private uint dumpAddr;
 
         /*
         * LDR R1, [X]
@@ -25,7 +21,7 @@ namespace Il2CppDumper
         * ADD R2, X, X
         */
         private static readonly string ARMFeatureBytes = "? 0x10 ? 0xE7 ? 0x00 ? 0xE0 ? 0x20 ? 0xE0";
-        private static readonly string X86FeatureBytes = "? 0x10 ? 0xE7 ? 0x00 ? 0xE0 ? 0x20 ? 0xE0";
+        private static readonly string X86FeatureBytes = "? 0x10 ? 0xE7 ? 0x00 ? 0xE0 ? 0x20 ? 0xE0"; //TODO
 
         public Elf(Stream stream) : base(stream)
         {
@@ -34,31 +30,20 @@ namespace Il2CppDumper
             programSegment = ReadClassArray<Elf32_Phdr>(elfHeader.e_phoff, elfHeader.e_phnum);
             if (!CheckSection())
             {
-                FormGUI.WriteLine("Detected this may be a dump file.");
-                FormDump form = new FormDump();
-                form.Message = 0;
-                if (form.ShowDialog() == DialogResult.OK)
-                {
-                    dumpAddr = Convert.ToUInt32(form.ReturnedText, 16);
-                    FormGUI.WriteLine("Inputted address: " + dumpAddr.ToString("X"));
-                }
-                if (dumpAddr != 0)
-                {
-                    isDumped = true;
-                }
+                GetDumpAddress();
             }
-            if (isDumped)
+            if (IsDumped)
             {
                 FixedProgramSegment();
             }
             pt_dynamic = programSegment.First(x => x.p_type == PT_DYNAMIC);
             dynamicSection = ReadClassArray<Elf32_Dyn>(pt_dynamic.p_offset, pt_dynamic.p_filesz / 8u);
-            if (isDumped)
+            if (IsDumped)
             {
                 FixedDynamicSection();
             }
             ReadSymbol();
-            if (!isDumped)
+            if (!IsDumped)
             {
                 RelocationProcessing();
                 if (CheckProtection())
@@ -138,10 +123,10 @@ namespace Il2CppDumper
                     if (elfHeader.e_machine == EM_ARM)
                     {
                         Position = result + 0x14;
-                        codeRegistration = ReadUInt32() + result + 0xcu + dumpAddr;
+                        codeRegistration = ReadUInt32() + result + 0xcu + (uint)DumpAddr;
                         Position = result + 0x10;
                         var ptr = ReadUInt32() + result + 0x8;
-                        Position = MapVATR(ptr + dumpAddr);
+                        Position = MapVATR(ptr + DumpAddr);
                         metadataRegistration = ReadUInt32();
                     }
                 }
@@ -295,9 +280,9 @@ namespace Il2CppDumper
 
         public override ulong GetRVA(ulong pointer)
         {
-            if (isDumped)
+            if (IsDumped)
             {
-                return pointer - dumpAddr;
+                return pointer - DumpAddr;
             }
             return pointer;
         }
@@ -310,7 +295,7 @@ namespace Il2CppDumper
                 var phdr = programSegment[i];
                 phdr.p_offset = phdr.p_vaddr;
                 Write(phdr.p_offset);
-                phdr.p_vaddr += dumpAddr;
+                phdr.p_vaddr += (uint)DumpAddr;
                 Write(phdr.p_vaddr);
                 Position += 4;
                 phdr.p_filesz = phdr.p_memsz;
@@ -337,7 +322,7 @@ namespace Il2CppDumper
                     case DT_JMPREL:
                     case DT_INIT_ARRAY:
                     case DT_FINI_ARRAY:
-                        dyn.d_un += dumpAddr;
+                        dyn.d_un += (uint)DumpAddr;
                         Write(dyn.d_un);
                         break;
                 }
