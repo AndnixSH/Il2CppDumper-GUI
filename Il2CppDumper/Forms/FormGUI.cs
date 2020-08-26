@@ -41,7 +41,7 @@ namespace Il2CppDumper
         string RealPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
         string TempPath = Path.GetTempPath() + "\\";
 
-        string Version = "1.3.3";
+        string Version = "1.3.4";
 
         public FormGUI()
         {
@@ -228,7 +228,7 @@ namespace Il2CppDumper
             return true;
         }
 
-        private static void Dump(Metadata metadata, Il2Cpp il2Cpp, string outputDir)
+        private void Dump(Metadata metadata, Il2Cpp il2Cpp, string outputDir)
         {
             WriteLine("Dumping...");
             var executor = new Il2CppExecutor(metadata, il2Cpp);
@@ -247,6 +247,7 @@ namespace Il2CppDumper
                 WriteLine("Generate dummy dll...");
                 DummyAssemblyExporter.Export(executor, outputDir);
                 WriteLine("Done!");
+                Directory.SetCurrentDirectory(RealPath); //Fix read-only directory permission
             }
             WriteLine("");
         }
