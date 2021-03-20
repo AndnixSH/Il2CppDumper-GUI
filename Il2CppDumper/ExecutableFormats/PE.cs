@@ -25,20 +25,22 @@ namespace Il2CppDumper
             }
             var fileHeader = ReadClass<FileHeader>();
             var pos = Position;
-            if (fileHeader.Machine == 0x14c) //Intel 386
+            var magic = ReadUInt16();
+            Position -= 2;
+            if (magic == 0x10b)
             {
                 Is32Bit = true;
                 var optionalHeader = ReadClass<OptionalHeader>();
                 imageBase = optionalHeader.ImageBase;
             }
-            else if (fileHeader.Machine == 0x8664) //AMD64
+            else if (magic == 0x20b)
             {
                 var optionalHeader = ReadClass<OptionalHeader64>();
                 imageBase = optionalHeader.ImageBase;
             }
             else
             {
-                throw new NotSupportedException("ERROR: Unsupported machine.");
+                throw new NotSupportedException($"Invalid Optional header magic {magic}");
             }
             Position = pos + fileHeader.SizeOfOptionalHeader;
             sections = ReadClassArray<SectionHeader>(fileHeader.NumberOfSections);
@@ -70,7 +72,7 @@ namespace Il2CppDumper
             return false;
         }
 
-        public override bool PlusSearch(int methodCount, int typeDefinitionsCount)
+        public override bool PlusSearch(int methodCount, int typeDefinitionsCount, int imageCount)
         {
             var execList = new List<SectionHeader>();
             var dataList = new List<SectionHeader>();
@@ -87,7 +89,7 @@ namespace Il2CppDumper
                         break;
                 }
             }
-            var plusSearch = new PlusSearch(this, methodCount, typeDefinitionsCount, maxMetadataUsages);
+            var plusSearch = new PlusSearch(this, methodCount, typeDefinitionsCount, maxMetadataUsages, imageCount);
             var data = dataList.ToArray();
             var exec = execList.ToArray();
             plusSearch.SetSection(SearchSectionType.Exec, imageBase, exec);

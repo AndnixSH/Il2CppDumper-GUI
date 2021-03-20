@@ -4,9 +4,9 @@ namespace Il2CppDumper
 {
     public class Il2CppCodeRegistration
     {
-        [Version(Max = 24.1f)]
+        [Version(Max = 24.1)]
         public long methodPointersCount;
-        [Version(Max = 24.1f)]
+        [Version(Max = 24.1)]
         public ulong methodPointers;
         [Version(Max = 21)]
         public ulong delegateWrappersFromNativeToManagedCount;
@@ -30,11 +30,14 @@ namespace Il2CppDumper
         public ulong ccwMarshalingFunctions;
         public long genericMethodPointersCount;
         public ulong genericMethodPointers;
+        [Version(Min = 24.4, Max = 24.4)]
+        [Version(Min = 27.1)]
+        public ulong genericAdjustorThunks;
         public long invokerPointersCount;
         public ulong invokerPointers;
-        [Version(Max = 24.3f)]
+        [Version(Max = 24.4)]
         public long customAttributeCount;
-        [Version(Max = 24.3f)]
+        [Version(Max = 24.4)]
         public ulong customAttributeGenerators;
         [Version(Min = 21, Max = 22)]
         public long guidCount;
@@ -48,13 +51,13 @@ namespace Il2CppDumper
         public ulong interopDataCount;
         [Version(Min = 23)]
         public ulong interopData;
-        [Version(Min = 24.3f)]
+        [Version(Min = 24.3)]
         public ulong windowsRuntimeFactoryCount;
-        [Version(Min = 24.3f)]
+        [Version(Min = 24.3)]
         public ulong windowsRuntimeFactoryTable;
-        [Version(Min = 24.2f)]
+        [Version(Min = 24.2)]
         public long codeGenModulesCount;
-        [Version(Min = 24.2f)]
+        [Version(Min = 24.2)]
         public ulong codeGenModules;
     }
 
@@ -185,7 +188,7 @@ namespace Il2CppDumper
 
     public class Il2CppGenericClass
     {
-        [Version(Max = 24.3f)]
+        [Version(Max = 24.4)]
         public long typeDefinitionIndex;    /* the generic type definition */
         [Version(Min = 27)]
         public ulong type;        /* the generic type definition */
@@ -227,6 +230,9 @@ namespace Il2CppDumper
     {
         public int methodIndex;
         public int invokerIndex;
+        [Version(Min = 24.4, Max = 24.4)]
+        [Version(Min = 27.1)]
+        public int adjustorThunk;
     };
 
     public class Il2CppMethodSpec
@@ -241,6 +247,12 @@ namespace Il2CppDumper
         public ulong moduleName;
         public long methodPointerCount;
         public ulong methodPointers;
+        [Version(Min = 24.4, Max = 24.4)]
+        [Version(Min = 27.1)]
+        public long adjustorThunkCount;
+        [Version(Min = 24.4, Max = 24.4)]
+        [Version(Min = 27.1)]
+        public ulong adjustorThunks;
         public ulong invokerIndices;
         public ulong reversePInvokeWrapperCount;
         public ulong reversePInvokeWrapperIndices;

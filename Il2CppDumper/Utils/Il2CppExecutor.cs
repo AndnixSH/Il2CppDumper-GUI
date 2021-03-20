@@ -231,10 +231,10 @@ namespace Il2CppDumper
             return new Il2CppGenericContext { class_inst = classInstPointer, method_inst = methodInstPointer };
         }
 
-        public Il2CppRGCTXDefinition[] GetTypeRGCTXDefinition(string imageName, Il2CppTypeDefinition typeDef)
+        public Il2CppRGCTXDefinition[] GetRGCTXDefinition(string imageName, Il2CppTypeDefinition typeDef)
         {
             Il2CppRGCTXDefinition[] collection = null;
-            if (il2Cpp.Version >= 24.2f)
+            if (il2Cpp.Version >= 24.2)
             {
                 il2Cpp.rgctxsDictionary[imageName].TryGetValue(typeDef.token, out collection);
             }
@@ -244,6 +244,24 @@ namespace Il2CppDumper
                 {
                     collection = new Il2CppRGCTXDefinition[typeDef.rgctxCount];
                     Array.Copy(metadata.rgctxEntries, typeDef.rgctxStartIndex, collection, 0, typeDef.rgctxCount);
+                }
+            }
+            return collection;
+        }
+
+        public Il2CppRGCTXDefinition[] GetRGCTXDefinition(string imageName, Il2CppMethodDefinition methodDef)
+        {
+            Il2CppRGCTXDefinition[] collection = null;
+            if (il2Cpp.Version >= 24.2)
+            {
+                il2Cpp.rgctxsDictionary[imageName].TryGetValue(methodDef.token, out collection);
+            }
+            else
+            {
+                if (methodDef.rgctxCount > 0)
+                {
+                    collection = new Il2CppRGCTXDefinition[methodDef.rgctxCount];
+                    Array.Copy(metadata.rgctxEntries, methodDef.rgctxStartIndex, collection, 0, methodDef.rgctxCount);
                 }
             }
             return collection;

@@ -68,7 +68,7 @@ namespace Il2CppDumper
                 {
                     return false;
                 }
-                return true; ;
+                return true;
             }
             catch
             {
@@ -106,7 +106,7 @@ namespace Il2CppDumper
                 uint codeRegistration = 0;
                 uint metadataRegistration = 0;
                 var result = (uint)resultList[0];
-                if (Version < 24f)
+                if (Version < 24)
                 {
                     if (elfHeader.e_machine == EM_ARM)
                     {
@@ -118,7 +118,7 @@ namespace Il2CppDumper
                         metadataRegistration = ReadUInt32();
                     }
                 }
-                else if (Version >= 24f)
+                else if (Version >= 24)
                 {
                     if (elfHeader.e_machine == EM_ARM)
                     {
@@ -138,7 +138,7 @@ namespace Il2CppDumper
             return false;
         }
 
-        public override bool PlusSearch(int methodCount, int typeDefinitionsCount)
+        public override bool PlusSearch(int methodCount, int typeDefinitionsCount, int imageCount)
         {
             var dataList = new List<Elf32_Phdr>();
             var execList = new List<Elf32_Phdr>();
@@ -164,7 +164,7 @@ namespace Il2CppDumper
             }
             var data = dataList.ToArray();
             var exec = execList.ToArray();
-            var plusSearch = new PlusSearch(this, methodCount, typeDefinitionsCount, maxMetadataUsages);
+            var plusSearch = new PlusSearch(this, methodCount, typeDefinitionsCount, maxMetadataUsages, imageCount);
             plusSearch.SetSection(SearchSectionType.Exec, exec);
             plusSearch.SetSection(SearchSectionType.Data, data);
             plusSearch.SetSection(SearchSectionType.Bss, data);

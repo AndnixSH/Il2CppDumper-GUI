@@ -33,12 +33,12 @@ namespace Il2CppDumper
 
         public abstract ulong MapVATR(ulong uiAddr);
         public abstract bool Search();
-        public abstract bool PlusSearch(int methodCount, int typeDefinitionsCount);
+        public abstract bool PlusSearch(int methodCount, int typeDefinitionsCount, int imageCount);
         public abstract bool SymbolSearch();
 
         protected Il2Cpp(Stream stream) : base(stream) { }
 
-        public void SetProperties(float version, long maxMetadataUsages)
+        public void SetProperties(double version, long maxMetadataUsages)
         {
             Version = version;
             this.maxMetadataUsages = maxMetadataUsages;
@@ -48,17 +48,26 @@ namespace Il2CppDumper
         {
             if (codeRegistration != 0 && metadataRegistration != 0)
             {
-                if (Version == 24.2f)
+                if (Version == 24.2)
                 {
                     pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
-                    pMetadataRegistration = MapVATR<Il2CppMetadataRegistration>(metadataRegistration);
-                    genericMethodTable = MapVATR<Il2CppGenericMethodFunctionsDefinitions>(pMetadataRegistration.genericMethodTable, pMetadataRegistration.genericMethodTableCount);
-                    var genericMethodPointersCount = genericMethodTable.Max(x => x.indices.methodIndex) + 1;
-                    if (pCodeRegistration.reversePInvokeWrapperCount == genericMethodPointersCount)
+                    if (pCodeRegistration.reversePInvokeWrapperCount > 0x30000) //TODO
                     {
-                        Version = 24.3f;
-                        codeRegistration -= Is32Bit ? 8u : 16u;
-                        FormGUI.WriteLine($"Change il2cpp version to: {Version}");
+                        Version = 24.4;
+                        codeRegistration -= PointerSize * 3;
+                        Console.WriteLine($"Change il2cpp version to: {Version}");
+                    }
+                    else
+                    {
+                        pMetadataRegistration = MapVATR<Il2CppMetadataRegistration>(metadataRegistration);
+                        genericMethodTable = MapVATR<Il2CppGenericMethodFunctionsDefinitions>(pMetadataRegistration.genericMethodTable, pMetadataRegistration.genericMethodTableCount);
+                        var genericMethodPointersCount = genericMethodTable.Max(x => x.indices.methodIndex) + 1;
+                        if (pCodeRegistration.reversePInvokeWrapperCount == genericMethodPointersCount)
+                        {
+                            Version = 24.3;
+                            codeRegistration -= Is32Bit ? 8u : 16u;
+                            FormGUI.WriteLine($"Change il2cpp version to: {Version}");
+                        }
                     }
                 }
                 FormGUI.WriteLine("CodeRegistration : {0:x}", codeRegistration);
@@ -74,13 +83,35 @@ namespace Il2CppDumper
         public virtual void Init(ulong codeRegistration, ulong metadataRegistration)
         {
             pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
-            if (Version == 24.2f)
+            if (Version == 27)
             {
-                if (pCodeRegistration.codeGenModules == 0) //TODO
+                if (pCodeRegistration.reversePInvokeWrapperCount > 0x30000) //TODO
                 {
-                    Version = 24.3f;
-                    FormGUI.WriteLine($"Change il2cpp version to: {Version}");
+                    Version = 27.1;
+                    codeRegistration -= PointerSize;
+                    Console.WriteLine($"Change il2cpp version to: {Version}");
+                    Console.WriteLine("CodeRegistration : {0:x}", codeRegistration);
                     pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
+                }
+            }
+            if (Version == 24.2)
+            {
+                if (pCodeRegistration.reversePInvokeWrapperCount > 0x30000) //TODO
+                {
+                    Version = 24.4;
+                    codeRegistration -= PointerSize * 3;
+                    FormGUI.WriteLine($"Change il2cpp version to: {Version}");
+                    FormGUI.WriteLine("CodeRegistration : {0:x}", codeRegistration);
+                    pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
+                }
+                else
+                {
+                    if (pCodeRegistration.codeGenModules == 0) //TODO
+                    {
+                        Version = 24.3;
+                        FormGUI.WriteLine($"Change il2cpp version to: {Version}");
+                        pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
+                    }
                 }
             }
             pMetadataRegistration = MapVATR<Il2CppMetadataRegistration>(metadataRegistration);
@@ -125,7 +156,7 @@ namespace Il2CppDumper
                 types[i].Init();
                 typeDic.Add(pTypes[i], types[i]);
             }
-            if (Version >= 24.2f)
+            if (Version >= 24.2)
             {
                 var pCodeGenModules = MapVATR<ulong>(pCodeRegistration.codeGenModules, pCodeRegistration.codeGenModulesCount);
                 codeGenModules = new Dictionary<string, Il2CppCodeGenModule>(pCodeGenModules.Length, StringComparer.Ordinal);
@@ -239,7 +270,7 @@ namespace Il2CppDumper
 
         public ulong GetMethodPointer(string imageName, Il2CppMethodDefinition methodDef)
         {
-            if (Version >= 24.2f)
+            if (Version >= 24.2)
             {
                 var methodToken = methodDef.token;
                 var ptrs = codeGenModuleMethodPointers[imageName];

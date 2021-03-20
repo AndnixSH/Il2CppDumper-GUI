@@ -14,7 +14,7 @@ namespace Il2CppDumper
             return addr;
         }
 
-        public override bool PlusSearch(int methodCount, int typeDefinitionsCount)
+        public override bool PlusSearch(int methodCount, int typeDefinitionsCount, int imageCount)
         {
             var exec = new SearchSection
             {
@@ -33,11 +33,11 @@ namespace Il2CppDumper
             var bss = new SearchSection
             {
                 offset = Length,
-                offsetEnd = 1024 + 2159056, //STATICTOP
+                offsetEnd = long.MaxValue, //hack
                 address = Length,
-                addressEnd = 1024 + 2159056 //STATICTOP
+                addressEnd = long.MaxValue //hack
             };
-            var plusSearch = new PlusSearch(this, methodCount, typeDefinitionsCount, maxMetadataUsages);
+            var plusSearch = new PlusSearch(this, methodCount, typeDefinitionsCount, maxMetadataUsages, imageCount);
             plusSearch.SetSection(SearchSectionType.Exec, exec);
             plusSearch.SetSection(SearchSectionType.Data, data);
             plusSearch.SetSection(SearchSectionType.Bss, bss);

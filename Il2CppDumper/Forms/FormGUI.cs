@@ -17,6 +17,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 
 //Note: Rename the assembly name every update to bypass false positives by anti-virus
 
@@ -41,12 +42,11 @@ namespace Il2CppDumper
         string RealPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
         string TempPath = Path.GetTempPath() + "\\";
 
-        string Version = "1.3.4";
+        string Version = "1.4.0";
 
         public FormGUI()
         {
             InitializeComponent();
-            titleLbl.Text += " - " + Version;
 
             settingsPicBox.MouseLeave += new EventHandler((sender, e) => settingsPicBox.BackColor = Color.FromArgb(0, 0, 0, 0));
             settingsPicBox.MouseEnter += new EventHandler((sender, e) => settingsPicBox.BackColor = Color.FromArgb(36, 93, 127));
@@ -87,6 +87,8 @@ namespace Il2CppDumper
 
             if (FormRegistry.CheckForUpdate)
                 CheckUpdate();
+
+            titleLbl.Text += " " + Version;
 
             main = this;
         }
@@ -187,7 +189,7 @@ namespace Il2CppDumper
             LogOutput("Searching...");
             try
             {
-                var flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length);
+                var flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length, metadata.imageDefs.Length);
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     if (!flag && il2Cpp is PE)
@@ -195,7 +197,7 @@ namespace Il2CppDumper
                         LogOutput("Use custom PE loader");
                         il2Cpp = PELoader.Load(il2cppPath);
                         il2Cpp.SetProperties(version, metadata.maxMetadataUsages);
-                        flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length);
+                        flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length, metadata.imageDefs.Length);
                     }
                 }
                 if (!flag)
@@ -221,7 +223,7 @@ namespace Il2CppDumper
 #if DEBUG
                 LogOutput(ex.ToString());
 #else
-                LogOutput(ex.Message);
+                LogOutput(ex.Message, Color.Red);
 #endif
                 return false;
             }
@@ -235,21 +237,20 @@ namespace Il2CppDumper
             var decompiler = new Il2CppDecompiler(executor);
             decompiler.Decompile(config, outputDir);
             WriteLine("Done!");
-            if (config.GenerateScript)
+            if (config.GenerateStruct)
             {
-                WriteLine("Generate script...");
-                var scriptGenerator = new ScriptGenerator(executor);
+                WriteLine("Generate struct...");
+                var scriptGenerator = new StructGenerator(executor);
                 scriptGenerator.WriteScript(outputDir);
                 WriteLine("Done!");
             }
             if (config.GenerateDummyDll)
             {
                 WriteLine("Generate dummy dll...");
-                DummyAssemblyExporter.Export(executor, outputDir);
+                DummyAssemblyExporter.Export(executor, outputDir, config.DummyDllAddToken);
                 WriteLine("Done!");
                 Directory.SetCurrentDirectory(RealPath); //Fix read-only directory permission
             }
-            WriteLine("");
         }
         #endregion
 
@@ -307,7 +308,7 @@ namespace Il2CppDumper
                             metadataFile.ExtractToFile(TempPath + "global-metadata.dat", true);
                             if (iOSSwitch.Value)
                             {
-                                LogOutput("Dumping ARM64...", Color.Chartreuse);
+                                LogOutput("----- [Dumping ARM64] -----", Color.Chartreuse);
 
                                 if (FormRegistry.ExtBinaryChkBox)
                                     binaryFile.ExtractToFile(FileDir(outputPath + $"/{ipaBinaryName}"), true);
@@ -316,7 +317,7 @@ namespace Il2CppDumper
                             }
                             else
                             {
-                                LogOutput("Dumping ARMv7...", Color.Chartreuse);
+                                LogOutput("----- [Dumping ARMv7] -----", Color.Chartreuse);
 
                                 if (FormRegistry.ExtBinaryChkBox)
                                     binaryFile.ExtractToFile(FileDir(outputPath + $"/{ipaBinaryName}"), true);
@@ -364,7 +365,7 @@ namespace Il2CppDumper
                         {
                             if (entry.FullName.Equals(@"lib/armeabi-v7a/libil2cpp.so"))
                             {
-                                LogOutput("Dumping ARMv7...", Color.Chartreuse);
+                                LogOutput("----- [Dumping ARMv7] -----", Color.Chartreuse);
 
                                 if (FormRegistry.ExtBinaryChkBox)
                                     entry.ExtractToFile(FileDir(outputPath + "\\ARMv7\\libil2cpp.so"), true);
@@ -374,7 +375,7 @@ namespace Il2CppDumper
 
                             if (entry.FullName.Equals(@"lib/arm64-v8a/libil2cpp.so"))
                             {
-                                LogOutput("Dumping ARM64...", Color.Chartreuse);
+                                LogOutput("----- [Dumping ARM64] -----", Color.Chartreuse);
 
                                 if (FormRegistry.ExtBinaryChkBox)
                                     entry.ExtractToFile(FileDir(outputPath + "\\ARM64\\libil2cpp.so"), true);
@@ -447,7 +448,7 @@ namespace Il2CppDumper
 #if DEBUG
                 LogOutput($"{ex.ToString()}");
 #else
-                LogOutput($"{ex.Message}");
+                LogOutput($"{ex.Message}\n", Color.Red);
 #endif
             }
         }
@@ -597,6 +598,15 @@ namespace Il2CppDumper
             richTextBoxLogs.SelectionStart = richTextBoxLogs.Text.Length;
             richTextBoxLogs.ScrollToCaret();
         }
+
+        private void FormGUI_Load(object sender, EventArgs e)
+        {
+            if (IsAdministrator())
+            {
+                titleLbl.Text += " - Administrator ";
+                LogOutput("You are running as administrator. Drag and drop will not work\nIf this program is running as administrator by default, change your User Account Control back to default", Color.Yellow);
+            }
+        }
         #endregion
 
         #region Button click handlers
@@ -725,6 +735,11 @@ namespace Il2CppDumper
         #endregion
 
         #region Others
+        public static bool IsAdministrator()
+        {
+            return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
+                      .IsInRole(WindowsBuiltInRole.Administrator);
+        }
 
         string FileDir(string path)
         {
@@ -749,5 +764,6 @@ namespace Il2CppDumper
             Running
         }
         #endregion
+
     }
 }

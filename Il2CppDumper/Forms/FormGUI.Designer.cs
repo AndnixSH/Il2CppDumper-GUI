@@ -400,9 +400,9 @@
             this.label11.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.label11.Location = new System.Drawing.Point(10, 240);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(180, 68);
+            this.label11.Size = new System.Drawing.Size(160, 68);
             this.label11.TabIndex = 27;
-            this.label11.Text = "Credits:\r\nPerfare (Il2CppDumper)\r\ndjkaty (Some of her codes)\r\nAndnixSH (GUI)\r\n";
+            this.label11.Text = "Credits:\r\nPerfare (Il2CppDumper)\r\ndjkaty\r\nAndnixSH (GUI)\r\n";
             // 
             // label4
             // 
@@ -683,6 +683,7 @@
             this.KeyPreview = true;
             this.Name = "FormGUI";
             this.Text = "Il2CppDumper GUI";
+            this.Load += new System.EventHandler(this.FormGUI_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.FormGUI_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.FormGUI_DragEnter);
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.FormGUI_DragOver);
