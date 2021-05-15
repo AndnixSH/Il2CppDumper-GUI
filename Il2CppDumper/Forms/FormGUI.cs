@@ -1,23 +1,20 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using Bluegrams.Application;
+using Il2CppDumper.Properties;
 using Newtonsoft.Json;
-using Microsoft.Win32;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
-using System.Net;
+using System.Drawing;
 using System.Drawing.Text;
+using System.IO;
 using System.IO.Compression;
-using System.Threading.Tasks;
-using System.Threading;
-
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
+using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 //Note: Rename the assembly name every update to bypass false positives by anti-virus
 
@@ -28,8 +25,8 @@ namespace Il2CppDumper
         public static FormGUI main;
 
         internal FormDump aFormDump;
-        internal FormOptions aFormOptions;
-        internal FormRegistry aFormRegistry;
+        internal FormSettings aFormOptions;
+        internal FormAbout aFormAbout;
 
         private static Config config;
 
@@ -39,10 +36,10 @@ namespace Il2CppDumper
    IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
         public PrivateFontCollection fonts = new PrivateFontCollection();
 
-        string RealPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
-        string TempPath = Path.GetTempPath() + "\\";
+        string realPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
+        string tempPath = Path.GetTempPath() + "\\";
 
-        string Version = "1.4.0";
+        string Version = "1.5.0";
 
         public FormGUI()
         {
@@ -50,28 +47,30 @@ namespace Il2CppDumper
 
             settingsPicBox.MouseLeave += new EventHandler((sender, e) => settingsPicBox.BackColor = Color.FromArgb(0, 0, 0, 0));
             settingsPicBox.MouseEnter += new EventHandler((sender, e) => settingsPicBox.BackColor = Color.FromArgb(36, 93, 127));
+            aboutPicBox.MouseLeave += new EventHandler((sender, e) => aboutPicBox.BackColor = Color.FromArgb(0, 0, 0, 0));
+            aboutPicBox.MouseEnter += new EventHandler((sender, e) => aboutPicBox.BackColor = Color.FromArgb(36, 93, 127));
 
             aFormDump = new FormDump(this);
-            aFormOptions = new FormOptions(this);
-            aFormRegistry = new FormRegistry(this);
+            aFormOptions = new FormSettings(this);
+            aFormAbout = new FormAbout(this);
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            byte[] fontData = Properties.Resources.GOTHIC;
-            IntPtr fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
-            System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+            byte[] fontData = Resources.GOTHIC;
+            IntPtr fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
+            Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
             uint dummy = 0;
-            fonts.AddMemoryFont(fontPtr, Properties.Resources.GOTHIC.Length);
-            AddFontMemResourceEx(fontPtr, (uint)Properties.Resources.GOTHIC.Length, IntPtr.Zero, ref dummy);
-            System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+            fonts.AddMemoryFont(fontPtr, Resources.GOTHIC.Length);
+            AddFontMemResourceEx(fontPtr, (uint)Resources.GOTHIC.Length, IntPtr.Zero, ref dummy);
+            Marshal.FreeCoTaskMem(fontPtr);
 
-            fontData = Properties.Resources.GOTHICB;
-            fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
-            System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+            fontData = Resources.GOTHICB;
+            fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
+            Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
 
-            fonts.AddMemoryFont(fontPtr, Properties.Resources.GOTHICB.Length);
-            AddFontMemResourceEx(fontPtr, (uint)Properties.Resources.GOTHICB.Length, IntPtr.Zero, ref dummy);
-            System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+            fonts.AddMemoryFont(fontPtr, Resources.GOTHICB.Length);
+            AddFontMemResourceEx(fontPtr, (uint)Resources.GOTHICB.Length, IntPtr.Zero, ref dummy);
+            Marshal.FreeCoTaskMem(fontPtr);
 
             SetAllControlsFont(Controls);
 
@@ -82,13 +81,6 @@ namespace Il2CppDumper
             menuItem.Click += new EventHandler(CopyAction);
             contextMenu.MenuItems.Add(menuItem);
             richTextBoxLogs.ContextMenu = contextMenu;
-
-            FormRegistry.Load();
-
-            if (FormRegistry.CheckForUpdate)
-                CheckUpdate();
-
-            titleLbl.Text += " " + Version;
 
             main = this;
         }
@@ -104,7 +96,7 @@ namespace Il2CppDumper
             }));
 
             LogOutput("Read config...");
-            if (File.Exists(RealPath + "config.json"))
+            if (File.Exists(realPath + "config.json"))
             {
                 config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Application.StartupPath + Path.DirectorySeparatorChar + @"config.json"));
             }
@@ -220,11 +212,7 @@ namespace Il2CppDumper
             catch (Exception ex)
             {
                 LogOutput("An error occurred while processing.", Color.Red);
-#if DEBUG
                 LogOutput(ex.ToString());
-#else
-                LogOutput(ex.Message, Color.Red);
-#endif
                 return false;
             }
             return true;
@@ -249,7 +237,7 @@ namespace Il2CppDumper
                 WriteLine("Generate dummy dll...");
                 DummyAssemblyExporter.Export(executor, outputDir, config.DummyDllAddToken);
                 WriteLine("Done!");
-                Directory.SetCurrentDirectory(RealPath); //Fix read-only directory permission
+                Directory.SetCurrentDirectory(realPath); //Fix read-only directory permission
             }
         }
         #endregion
@@ -269,7 +257,7 @@ namespace Il2CppDumper
                         if (!String.IsNullOrEmpty(remoteVersion) && !remoteVersion.Contains(Version))
                         {
                             LogOutput("A new version is available: " + remoteVersion, Color.Lime);
-                            LogOutput("\nhttps://repo.andnixsh.com/tools/il2cppdumper/Il2CppDumperGUI.zip", Color.Lime);
+                            LogOutput("https://repo.andnixsh.com/tools/il2cppdumper/Il2CppDumperGUI.zip", Color.Lime);
                         }
                     }
                     catch
@@ -287,7 +275,7 @@ namespace Il2CppDumper
         #endregion
 
         #region Auto Dump
-        async Task iOSDump(string file, string outputPath)
+        private async Task iOSDump(string file, string outputPath)
         {
             await Task.Factory.StartNew(() =>
             {
@@ -305,24 +293,26 @@ namespace Il2CppDumper
                         var binaryFile = archive.Entries.FirstOrDefault(f => f.FullName == $"Payload/{ipaBinaryName}.app/{ipaBinaryName}");
                         if (metadataFile != null)
                         {
-                            metadataFile.ExtractToFile(TempPath + "global-metadata.dat", true);
+                            if (Settings.Default.ExtDatChkBox)
+                                metadataFile.ExtractToFile(FileDir(outputPath + "global-metadata.dat"), true);
+                            metadataFile.ExtractToFile(tempPath + "global-metadata.dat", true);
                             if (iOSSwitch.Value)
                             {
                                 LogOutput("----- [Dumping ARM64] -----", Color.Chartreuse);
 
-                                if (FormRegistry.ExtBinaryChkBox)
+                                if (Settings.Default.ExtBinaryChkBox)
                                     binaryFile.ExtractToFile(FileDir(outputPath + $"/{ipaBinaryName}"), true);
-                                binaryFile.ExtractToFile(TempPath + "arm64", true);
-                                Dumper(TempPath + "arm64", TempPath + "global-metadata.dat", FileDir(outputPath + "\\"));
+                                binaryFile.ExtractToFile(tempPath + "arm64", true);
+                                Dumper(tempPath + "arm64", tempPath + "global-metadata.dat", FileDir(outputPath + "\\"));
                             }
                             else
                             {
                                 LogOutput("----- [Dumping ARMv7] -----", Color.Chartreuse);
 
-                                if (FormRegistry.ExtBinaryChkBox)
+                                if (Settings.Default.ExtBinaryChkBox)
                                     binaryFile.ExtractToFile(FileDir(outputPath + $"/{ipaBinaryName}"), true);
-                                binaryFile.ExtractToFile(TempPath + "armv7", true);
-                                Dumper(TempPath + "armv7", TempPath + "global-metadata.dat", FileDir(outputPath + "\\"));
+                                binaryFile.ExtractToFile(tempPath + "armv7", true);
+                                Dumper(tempPath + "armv7", tempPath + "global-metadata.dat", FileDir(outputPath + "\\"));
                             }
                         }
                         else
@@ -336,7 +326,7 @@ namespace Il2CppDumper
             });
         }
 
-        async Task APKDump(string file, string outputPath)
+        private async Task APKDump(string file, string outputPath)
         {
             await Task.Factory.StartNew(() =>
             {
@@ -359,7 +349,9 @@ namespace Il2CppDumper
 
                     if (metadataFile != null)
                     {
-                        metadataFile.ExtractToFile(TempPath + "global-metadata.dat", true);
+                        if (Settings.Default.ExtDatChkBox)
+                            metadataFile.ExtractToFile(FileDir(outputPath + "global-metadata.dat"), true);
+                        metadataFile.ExtractToFile(tempPath + "global-metadata.dat", true);
 
                         foreach (ZipArchiveEntry entry in archive.Entries)
                         {
@@ -367,30 +359,30 @@ namespace Il2CppDumper
                             {
                                 LogOutput("----- [Dumping ARMv7] -----", Color.Chartreuse);
 
-                                if (FormRegistry.ExtBinaryChkBox)
+                                if (Settings.Default.ExtBinaryChkBox)
                                     entry.ExtractToFile(FileDir(outputPath + "\\ARMv7\\libil2cpp.so"), true);
-                                entry.ExtractToFile(TempPath + "libil2cpparmv7", true);
-                                Dumper(TempPath + "libil2cpparmv7", TempPath + "global-metadata.dat", FileDir(outputPath + "\\ARMv7\\"));
+                                entry.ExtractToFile(tempPath + "libil2cpparmv7", true);
+                                Dumper(tempPath + "libil2cpparmv7", tempPath + "global-metadata.dat", FileDir(outputPath + "\\ARMv7\\"));
                             }
 
                             if (entry.FullName.Equals(@"lib/arm64-v8a/libil2cpp.so"))
                             {
                                 LogOutput("----- [Dumping ARM64] -----", Color.Chartreuse);
 
-                                if (FormRegistry.ExtBinaryChkBox)
+                                if (Settings.Default.ExtBinaryChkBox)
                                     entry.ExtractToFile(FileDir(outputPath + "\\ARM64\\libil2cpp.so"), true);
-                                entry.ExtractToFile(TempPath + "libil2cpparm64", true);
-                                Dumper(TempPath + "libil2cpparm64", TempPath + "global-metadata.dat", FileDir(outputPath + "\\ARM64\\"));
+                                entry.ExtractToFile(tempPath + "libil2cpparm64", true);
+                                Dumper(tempPath + "libil2cpparm64", tempPath + "global-metadata.dat", FileDir(outputPath + "\\ARM64\\"));
                             }
 
                             if (entry.FullName.Equals(@"lib/x86/libil2cpp.so"))
                             {
                                 LogOutput("Dumping x86...", Color.Chartreuse);
 
-                                if (FormRegistry.ExtBinaryChkBox)
+                                if (Settings.Default.ExtBinaryChkBox)
                                     entry.ExtractToFile(FileDir(outputPath + "\\x86\\libil2cpp.so"), true);
-                                entry.ExtractToFile(TempPath + "libil2cppx86", true);
-                                Dumper(TempPath + "libil2cppx86", TempPath + "global-metadata.dat", FileDir(outputPath + "\\x86\\"));
+                                entry.ExtractToFile(tempPath + "libil2cppx86", true);
+                                Dumper(tempPath + "libil2cppx86", tempPath + "global-metadata.dat", FileDir(outputPath + "\\x86\\"));
                             }
                         }
                     }
@@ -402,8 +394,9 @@ namespace Il2CppDumper
             });
         }
 
-        async Task APKSplitDump(string file, string outputPath)
+        private async Task APKSplitDump(string file, string outputPath)
         {
+            LogOutput("----- [Dumping Split APK] -----", Color.Chartreuse);
             await Task.Factory.StartNew(() =>
             {
                 using (ZipArchive archive = ZipFile.OpenRead(file))
@@ -414,22 +407,90 @@ namespace Il2CppDumper
 
                     if (metadataFile != null)
                     {
-                        Debug.WriteLine("Extracted global-metadata.dat to temp");
-                        metadataFile.ExtractToFile(TempPath + "global-metadata.dat", true);
+                        if (Settings.Default.ExtDatChkBox)
+                            metadataFile.ExtractToFile(FileDir(outputPath + "global-metadata.dat"), true);
+                        metadataFile.ExtractToFile(tempPath + "global-metadata.dat", true);
                     }
 
                     if (binaryFile != null)
                     {
-                        Debug.WriteLine("Extracted libil2cpp.so to temp");
-                        binaryFile.ExtractToFile(TempPath + "libil2cpp.so", true);
+                        binaryFile.ExtractToFile(tempPath + "libil2cpp.so", true);
                     }
 
-                    if (File.Exists(TempPath + "libil2cpp.so") && File.Exists(TempPath + "global-metadata.dat"))
+                    if (File.Exists(tempPath + "libil2cpp.so") && File.Exists(tempPath + "global-metadata.dat"))
                     {
-                        Dumper(TempPath + "libil2cpp.so", TempPath + "global-metadata.dat", FileDir(outputPath + "\\"));
+                        Dumper(tempPath + "libil2cpp.so", tempPath + "global-metadata.dat", FileDir(outputPath + "\\"));
                     }
                 }
             });
+        }
+
+        private async Task APKsDump(string file, string outputPath)
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                using (ZipArchive archive = ZipFile.OpenRead(file))
+                {
+                    foreach (var entryApks in archive.Entries)
+                    {
+                        if (entryApks.FullName.EndsWith(".apk", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var apkFile = Path.Combine(tempPath, entryApks.FullName);
+                            entryApks.ExtractToFile(apkFile, true);
+                            using (ZipArchive entryBase = ZipFile.OpenRead(apkFile))
+                            {
+                                var binaryFile = entryBase.Entries.FirstOrDefault(f => f.Name.Contains("libil2cpp.so"));
+                                var metadataFile = entryBase.Entries.FirstOrDefault(f => f.FullName == "assets/bin/Data/Managed/Metadata/global-metadata.dat");
+
+                                if (Settings.Default.ExtDatChkBox)
+                                    metadataFile?.ExtractToFile(FileDir(outputPath + "global-metadata.dat"), true);
+                                metadataFile?.ExtractToFile(tempPath + "global-metadata.dat", true);
+
+                                if (binaryFile != null)
+                                {
+                                    binaryFile.ExtractToFile(tempPath + "libil2cpp.so", true);
+
+                                    foreach (var entry in entryBase.Entries)
+                                    {
+                                        if (entry.FullName.Equals("lib/armeabi-v7a/libil2cpp.so"))
+                                        {
+                                            WriteLine("Dumping ARMv7...", Color.Chartreuse);
+
+                                            if (Settings.Default.ExtBinaryChkBox)
+                                                entry.ExtractToFile(FileDir(outputPath + "\\ARMv7\\libil2cpp.so"), true);
+                                            entry.ExtractToFile(tempPath + "libil2cpparmv7", true);
+                                            Dumper(tempPath + "libil2cpparmv7", tempPath + "global-metadata.dat", FileDir(outputPath + "\\ARMv7\\"));
+                                        }
+
+                                        if (entry.FullName.Equals(@"lib/arm64-v8a/libil2cpp.so"))
+                                        {
+                                            WriteLine("Dumping ARM64...", Color.Chartreuse);
+
+                                            if (Settings.Default.ExtBinaryChkBox)
+                                                entry.ExtractToFile(FileDir(outputPath + "\\ARM64\\libil2cpp.so"), true);
+                                            entry.ExtractToFile(tempPath + "libil2cpparm64", true);
+                                            Dumper(tempPath + "libil2cpparm64", tempPath + "global-metadata.dat", FileDir(outputPath + "\\ARM64\\"));
+                                        }
+
+                                        if (entry.FullName.Equals(@"lib/x86/libil2cpp.so"))
+                                        {
+                                            WriteLine("Dumping x86...", Color.Chartreuse);
+
+                                            if (Settings.Default.ExtBinaryChkBox)
+                                                entry.ExtractToFile(FileDir(outputPath + "\\x86\\libil2cpp.so"), true);
+                                            entry.ExtractToFile(tempPath + "libil2cppx86", true);
+                                            Dumper(tempPath + "libil2cppx86", tempPath + "global-metadata.dat", FileDir(outputPath + "\\x86\\"));
+                                        }
+                                    }
+                                }
+                                entryBase.Dispose();
+                            }
+                            File.Delete(apkFile);
+                        }
+                    }
+                    archive.Dispose();
+                }
+            }).ConfigureAwait(false);
         }
         #endregion
 
@@ -445,11 +506,79 @@ namespace Il2CppDumper
             }
             catch (Exception ex)
             {
-#if DEBUG
-                LogOutput($"{ex.ToString()}");
-#else
-                LogOutput($"{ex.Message}\n", Color.Red);
-#endif
+                LogOutput(ex.ToString() + "\n", Color.Red);
+            }
+        }
+
+        private void CopyScripts(string outputPath)
+        {
+            var guiPath = AppDomain.CurrentDomain.BaseDirectory;
+            try
+            {
+                if (Settings.Default.ghidra)
+                {
+                    if (File.Exists(guiPath + "ghidra.py"))
+                    {
+                        File.Copy(guiPath + "ghidra.py", outputPath + "ghidra.py", true);
+                        LogOutput($"Copied ghidra.py");
+                    }
+                    else
+                        LogOutput("ghidra.py does not exist", Color.Yellow);
+                }
+                if (Settings.Default.ghidra_with_struct)
+                {
+                    if (File.Exists(guiPath + "ghidra_with_struct.py"))
+                    {
+                        File.Copy(guiPath + "ghidra_with_struct.py", outputPath + "ghidra_with_struct.py", true);
+                        LogOutput($"Copied ghidra_with_struct.py");
+                    }
+                    else
+                        LogOutput("ghidra_with_struct.py does not exist", Color.Yellow);
+                }
+                if (Settings.Default.ida)
+                {
+                    if (File.Exists(guiPath + "ida.py"))
+                    {
+                        File.Copy(guiPath + "ida.py", outputPath + "ida.py", true);
+                        LogOutput($"Copied ida.py");
+                    }
+                    else
+                        LogOutput("ida.py does not exist", Color.Yellow);
+                }
+                if (Settings.Default.ida_py3)
+                {
+                    if (File.Exists(guiPath + "ida_py3.py"))
+                    {
+                        File.Copy(guiPath + "ida_py3.py", outputPath + "ida_py3.py", true);
+                        LogOutput($"Copied ida_py3.py");
+                    }
+                    else
+                        LogOutput("ida_py3.py does not exist", Color.Yellow);
+                }
+                if (Settings.Default.ida_with_struct)
+                {
+                    if (File.Exists(guiPath + "ida_with_struct.py"))
+                    {
+                        File.Copy(guiPath + "ida_with_struct.py", outputPath + "ida_with_struct.py", true);
+                        LogOutput($"Copied ida_with_struct.py");
+                    }
+                    else
+                        LogOutput("ida_with_struct.py does not exist", Color.Yellow);
+                }
+                if (Settings.Default.ida_with_struct_py3)
+                {
+                    if (File.Exists(guiPath + "ida_with_struct_py3.py"))
+                    {
+                        File.Copy(guiPath + "ida_with_struct_py3.py", outputPath + "ida_with_struct_py3.py", true);
+                        LogOutput($"Copied ida_with_struct_py3.py");
+                    }
+                    else
+                        LogOutput("ida_with_struct_py3.py does not exist", Color.Yellow);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogOutput(ex.ToString(), Color.Red);
             }
         }
         #endregion
@@ -467,11 +596,11 @@ namespace Il2CppDumper
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (files.Length > 1)
                 {
-                    DeleteFile(TempPath + "global-metadata.dat");
-                    DeleteFile(TempPath + "libil2cpp.so");
+                    DeleteFile(tempPath + "global-metadata.dat");
+                    DeleteFile(tempPath + "libil2cpp.so");
                 }
                 string outputPath;
-                if (FormRegistry.AutoSetDir)
+                if (Settings.Default.AutoSetDir)
                 {
                     outputPath = Path.GetDirectoryName(files[0]) + "\\" + Path.GetFileNameWithoutExtension(files[0]) + "_dumped\\";
                 }
@@ -482,44 +611,44 @@ namespace Il2CppDumper
 
                 foreach (var file in files)
                 {
-                    var ext = Path.GetExtension(file);
-                    if (ext.Equals(".dat"))
+                    switch (Path.GetExtension(file))
                     {
-                        datFileTxtBox.Text = file;
-                    }
-                    else if (ext.Equals(".apk"))
-                    {
-                        richTextBoxLogs.Text = "";
-                        if (files.Length > 1)
-                        {
-                            LogOutput("Dumping Il2Cpp from splitted APKs...", Color.Cyan);
-                            await APKSplitDump(file, outputPath);
-                        }
-                        else
-                            await APKDump(file, outputPath);
-                    }
-                    else if (ext.Equals(".ipa"))
-                    {
-                        richTextBoxLogs.Text = "";
-                        await iOSDump(file, outputPath);
-                    }
-                    else
-                    {
-                        binFileTxtBox.Text = file;
+                        case ".dat":
+                            datFileTxtBox.Text = file;
+                            break;
+                        case ".apk":
+                            richTextBoxLogs.Text = "";
+                            if (files.Length > 1)
+                            {
+                                LogOutput("Dumping Il2Cpp from splitted APKs...", Color.Cyan);
+                                await APKSplitDump(file, outputPath);
+                            }
+                            else
+                                await APKDump(file, outputPath);
+                            break;
+                        case ".apks":
+                        case ".xapk":
+                            await APKsDump(file, outputPath);
+                            break;
+                        case ".ipa":
+                            richTextBoxLogs.Text = "";
+                            await iOSDump(file, outputPath);
+                            break;
+                        default:
+                            binFileTxtBox.Text = file;
+                            break;
                     }
 
-                    if (FormRegistry.AutoSetDir)
+                    if (Settings.Default.AutoSetDir)
                         outputTxtBox.Text = Path.GetDirectoryName(file) + "\\";
                 }
+
+                CopyScripts(outputPath);
             }
 
             catch (Exception ex)
             {
-#if DEBUG
                 LogOutput(ex.ToString());
-#else
-                LogOutput(ex.Message);
-#endif
             }
             FormState(State.Idle);
         }
@@ -593,6 +722,7 @@ namespace Il2CppDumper
                 iOSSwitch.Enabled = true;
             }
         }
+
         private void richTextBoxLogs_TextChanged(object sender, EventArgs e)
         {
             richTextBoxLogs.SelectionStart = richTextBoxLogs.Text.Length;
@@ -601,20 +731,58 @@ namespace Il2CppDumper
 
         private void FormGUI_Load(object sender, EventArgs e)
         {
+            //https://github.com/Bluegrams/SettingsProviders
+            PortableSettingsProvider.SettingsFileName = "Il2CppDumper.config";
+            PortableSettingsProviderBase.SettingsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            PortableSettingsProvider.ApplyProvider(Settings.Default);
+
+            binFileTxtBox.Text = Settings.Default.BinaryFileTxtBox;
+            datFileTxtBox.Text = Settings.Default.DatFileTxtBox;
+            outputTxtBox.Text = Settings.Default.OutputTxtBox;
+            iOSSwitch.Checked = Settings.Default.MachO;
+            if (Settings.Default.RememberWindowPosition)
+            {
+                Location = Settings.Default.Location;
+            }
+
+            titleLbl.Text += " " + Version;
+
             if (IsAdministrator())
             {
                 titleLbl.Text += " - Administrator ";
                 LogOutput("You are running as administrator. Drag and drop will not work\nIf this program is running as administrator by default, change your User Account Control back to default", Color.Yellow);
             }
+
+            if (Settings.Default.CheckForUpdate)
+                CheckUpdate();
         }
         #endregion
 
         #region Button click handlers
+        private void closeBtn_Click(object sender, EventArgs e)
+        {
+            Settings.Default.BinaryFileTxtBox = binFileTxtBox.Text;
+            Settings.Default.DatFileTxtBox = datFileTxtBox.Text;
+            Settings.Default.OutputTxtBox = outputTxtBox.Text;
+            Settings.Default.MachO = iOSSwitch.Checked;
+            Settings.Default.Location = Location;
+
+            Settings.Default.Save();
+            Application.Exit();
+        }
+
         private void settingsPicBox_Click(object sender, EventArgs e)
         {
-            FormOptions form = new FormOptions();
+            FormSettings form = new FormSettings();
             form.Show();
         }
+
+        private void aboutPicBox_Click(object sender, EventArgs e)
+        {
+            FormAbout form = new FormAbout();
+            form.Show();
+        }
+
 
         private async void startBtn_Click(object sender, EventArgs e)
         {
@@ -648,12 +816,6 @@ namespace Il2CppDumper
             FormState(State.Idle);
         }
 
-        private void closeBtn_Click(object sender, EventArgs e)
-        {
-            FormRegistry.Save();
-            Application.Exit();
-        }
-
         private void openFolderBtn_Click(object sender, EventArgs e)
         {
             Process.Start("explorer.exe", outputTxtBox.Text);
@@ -675,7 +837,7 @@ namespace Il2CppDumper
                 binFileTxtBox.Text = ofd.FileName;
                 CodeRegistrationTxtBox.Text = "";
                 metadataRegistrationTxtBox.Text = "";
-                if (FormRegistry.AutoSetDir)
+                if (Settings.Default.AutoSetDir)
                 {
                     outputTxtBox.Text = Path.GetDirectoryName(binFileTxtBox.Text) + "\\";
                 }
@@ -764,6 +926,5 @@ namespace Il2CppDumper
             Running
         }
         #endregion
-
     }
 }

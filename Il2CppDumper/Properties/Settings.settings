@@ -1,7 +1,54 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Il2CppDumper.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="BinaryFileTxtBox" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DatFileTxtBox" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="OutputTxtBox" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="MachO" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="RememberWindowPosition" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AutoSetDir" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CheckForUpdate" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ExtBinaryChkBox" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ghidra" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ghidra_with_struct" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ida" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ida_py3" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ida_with_struct" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ida_with_struct_py3" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ExtDatChkBox" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Location" Provider="Bluegrams.Application.PortableSettingsProvider" Type="System.Drawing.Point" Scope="User">
+      <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

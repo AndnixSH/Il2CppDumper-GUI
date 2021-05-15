@@ -30,19 +30,17 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormGUI));
-            Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState toggleState4 = new Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState();
-            Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState toggleState5 = new Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState();
-            Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState toggleState6 = new Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState();
+            Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState toggleState1 = new Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState();
+            Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState toggleState2 = new Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState();
+            Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState toggleState3 = new Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState();
             this.startBtn = new Bunifu.Framework.UI.BunifuFlatButton();
             this.selBinFile = new Bunifu.Framework.UI.BunifuFlatButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.minimizeBtn = new Bunifu.Framework.UI.BunifuImageButton();
             this.closeBtn = new Bunifu.Framework.UI.BunifuImageButton();
             this.titleLbl = new System.Windows.Forms.Label();
-            this.binFileTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
             this.exeFileLbl = new System.Windows.Forms.Label();
             this.datFileLbl = new System.Windows.Forms.Label();
-            this.datFileTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
             this.selDatFile = new Bunifu.Framework.UI.BunifuFlatButton();
             this.platformLbl1 = new System.Windows.Forms.Label();
             this.platformLbl2 = new System.Windows.Forms.Label();
@@ -51,10 +49,8 @@
             this.label9 = new System.Windows.Forms.Label();
             this.CodeRegistrationTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
             this.metadataRegistrationTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
-            this.label11 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.richTextBoxLogs = new System.Windows.Forms.RichTextBox();
-            this.outputTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
             this.selOutDir = new Bunifu.Framework.UI.BunifuFlatButton();
             this.label6 = new System.Windows.Forms.Label();
             this.openFolderBtn = new Bunifu.Framework.UI.BunifuFlatButton();
@@ -66,11 +62,16 @@
             this.bunifuDragControl1 = new Bunifu.Framework.UI.BunifuDragControl(this.components);
             this.settingsPicBox = new System.Windows.Forms.PictureBox();
             this.iOSSwitch = new Bunifu.UI.WinForms.BunifuToggleSwitch();
+            this.outputTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
+            this.datFileTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
+            this.binFileTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
+            this.aboutPicBox = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.minimizeBtn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.closeBtn)).BeginInit();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.settingsPicBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.aboutPicBox)).BeginInit();
             this.SuspendLayout();
             // 
             // startBtn
@@ -96,7 +97,7 @@
             this.startBtn.IconVisible = false;
             this.startBtn.IconZoom = 90D;
             this.startBtn.IsTab = false;
-            this.startBtn.Location = new System.Drawing.Point(251, 260);
+            this.startBtn.Location = new System.Drawing.Point(258, 225);
             this.startBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.startBtn.Name = "startBtn";
             this.startBtn.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
@@ -203,25 +204,6 @@
             this.titleLbl.TabIndex = 0;
             this.titleLbl.Text = "Il2CppDumper GUI";
             // 
-            // binFileTxtBox
-            // 
-            this.binFileTxtBox.BorderColorFocused = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
-            this.binFileTxtBox.BorderColorIdle = System.Drawing.Color.DodgerBlue;
-            this.binFileTxtBox.BorderColorMouseHover = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
-            this.binFileTxtBox.BorderThickness = 1;
-            this.binFileTxtBox.characterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.binFileTxtBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.binFileTxtBox.Font = new System.Drawing.Font("Century Gothic", 9.75F);
-            this.binFileTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
-            this.binFileTxtBox.isPassword = false;
-            this.binFileTxtBox.Location = new System.Drawing.Point(170, 40);
-            this.binFileTxtBox.Margin = new System.Windows.Forms.Padding(4);
-            this.binFileTxtBox.MaxLength = 32767;
-            this.binFileTxtBox.Name = "binFileTxtBox";
-            this.binFileTxtBox.Size = new System.Drawing.Size(434, 35);
-            this.binFileTxtBox.TabIndex = 1;
-            this.binFileTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            // 
             // exeFileLbl
             // 
             this.exeFileLbl.AutoSize = true;
@@ -243,25 +225,6 @@
             this.datFileLbl.Size = new System.Drawing.Size(150, 16);
             this.datFileLbl.TabIndex = 18;
             this.datFileLbl.Text = "global-metadata.dat:";
-            // 
-            // datFileTxtBox
-            // 
-            this.datFileTxtBox.BorderColorFocused = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
-            this.datFileTxtBox.BorderColorIdle = System.Drawing.Color.DodgerBlue;
-            this.datFileTxtBox.BorderColorMouseHover = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
-            this.datFileTxtBox.BorderThickness = 1;
-            this.datFileTxtBox.characterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.datFileTxtBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.datFileTxtBox.Font = new System.Drawing.Font("Century Gothic", 9.75F);
-            this.datFileTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
-            this.datFileTxtBox.isPassword = false;
-            this.datFileTxtBox.Location = new System.Drawing.Point(170, 83);
-            this.datFileTxtBox.Margin = new System.Windows.Forms.Padding(4);
-            this.datFileTxtBox.MaxLength = 32767;
-            this.datFileTxtBox.Name = "datFileTxtBox";
-            this.datFileTxtBox.Size = new System.Drawing.Size(434, 35);
-            this.datFileTxtBox.TabIndex = 2;
-            this.datFileTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             // 
             // selDatFile
             // 
@@ -305,7 +268,7 @@
             this.platformLbl1.AutoSize = true;
             this.platformLbl1.Font = new System.Drawing.Font("Century Gothic", 9.75F);
             this.platformLbl1.ForeColor = System.Drawing.Color.White;
-            this.platformLbl1.Location = new System.Drawing.Point(470, 213);
+            this.platformLbl1.Location = new System.Drawing.Point(9, 214);
             this.platformLbl1.Name = "platformLbl1";
             this.platformLbl1.Size = new System.Drawing.Size(63, 17);
             this.platformLbl1.TabIndex = 18;
@@ -316,7 +279,7 @@
             this.platformLbl2.AutoSize = true;
             this.platformLbl2.Font = new System.Drawing.Font("Century Gothic", 9.75F);
             this.platformLbl2.ForeColor = System.Drawing.Color.DarkGray;
-            this.platformLbl2.Location = new System.Drawing.Point(544, 213);
+            this.platformLbl2.Location = new System.Drawing.Point(83, 214);
             this.platformLbl2.Name = "platformLbl2";
             this.platformLbl2.Size = new System.Drawing.Size(43, 17);
             this.platformLbl2.TabIndex = 21;
@@ -327,7 +290,7 @@
             this.platformLbl3.AutoSize = true;
             this.platformLbl3.Font = new System.Drawing.Font("Century Gothic", 9.75F);
             this.platformLbl3.ForeColor = System.Drawing.Color.DarkGray;
-            this.platformLbl3.Location = new System.Drawing.Point(634, 213);
+            this.platformLbl3.Location = new System.Drawing.Point(173, 214);
             this.platformLbl3.Name = "platformLbl3";
             this.platformLbl3.Size = new System.Drawing.Size(43, 17);
             this.platformLbl3.TabIndex = 22;
@@ -370,7 +333,7 @@
             this.CodeRegistrationTxtBox.Margin = new System.Windows.Forms.Padding(4);
             this.CodeRegistrationTxtBox.MaxLength = 32767;
             this.CodeRegistrationTxtBox.Name = "CodeRegistrationTxtBox";
-            this.CodeRegistrationTxtBox.Size = new System.Drawing.Size(154, 35);
+            this.CodeRegistrationTxtBox.Size = new System.Drawing.Size(148, 35);
             this.CodeRegistrationTxtBox.TabIndex = 9;
             this.CodeRegistrationTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             // 
@@ -393,23 +356,12 @@
             this.metadataRegistrationTxtBox.TabIndex = 11;
             this.metadataRegistrationTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("Century Gothic", 9.75F);
-            this.label11.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label11.Location = new System.Drawing.Point(10, 240);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(160, 68);
-            this.label11.TabIndex = 27;
-            this.label11.Text = "Credits:\r\nPerfare (Il2CppDumper)\r\ndjkaty\r\nAndnixSH (GUI)\r\n";
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Century Gothic", 9.75F);
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(11, 337);
+            this.label4.Location = new System.Drawing.Point(13, 287);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(84, 17);
             this.label4.TabIndex = 28;
@@ -421,33 +373,14 @@
             this.richTextBoxLogs.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBoxLogs.Font = new System.Drawing.Font("Consolas", 9F);
             this.richTextBoxLogs.ForeColor = System.Drawing.SystemColors.Window;
-            this.richTextBoxLogs.Location = new System.Drawing.Point(10, 361);
+            this.richTextBoxLogs.Location = new System.Drawing.Point(12, 311);
             this.richTextBoxLogs.Name = "richTextBoxLogs";
             this.richTextBoxLogs.ReadOnly = true;
-            this.richTextBoxLogs.Size = new System.Drawing.Size(671, 119);
+            this.richTextBoxLogs.Size = new System.Drawing.Size(671, 144);
             this.richTextBoxLogs.TabIndex = 17;
             this.richTextBoxLogs.Text = "";
             this.richTextBoxLogs.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.richTextBoxLogs_LinkClicked);
             this.richTextBoxLogs.TextChanged += new System.EventHandler(this.richTextBoxLogs_TextChanged);
-            // 
-            // outputTxtBox
-            // 
-            this.outputTxtBox.BorderColorFocused = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(233)))), ((int)(((byte)(233)))));
-            this.outputTxtBox.BorderColorIdle = System.Drawing.Color.DarkTurquoise;
-            this.outputTxtBox.BorderColorMouseHover = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(233)))), ((int)(((byte)(233)))));
-            this.outputTxtBox.BorderThickness = 1;
-            this.outputTxtBox.characterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.outputTxtBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.outputTxtBox.Font = new System.Drawing.Font("Century Gothic", 9.75F);
-            this.outputTxtBox.ForeColor = System.Drawing.Color.DarkTurquoise;
-            this.outputTxtBox.isPassword = false;
-            this.outputTxtBox.Location = new System.Drawing.Point(170, 126);
-            this.outputTxtBox.Margin = new System.Windows.Forms.Padding(4);
-            this.outputTxtBox.MaxLength = 32767;
-            this.outputTxtBox.Name = "outputTxtBox";
-            this.outputTxtBox.Size = new System.Drawing.Size(390, 35);
-            this.outputTxtBox.TabIndex = 4;
-            this.outputTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             // 
             // selOutDir
             // 
@@ -538,7 +471,7 @@
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Century Gothic", 9.75F);
             this.label17.ForeColor = System.Drawing.Color.DarkCyan;
-            this.label17.Location = new System.Drawing.Point(196, 337);
+            this.label17.Location = new System.Drawing.Point(196, 280);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(315, 17);
             this.label17.TabIndex = 50;
@@ -552,7 +485,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel4.Location = new System.Drawing.Point(0, 33);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1, 456);
+            this.panel4.Size = new System.Drawing.Size(1, 434);
             this.panel4.TabIndex = 58;
             // 
             // panel5
@@ -561,7 +494,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel5.Location = new System.Drawing.Point(0, 0);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1, 456);
+            this.panel5.Size = new System.Drawing.Size(1, 434);
             this.panel5.TabIndex = 29;
             // 
             // panel6
@@ -570,14 +503,14 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel6.Location = new System.Drawing.Point(691, 33);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(1, 456);
+            this.panel6.Size = new System.Drawing.Size(1, 434);
             this.panel6.TabIndex = 59;
             // 
             // panel7
             // 
             this.panel7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(119)))), ((int)(((byte)(215)))));
             this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel7.Location = new System.Drawing.Point(1, 488);
+            this.panel7.Location = new System.Drawing.Point(1, 466);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(690, 1);
             this.panel7.TabIndex = 60;
@@ -593,9 +526,9 @@
             // 
             this.settingsPicBox.Cursor = System.Windows.Forms.Cursors.Hand;
             this.settingsPicBox.Image = ((System.Drawing.Image)(resources.GetObject("settingsPicBox.Image")));
-            this.settingsPicBox.Location = new System.Drawing.Point(604, 252);
+            this.settingsPicBox.Location = new System.Drawing.Point(630, 214);
             this.settingsPicBox.Name = "settingsPicBox";
-            this.settingsPicBox.Size = new System.Drawing.Size(56, 56);
+            this.settingsPicBox.Size = new System.Drawing.Size(50, 50);
             this.settingsPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.settingsPicBox.TabIndex = 65;
             this.settingsPicBox.TabStop = false;
@@ -609,39 +542,108 @@
             this.iOSSwitch.Checked = true;
             this.iOSSwitch.Cursor = System.Windows.Forms.Cursors.Hand;
             this.iOSSwitch.InnerCirclePadding = 3;
-            this.iOSSwitch.Location = new System.Drawing.Point(594, 213);
+            this.iOSSwitch.Location = new System.Drawing.Point(133, 214);
             this.iOSSwitch.Name = "iOSSwitch";
             this.iOSSwitch.Size = new System.Drawing.Size(32, 18);
             this.iOSSwitch.TabIndex = 66;
             this.iOSSwitch.ThumbMargin = 3;
-            toggleState4.BackColor = System.Drawing.Color.DarkGray;
-            toggleState4.BackColorInner = System.Drawing.Color.White;
-            toggleState4.BorderColor = System.Drawing.Color.DarkGray;
-            toggleState4.BorderColorInner = System.Drawing.Color.White;
-            toggleState4.BorderRadius = 17;
-            toggleState4.BorderRadiusInner = 11;
-            toggleState4.BorderThickness = 1;
-            toggleState4.BorderThicknessInner = 1;
-            this.iOSSwitch.ToggleStateDisabled = toggleState4;
-            toggleState5.BackColor = System.Drawing.Color.Empty;
-            toggleState5.BackColorInner = System.Drawing.Color.Empty;
-            toggleState5.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(0)))), ((int)(((byte)(140)))));
-            toggleState5.BorderColorInner = System.Drawing.Color.Empty;
-            toggleState5.BorderRadius = 1;
-            toggleState5.BorderRadiusInner = 1;
-            toggleState5.BorderThickness = 1;
-            toggleState5.BorderThicknessInner = 1;
-            this.iOSSwitch.ToggleStateOff = toggleState5;
-            toggleState6.BackColor = System.Drawing.Color.DodgerBlue;
-            toggleState6.BackColorInner = System.Drawing.Color.White;
-            toggleState6.BorderColor = System.Drawing.Color.DodgerBlue;
-            toggleState6.BorderColorInner = System.Drawing.Color.White;
-            toggleState6.BorderRadius = 17;
-            toggleState6.BorderRadiusInner = 11;
-            toggleState6.BorderThickness = 1;
-            toggleState6.BorderThicknessInner = 1;
-            this.iOSSwitch.ToggleStateOn = toggleState6;
+            toggleState1.BackColor = System.Drawing.Color.DarkGray;
+            toggleState1.BackColorInner = System.Drawing.Color.White;
+            toggleState1.BorderColor = System.Drawing.Color.DarkGray;
+            toggleState1.BorderColorInner = System.Drawing.Color.White;
+            toggleState1.BorderRadius = 17;
+            toggleState1.BorderRadiusInner = 11;
+            toggleState1.BorderThickness = 1;
+            toggleState1.BorderThicknessInner = 1;
+            this.iOSSwitch.ToggleStateDisabled = toggleState1;
+            toggleState2.BackColor = System.Drawing.Color.Empty;
+            toggleState2.BackColorInner = System.Drawing.Color.Empty;
+            toggleState2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(0)))), ((int)(((byte)(140)))));
+            toggleState2.BorderColorInner = System.Drawing.Color.Empty;
+            toggleState2.BorderRadius = 1;
+            toggleState2.BorderRadiusInner = 1;
+            toggleState2.BorderThickness = 1;
+            toggleState2.BorderThicknessInner = 1;
+            this.iOSSwitch.ToggleStateOff = toggleState2;
+            toggleState3.BackColor = System.Drawing.Color.DodgerBlue;
+            toggleState3.BackColorInner = System.Drawing.Color.White;
+            toggleState3.BorderColor = System.Drawing.Color.DodgerBlue;
+            toggleState3.BorderColorInner = System.Drawing.Color.White;
+            toggleState3.BorderRadius = 17;
+            toggleState3.BorderRadiusInner = 11;
+            toggleState3.BorderThickness = 1;
+            toggleState3.BorderThicknessInner = 1;
+            this.iOSSwitch.ToggleStateOn = toggleState3;
             this.iOSSwitch.Value = true;
+            // 
+            // outputTxtBox
+            // 
+            this.outputTxtBox.BorderColorFocused = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(233)))), ((int)(((byte)(233)))));
+            this.outputTxtBox.BorderColorIdle = System.Drawing.Color.DarkTurquoise;
+            this.outputTxtBox.BorderColorMouseHover = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(233)))), ((int)(((byte)(233)))));
+            this.outputTxtBox.BorderThickness = 1;
+            this.outputTxtBox.characterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.outputTxtBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.outputTxtBox.Font = new System.Drawing.Font("Century Gothic", 9.75F);
+            this.outputTxtBox.ForeColor = System.Drawing.Color.DarkTurquoise;
+            this.outputTxtBox.isPassword = false;
+            this.outputTxtBox.Location = new System.Drawing.Point(170, 126);
+            this.outputTxtBox.Margin = new System.Windows.Forms.Padding(4);
+            this.outputTxtBox.MaxLength = 32767;
+            this.outputTxtBox.Name = "outputTxtBox";
+            this.outputTxtBox.Size = new System.Drawing.Size(390, 35);
+            this.outputTxtBox.TabIndex = 4;
+            this.outputTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            // 
+            // datFileTxtBox
+            // 
+            this.datFileTxtBox.BorderColorFocused = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
+            this.datFileTxtBox.BorderColorIdle = System.Drawing.Color.DodgerBlue;
+            this.datFileTxtBox.BorderColorMouseHover = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
+            this.datFileTxtBox.BorderThickness = 1;
+            this.datFileTxtBox.characterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.datFileTxtBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.datFileTxtBox.Font = new System.Drawing.Font("Century Gothic", 9.75F);
+            this.datFileTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
+            this.datFileTxtBox.isPassword = false;
+            this.datFileTxtBox.Location = new System.Drawing.Point(170, 83);
+            this.datFileTxtBox.Margin = new System.Windows.Forms.Padding(4);
+            this.datFileTxtBox.MaxLength = 32767;
+            this.datFileTxtBox.Name = "datFileTxtBox";
+            this.datFileTxtBox.Size = new System.Drawing.Size(434, 35);
+            this.datFileTxtBox.TabIndex = 2;
+            this.datFileTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            // 
+            // binFileTxtBox
+            // 
+            this.binFileTxtBox.BorderColorFocused = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
+            this.binFileTxtBox.BorderColorIdle = System.Drawing.Color.DodgerBlue;
+            this.binFileTxtBox.BorderColorMouseHover = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
+            this.binFileTxtBox.BorderThickness = 1;
+            this.binFileTxtBox.characterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.binFileTxtBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.binFileTxtBox.Font = new System.Drawing.Font("Century Gothic", 9.75F);
+            this.binFileTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
+            this.binFileTxtBox.isPassword = false;
+            this.binFileTxtBox.Location = new System.Drawing.Point(170, 40);
+            this.binFileTxtBox.Margin = new System.Windows.Forms.Padding(4);
+            this.binFileTxtBox.MaxLength = 32767;
+            this.binFileTxtBox.Name = "binFileTxtBox";
+            this.binFileTxtBox.Size = new System.Drawing.Size(434, 35);
+            this.binFileTxtBox.TabIndex = 1;
+            this.binFileTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            // 
+            // aboutPicBox
+            // 
+            this.aboutPicBox.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.aboutPicBox.Image = ((System.Drawing.Image)(resources.GetObject("aboutPicBox.Image")));
+            this.aboutPicBox.Location = new System.Drawing.Point(566, 214);
+            this.aboutPicBox.Name = "aboutPicBox";
+            this.aboutPicBox.Size = new System.Drawing.Size(50, 50);
+            this.aboutPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.aboutPicBox.TabIndex = 65;
+            this.aboutPicBox.TabStop = false;
+            this.aboutPicBox.Click += new System.EventHandler(this.aboutPicBox_Click);
             // 
             // FormGUI
             // 
@@ -649,8 +651,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(25)))), ((int)(((byte)(31)))));
-            this.ClientSize = new System.Drawing.Size(692, 489);
+            this.ClientSize = new System.Drawing.Size(692, 467);
             this.Controls.Add(this.iOSSwitch);
+            this.Controls.Add(this.aboutPicBox);
             this.Controls.Add(this.settingsPicBox);
             this.Controls.Add(this.panel7);
             this.Controls.Add(this.panel6);
@@ -660,7 +663,6 @@
             this.Controls.Add(this.outputTxtBox);
             this.Controls.Add(this.richTextBoxLogs);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label11);
             this.Controls.Add(this.metadataRegistrationTxtBox);
             this.Controls.Add(this.CodeRegistrationTxtBox);
             this.Controls.Add(this.label9);
@@ -694,6 +696,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.closeBtn)).EndInit();
             this.panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.settingsPicBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.aboutPicBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -714,7 +717,6 @@
         private Bunifu.Framework.UI.BunifuImageButton minimizeBtn;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
         private Bunifu.Framework.UI.BunifuFlatButton selOutDir;
@@ -733,5 +735,6 @@
         private System.Windows.Forms.PictureBox settingsPicBox;
         internal Bunifu.UI.WinForms.BunifuToggleSwitch iOSSwitch;
         internal System.Windows.Forms.RichTextBox richTextBoxLogs;
+        private System.Windows.Forms.PictureBox aboutPicBox;
     }
 }
