@@ -1,6 +1,6 @@
 # Il2CppDumper GUI
 
-This is the simple GUI version of Perfare's Il2CppDumper. The GUI is based on Bunifu Framework
+This is the simple GUI version of Perfare's Il2CppDumper. The GUI is based on Bunifu Framework because I like it
 
 Support drag and drop with APK and decrypted IPA file for auto dump
 
