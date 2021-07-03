@@ -471,11 +471,11 @@
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Century Gothic", 9.75F);
             this.label17.ForeColor = System.Drawing.Color.DarkCyan;
-            this.label17.Location = new System.Drawing.Point(196, 280);
+            this.label17.Location = new System.Drawing.Point(164, 282);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(315, 17);
+            this.label17.Size = new System.Drawing.Size(395, 17);
             this.label17.TabIndex = 50;
-            this.label17.Text = "Drop APK or decrypted IPA file to start dumping";
+            this.label17.Text = "Drop APK, APKS, XAPK or decrypted IPA file to start dumping";
             this.label17.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // panel4

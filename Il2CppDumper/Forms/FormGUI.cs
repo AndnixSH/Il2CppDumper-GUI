@@ -39,7 +39,7 @@ namespace Il2CppDumper
         string realPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
         string tempPath = Path.GetTempPath() + "\\";
 
-        string Version = "1.5.0";
+        string Version = "1.5.1";
 
         public FormGUI()
         {
@@ -508,6 +508,7 @@ namespace Il2CppDumper
             {
                 LogOutput(ex.ToString() + "\n", Color.Red);
             }
+            CopyScripts(outputPath);
         }
 
         private void CopyScripts(string outputPath)
@@ -643,7 +644,7 @@ namespace Il2CppDumper
                         outputTxtBox.Text = Path.GetDirectoryName(file) + "\\";
                 }
 
-                CopyScripts(outputPath);
+
             }
 
             catch (Exception ex)
@@ -782,7 +783,6 @@ namespace Il2CppDumper
             FormAbout form = new FormAbout();
             form.Show();
         }
-
 
         private async void startBtn_Click(object sender, EventArgs e)
         {

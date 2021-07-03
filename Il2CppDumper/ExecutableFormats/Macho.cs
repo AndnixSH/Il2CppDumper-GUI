@@ -176,16 +176,9 @@ namespace Il2CppDumper
 
         public override bool PlusSearch(int methodCount, int typeDefinitionsCount, int imageCount)
         {
-            var data = sections.Where(x => x.sectname == "__const").ToArray();
-            var code = sections.Where(x => x.flags == 0x80000400).ToArray();
-            var bss = sections.Where(x => x.flags == 1u).ToArray();
-
-            var plusSearch = new PlusSearch(this, methodCount, typeDefinitionsCount, maxMetadataUsages, imageCount);
-            plusSearch.SetSection(SearchSectionType.Exec, code);
-            plusSearch.SetSection(SearchSectionType.Data, data);
-            plusSearch.SetSection(SearchSectionType.Bss, bss);
-            var codeRegistration = plusSearch.FindCodeRegistration();
-            var metadataRegistration = plusSearch.FindMetadataRegistration();
+            var sectionHelper = GetSectionHelper(methodCount, typeDefinitionsCount, imageCount);
+            var codeRegistration = sectionHelper.FindCodeRegistration();
+            var metadataRegistration = sectionHelper.FindMetadataRegistration();
             return AutoPlusInit(codeRegistration, metadataRegistration);
         }
 
@@ -198,5 +191,18 @@ namespace Il2CppDumper
         {
             return pointer - vmaddr;
         }
+
+        public override SectionHelper GetSectionHelper(int methodCount, int typeDefinitionsCount, int imageCount)
+        {
+            var data = sections.Where(x => x.sectname == "__const").ToArray();
+            var code = sections.Where(x => x.flags == 0x80000400).ToArray();
+            var bss = sections.Where(x => x.flags == 1u).ToArray();
+            var sectionHelper = new SectionHelper(this, methodCount, typeDefinitionsCount, maxMetadataUsages, imageCount);
+            sectionHelper.SetSection(SearchSectionType.Exec, code);
+            sectionHelper.SetSection(SearchSectionType.Data, data);
+            sectionHelper.SetSection(SearchSectionType.Bss, bss);
+            return sectionHelper;
+        }
     }
 }
+
