@@ -25,7 +25,7 @@ namespace Il2CppDumper
         {
             InitializeComponent();
             StartPosition = FormStartPosition.Manual;
-            Location = new Point(main.Location.X + 180, main.Location.Y + 90);
+            Location = new Point(main.Location.X + 60, main.Location.Y + 90);
 
             main.SetAllControlsFont(Controls);
         }

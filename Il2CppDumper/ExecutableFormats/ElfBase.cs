@@ -14,7 +14,6 @@ namespace Il2CppDumper
         public void GetDumpAddress()
         {
             FormGUI.WriteLine("Detected this may be a dump file.");
-            FormGUI.WriteLine("Input il2cpp dump address or input 0 to force continue:");
             FormDump form = new FormDump();
             form.Message = 0;
             if (form.ShowDialog() == DialogResult.OK)

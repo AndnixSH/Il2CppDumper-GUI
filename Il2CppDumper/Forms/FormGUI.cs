@@ -10,6 +10,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
@@ -39,12 +40,17 @@ namespace Il2CppDumper
         string realPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
         string tempPath = Path.GetTempPath() + "\\";
 
-        string Version = "1.5.1";
+        string Version = null;
 
         public FormGUI()
         {
             InitializeComponent();
 
+            //I liked 3 digits better
+            string[] versionArray = Assembly.GetExecutingAssembly().GetName().Version.ToString().Split('.');
+            Version = string.Join(".", versionArray.Take(3));
+
+            //Events
             settingsPicBox.MouseLeave += new EventHandler((sender, e) => settingsPicBox.BackColor = Color.FromArgb(0, 0, 0, 0));
             settingsPicBox.MouseEnter += new EventHandler((sender, e) => settingsPicBox.BackColor = Color.FromArgb(36, 93, 127));
             aboutPicBox.MouseLeave += new EventHandler((sender, e) => aboutPicBox.BackColor = Color.FromArgb(0, 0, 0, 0));
@@ -54,8 +60,10 @@ namespace Il2CppDumper
             aFormOptions = new FormSettings(this);
             aFormAbout = new FormAbout(this);
 
+            //Force tls12
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
+            //Load custom fonts
             byte[] fontData = Resources.GOTHIC;
             IntPtr fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
             Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
@@ -173,7 +181,7 @@ namespace Il2CppDumper
                 form.Message = 0;
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    metadata.Address = Convert.ToUInt64(Console.ReadLine(), 16);
+                    metadata.Address = Convert.ToUInt64(form.ReturnedText, 16);
                     LogOutput("Inputted address: " + metadata.Address.ToString("X"));
                 }
             }
@@ -211,8 +219,8 @@ namespace Il2CppDumper
             }
             catch (Exception ex)
             {
-                LogOutput("An error occurred while processing.", Color.Red);
-                LogOutput(ex.ToString());
+                LogOutput("An error occurred while processing.", Color.Orange);
+                LogOutput(ex.ToString(), Color.Orange);
                 return false;
             }
             return true;
@@ -502,15 +510,16 @@ namespace Il2CppDumper
                 if (Init(file, metadataPath, out var metadata, out var il2Cpp))
                 {
                     Dump(metadata, il2Cpp, outputPath);
+                    CopyScripts(outputPath);
                 }
             }
             catch (Exception ex)
             {
-                LogOutput(ex.ToString() + "\n", Color.Red);
+                LogOutput(ex.ToString() + "\n", Color.Orange);
             }
-            CopyScripts(outputPath);
         }
 
+        //Copy python scripts after dump successfullt
         private void CopyScripts(string outputPath)
         {
             var guiPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -643,8 +652,6 @@ namespace Il2CppDumper
                     if (Settings.Default.AutoSetDir)
                         outputTxtBox.Text = Path.GetDirectoryName(file) + "\\";
                 }
-
-
             }
 
             catch (Exception ex)
@@ -789,20 +796,20 @@ namespace Il2CppDumper
             richTextBoxLogs.Text = "";
             if (!Directory.Exists(outputTxtBox.Text))
             {
-                LogOutput("Output directory does not exist", Color.Red);
+                LogOutput("Output directory does not exist", Color.Orange);
                 return;
             }
 
             //Check of bin or dat file exists
             if (binFileTxtBox.Text == "")
             {
-                LogOutput("Executable file is not selected", Color.Red);
+                LogOutput("Executable file is not selected", Color.Orange);
                 return;
             }
 
             if (datFileTxtBox.Text == "")
             {
-                LogOutput("Metadata-global.dat file is not selected", Color.Red);
+                LogOutput("Metadata-global.dat file is not selected", Color.Orange);
                 return;
             }
 

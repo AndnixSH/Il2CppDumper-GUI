@@ -56,7 +56,7 @@ namespace Il2CppDumper
             this.Panel.Dock = System.Windows.Forms.DockStyle.Top;
             this.Panel.Location = new System.Drawing.Point(0, 0);
             this.Panel.Name = "Panel";
-            this.Panel.Size = new System.Drawing.Size(338, 33);
+            this.Panel.Size = new System.Drawing.Size(569, 33);
             this.Panel.TabIndex = 18;
             // 
             // closeBtn
@@ -66,7 +66,7 @@ namespace Il2CppDumper
             this.closeBtn.Dock = System.Windows.Forms.DockStyle.Right;
             this.closeBtn.Image = ((System.Drawing.Image)(resources.GetObject("closeBtn.Image")));
             this.closeBtn.ImageActive = null;
-            this.closeBtn.Location = new System.Drawing.Point(309, 0);
+            this.closeBtn.Location = new System.Drawing.Point(540, 0);
             this.closeBtn.Name = "closeBtn";
             this.closeBtn.Size = new System.Drawing.Size(29, 33);
             this.closeBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -91,16 +91,16 @@ namespace Il2CppDumper
             this.panel7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(119)))), ((int)(((byte)(215)))));
             this.panel7.Controls.Add(this.panel6);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel7.Location = new System.Drawing.Point(0, 234);
+            this.panel7.Location = new System.Drawing.Point(0, 275);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(338, 1);
+            this.panel7.Size = new System.Drawing.Size(569, 1);
             this.panel7.TabIndex = 62;
             // 
             // panel6
             // 
             this.panel6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(119)))), ((int)(((byte)(215)))));
             this.panel6.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel6.Location = new System.Drawing.Point(337, 0);
+            this.panel6.Location = new System.Drawing.Point(568, 0);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(1, 1);
             this.panel6.TabIndex = 60;
@@ -112,7 +112,7 @@ namespace Il2CppDumper
             this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel4.Location = new System.Drawing.Point(0, 33);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1, 201);
+            this.panel4.Size = new System.Drawing.Size(1, 242);
             this.panel4.TabIndex = 63;
             // 
             // panel5
@@ -121,16 +121,16 @@ namespace Il2CppDumper
             this.panel5.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel5.Location = new System.Drawing.Point(0, 0);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1, 201);
+            this.panel5.Size = new System.Drawing.Size(1, 242);
             this.panel5.TabIndex = 29;
             // 
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(119)))), ((int)(((byte)(215)))));
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(337, 33);
+            this.panel2.Location = new System.Drawing.Point(568, 33);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1, 201);
+            this.panel2.Size = new System.Drawing.Size(1, 242);
             this.panel2.TabIndex = 64;
             // 
             // label11
@@ -140,10 +140,11 @@ namespace Il2CppDumper
             this.label11.ForeColor = System.Drawing.Color.White;
             this.label11.Location = new System.Drawing.Point(15, 70);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(301, 85);
+            this.label11.Size = new System.Drawing.Size(546, 119);
             this.label11.TabIndex = 65;
-            this.label11.Text = "Perfare (Il2CppDumper)\r\n\r\ndjkaty (For help and using some of her codes)\r\n\r\nAndnix" +
-    "SH, T5ive (GUI related)\r\n";
+            this.label11.Text = "AndnixSH (GUI related)\r\n\r\nPerfare (Il2CppDumper)\r\n\r\ndjkaty (Helped me fixing an i" +
+    "ssue and I used some codes from her\'s Il2CppInspector)\r\n\r\nT5ive (Using some of h" +
+    "is codes)";
             // 
             // label4
             // 
@@ -161,7 +162,7 @@ namespace Il2CppDumper
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(15, 178);
+            this.label1.Location = new System.Drawing.Point(15, 222);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(93, 16);
             this.label1.TabIndex = 73;
@@ -172,7 +173,7 @@ namespace Il2CppDumper
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.Font = new System.Drawing.Font("Century Gothic", 9.75F);
             this.linkLabel1.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(143)))), ((int)(((byte)(205)))));
-            this.linkLabel1.Location = new System.Drawing.Point(15, 200);
+            this.linkLabel1.Location = new System.Drawing.Point(15, 244);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(52, 17);
             this.linkLabel1.TabIndex = 74;
@@ -185,7 +186,7 @@ namespace Il2CppDumper
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(25)))), ((int)(((byte)(31)))));
-            this.ClientSize = new System.Drawing.Size(338, 235);
+            this.ClientSize = new System.Drawing.Size(569, 276);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label4);
