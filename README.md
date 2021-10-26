@@ -8,7 +8,7 @@ Support drag and drop binary files and DAT for file selection. APK, APKS, XAPK a
 
 About code updating, I merge manually using Code compare instead using Github's auto merge, because i didn't know how to use Github back then but I will still do as of today, as I don't have time to learn more about merging
 
-Bunifu requires to be paid in order to use. If you don't like/or can't activate Bunifu, try to find shady versions, you know, or reconstuct the UI with the default WinForm layout, or get the non-bunifu project here https://github.com/T5ive/Il2CppDumper-GUI
+Bunifu requires to be paid in order to use. If you don't like Bunifu or can't activate Bunifu, try to find shady versions, you know, or reconstuct the UI with the default WinForm layout, or get the non-bunifu project here https://github.com/T5ive/Il2CppDumper-GUI
 
 Note that my C# codes are not the best hehe
 
