@@ -13,13 +13,13 @@ namespace Il2CppDumper
 
         public void GetDumpAddress()
         {
-            FormGUI.WriteLine("Detected this may be a dump file.");
+            FormGUI.Log("Detected this may be a dump file.");
             FormDump form = new FormDump();
             form.Message = 0;
             if (form.ShowDialog() == DialogResult.OK)
             {
                 DumpAddr = Convert.ToUInt64(form.ReturnedText, 16);
-                FormGUI.WriteLine("Inputted address: " + DumpAddr.ToString("X"));
+                FormGUI.Log("Inputted address: " + DumpAddr.ToString("X"));
             }
             if (DumpAddr != 0)
             {

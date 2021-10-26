@@ -68,17 +68,17 @@ namespace Il2CppDumper
                         {
                             Version = 24.3;
                             codeRegistration -= Is32Bit ? 8u : 16u;
-                            FormGUI.WriteLine($"Change il2cpp version to: {Version}");
+                            FormGUI.Log($"Change il2cpp version to: {Version}");
                         }
                     }
                 }
-                FormGUI.WriteLine("CodeRegistration : {0:x}", codeRegistration);
-                FormGUI.WriteLine("MetadataRegistration : {0:x}", metadataRegistration);
+                FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
+                FormGUI.Log("MetadataRegistration : {0:x}", metadataRegistration);
                 Init(codeRegistration, metadataRegistration);
                 return true;
             }
-            FormGUI.WriteLine("CodeRegistration : {0:x}", codeRegistration);
-            FormGUI.WriteLine("MetadataRegistration : {0:x}", metadataRegistration);
+            FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
+            FormGUI.Log("MetadataRegistration : {0:x}", metadataRegistration);
             return false;
         }
 
@@ -91,8 +91,8 @@ namespace Il2CppDumper
                 {
                     Version = 27.1;
                     codeRegistration -= PointerSize;
-                    Console.WriteLine($"Change il2cpp version to: {Version}");
-                    Console.WriteLine("CodeRegistration : {0:x}", codeRegistration);
+                    FormGUI.Log($"Change il2cpp version to: {Version}");
+                    FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
                     pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
                 }
             }
@@ -102,8 +102,8 @@ namespace Il2CppDumper
                 {
                     Version = 24.4;
                     codeRegistration -= PointerSize * 3;
-                    FormGUI.WriteLine($"Change il2cpp version to: {Version}");
-                    FormGUI.WriteLine("CodeRegistration : {0:x}", codeRegistration);
+                    FormGUI.Log($"Change il2cpp version to: {Version}");
+                    FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
                     pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
                 }
                 else
@@ -111,7 +111,7 @@ namespace Il2CppDumper
                     if (pCodeRegistration.codeGenModules == 0) //TODO
                     {
                         Version = 24.3;
-                        FormGUI.WriteLine($"Change il2cpp version to: {Version}");
+                        FormGUI.Log($"Change il2cpp version to: {Version}");
                         pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
                     }
                 }

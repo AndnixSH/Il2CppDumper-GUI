@@ -30,9 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormGUI));
-            Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState toggleState1 = new Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState();
-            Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState toggleState2 = new Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState();
-            Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState toggleState3 = new Bunifu.UI.WinForms.BunifuToggleSwitch.ToggleState();
             this.startBtn = new Bunifu.Framework.UI.BunifuFlatButton();
             this.selBinFile = new Bunifu.Framework.UI.BunifuFlatButton();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -42,9 +39,6 @@
             this.exeFileLbl = new System.Windows.Forms.Label();
             this.datFileLbl = new System.Windows.Forms.Label();
             this.selDatFile = new Bunifu.Framework.UI.BunifuFlatButton();
-            this.platformLbl1 = new System.Windows.Forms.Label();
-            this.platformLbl2 = new System.Windows.Forms.Label();
-            this.platformLbl3 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.CodeRegistrationTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
@@ -61,11 +55,12 @@
             this.panel7 = new System.Windows.Forms.Panel();
             this.bunifuDragControl1 = new Bunifu.Framework.UI.BunifuDragControl(this.components);
             this.settingsPicBox = new System.Windows.Forms.PictureBox();
-            this.iOSSwitch = new Bunifu.UI.WinForms.BunifuToggleSwitch();
             this.outputTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
             this.datFileTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
             this.binFileTxtBox = new Bunifu.Framework.UI.BunifuMetroTextbox();
             this.aboutPicBox = new System.Windows.Forms.PictureBox();
+            this.androArch = new Bunifu.UI.WinForms.BunifuDropdown();
+            this.label1 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.minimizeBtn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.closeBtn)).BeginInit();
@@ -97,7 +92,7 @@
             this.startBtn.IconVisible = false;
             this.startBtn.IconZoom = 90D;
             this.startBtn.IsTab = false;
-            this.startBtn.Location = new System.Drawing.Point(258, 225);
+            this.startBtn.Location = new System.Drawing.Point(255, 229);
             this.startBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.startBtn.Name = "startBtn";
             this.startBtn.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
@@ -116,7 +111,7 @@
             // 
             this.selBinFile.Active = false;
             this.selBinFile.Activecolor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(143)))), ((int)(((byte)(205)))));
-            this.selBinFile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(143)))), ((int)(((byte)(205)))));
+            this.selBinFile.BackColor = System.Drawing.Color.DodgerBlue;
             this.selBinFile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.selBinFile.BorderRadius = 0;
             this.selBinFile.ButtonText = "Select";
@@ -137,7 +132,7 @@
             this.selBinFile.IsTab = false;
             this.selBinFile.Location = new System.Drawing.Point(611, 41);
             this.selBinFile.Name = "selBinFile";
-            this.selBinFile.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(143)))), ((int)(((byte)(205)))));
+            this.selBinFile.Normalcolor = System.Drawing.Color.DodgerBlue;
             this.selBinFile.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
             this.selBinFile.OnHoverTextColor = System.Drawing.Color.White;
             this.selBinFile.selected = false;
@@ -230,7 +225,7 @@
             // 
             this.selDatFile.Active = false;
             this.selDatFile.Activecolor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(143)))), ((int)(((byte)(205)))));
-            this.selDatFile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(143)))), ((int)(((byte)(205)))));
+            this.selDatFile.BackColor = System.Drawing.Color.DodgerBlue;
             this.selDatFile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.selDatFile.BorderRadius = 0;
             this.selDatFile.ButtonText = "Select";
@@ -251,7 +246,7 @@
             this.selDatFile.IsTab = false;
             this.selDatFile.Location = new System.Drawing.Point(611, 84);
             this.selDatFile.Name = "selDatFile";
-            this.selDatFile.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(143)))), ((int)(((byte)(205)))));
+            this.selDatFile.Normalcolor = System.Drawing.Color.DodgerBlue;
             this.selDatFile.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(183)))), ((int)(((byte)(225)))));
             this.selDatFile.OnHoverTextColor = System.Drawing.Color.White;
             this.selDatFile.selected = false;
@@ -262,39 +257,6 @@
             this.selDatFile.Textcolor = System.Drawing.Color.White;
             this.selDatFile.TextFont = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.selDatFile.Click += new System.EventHandler(this.selDatFile_Click);
-            // 
-            // platformLbl1
-            // 
-            this.platformLbl1.AutoSize = true;
-            this.platformLbl1.Font = new System.Drawing.Font("Century Gothic", 9.75F);
-            this.platformLbl1.ForeColor = System.Drawing.Color.White;
-            this.platformLbl1.Location = new System.Drawing.Point(9, 214);
-            this.platformLbl1.Name = "platformLbl1";
-            this.platformLbl1.Size = new System.Drawing.Size(63, 17);
-            this.platformLbl1.TabIndex = 18;
-            this.platformLbl1.Text = "Mach-O:";
-            // 
-            // platformLbl2
-            // 
-            this.platformLbl2.AutoSize = true;
-            this.platformLbl2.Font = new System.Drawing.Font("Century Gothic", 9.75F);
-            this.platformLbl2.ForeColor = System.Drawing.Color.DarkGray;
-            this.platformLbl2.Location = new System.Drawing.Point(83, 214);
-            this.platformLbl2.Name = "platformLbl2";
-            this.platformLbl2.Size = new System.Drawing.Size(43, 17);
-            this.platformLbl2.TabIndex = 21;
-            this.platformLbl2.Text = "32-bit";
-            // 
-            // platformLbl3
-            // 
-            this.platformLbl3.AutoSize = true;
-            this.platformLbl3.Font = new System.Drawing.Font("Century Gothic", 9.75F);
-            this.platformLbl3.ForeColor = System.Drawing.Color.DarkGray;
-            this.platformLbl3.Location = new System.Drawing.Point(173, 214);
-            this.platformLbl3.Name = "platformLbl3";
-            this.platformLbl3.Size = new System.Drawing.Size(43, 17);
-            this.platformLbl3.TabIndex = 22;
-            this.platformLbl3.Text = "64-bit";
             // 
             // label8
             // 
@@ -361,7 +323,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Century Gothic", 9.75F);
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(13, 287);
+            this.label4.Location = new System.Drawing.Point(14, 301);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(84, 17);
             this.label4.TabIndex = 28;
@@ -373,7 +335,7 @@
             this.richTextBoxLogs.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBoxLogs.Font = new System.Drawing.Font("Consolas", 9F);
             this.richTextBoxLogs.ForeColor = System.Drawing.SystemColors.Window;
-            this.richTextBoxLogs.Location = new System.Drawing.Point(12, 311);
+            this.richTextBoxLogs.Location = new System.Drawing.Point(11, 325);
             this.richTextBoxLogs.Name = "richTextBoxLogs";
             this.richTextBoxLogs.ReadOnly = true;
             this.richTextBoxLogs.Size = new System.Drawing.Size(671, 144);
@@ -416,7 +378,7 @@
             this.selOutDir.Text = "Select";
             this.selOutDir.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.selOutDir.Textcolor = System.Drawing.Color.White;
-            this.selOutDir.TextFont = new System.Drawing.Font("Century Gothic", 9.75F);
+            this.selOutDir.TextFont = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.selOutDir.Click += new System.EventHandler(this.selOutDir_Click);
             // 
             // label6
@@ -471,7 +433,7 @@
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Century Gothic", 9.75F);
             this.label17.ForeColor = System.Drawing.Color.DarkCyan;
-            this.label17.Location = new System.Drawing.Point(164, 282);
+            this.label17.Location = new System.Drawing.Point(155, 295);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(395, 17);
             this.label17.TabIndex = 50;
@@ -485,7 +447,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel4.Location = new System.Drawing.Point(0, 33);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1, 434);
+            this.panel4.Size = new System.Drawing.Size(1, 449);
             this.panel4.TabIndex = 58;
             // 
             // panel5
@@ -494,7 +456,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel5.Location = new System.Drawing.Point(0, 0);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1, 434);
+            this.panel5.Size = new System.Drawing.Size(1, 449);
             this.panel5.TabIndex = 29;
             // 
             // panel6
@@ -503,14 +465,14 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel6.Location = new System.Drawing.Point(691, 33);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(1, 434);
+            this.panel6.Size = new System.Drawing.Size(1, 449);
             this.panel6.TabIndex = 59;
             // 
             // panel7
             // 
             this.panel7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(119)))), ((int)(((byte)(215)))));
             this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel7.Location = new System.Drawing.Point(1, 466);
+            this.panel7.Location = new System.Drawing.Point(1, 481);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(690, 1);
             this.panel7.TabIndex = 60;
@@ -533,48 +495,6 @@
             this.settingsPicBox.TabIndex = 65;
             this.settingsPicBox.TabStop = false;
             this.settingsPicBox.Click += new System.EventHandler(this.settingsPicBox_Click);
-            // 
-            // iOSSwitch
-            // 
-            this.iOSSwitch.Animation = 5;
-            this.iOSSwitch.BackColor = System.Drawing.Color.Transparent;
-            this.iOSSwitch.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("iOSSwitch.BackgroundImage")));
-            this.iOSSwitch.Checked = true;
-            this.iOSSwitch.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.iOSSwitch.InnerCirclePadding = 3;
-            this.iOSSwitch.Location = new System.Drawing.Point(133, 214);
-            this.iOSSwitch.Name = "iOSSwitch";
-            this.iOSSwitch.Size = new System.Drawing.Size(32, 18);
-            this.iOSSwitch.TabIndex = 66;
-            this.iOSSwitch.ThumbMargin = 3;
-            toggleState1.BackColor = System.Drawing.Color.DarkGray;
-            toggleState1.BackColorInner = System.Drawing.Color.White;
-            toggleState1.BorderColor = System.Drawing.Color.DarkGray;
-            toggleState1.BorderColorInner = System.Drawing.Color.White;
-            toggleState1.BorderRadius = 17;
-            toggleState1.BorderRadiusInner = 11;
-            toggleState1.BorderThickness = 1;
-            toggleState1.BorderThicknessInner = 1;
-            this.iOSSwitch.ToggleStateDisabled = toggleState1;
-            toggleState2.BackColor = System.Drawing.Color.Empty;
-            toggleState2.BackColorInner = System.Drawing.Color.Empty;
-            toggleState2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(0)))), ((int)(((byte)(140)))));
-            toggleState2.BorderColorInner = System.Drawing.Color.Empty;
-            toggleState2.BorderRadius = 1;
-            toggleState2.BorderRadiusInner = 1;
-            toggleState2.BorderThickness = 1;
-            toggleState2.BorderThicknessInner = 1;
-            this.iOSSwitch.ToggleStateOff = toggleState2;
-            toggleState3.BackColor = System.Drawing.Color.DodgerBlue;
-            toggleState3.BackColorInner = System.Drawing.Color.White;
-            toggleState3.BorderColor = System.Drawing.Color.DodgerBlue;
-            toggleState3.BorderColorInner = System.Drawing.Color.White;
-            toggleState3.BorderRadius = 17;
-            toggleState3.BorderRadiusInner = 11;
-            toggleState3.BorderThickness = 1;
-            toggleState3.BorderThicknessInner = 1;
-            this.iOSSwitch.ToggleStateOn = toggleState3;
-            this.iOSSwitch.Value = true;
             // 
             // outputTxtBox
             // 
@@ -645,14 +565,72 @@
             this.aboutPicBox.TabStop = false;
             this.aboutPicBox.Click += new System.EventHandler(this.aboutPicBox_Click);
             // 
+            // androArch
+            // 
+            this.androArch.BackColor = System.Drawing.Color.Transparent;
+            this.androArch.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(143)))), ((int)(((byte)(205)))));
+            this.androArch.BorderColor = System.Drawing.Color.Transparent;
+            this.androArch.BorderRadius = 1;
+            this.androArch.Color = System.Drawing.Color.Transparent;
+            this.androArch.Direction = Bunifu.UI.WinForms.BunifuDropdown.Directions.Down;
+            this.androArch.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.androArch.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.androArch.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.androArch.DisabledForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.androArch.DisabledIndicatorColor = System.Drawing.Color.DarkGray;
+            this.androArch.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.androArch.DropdownBorderThickness = Bunifu.UI.WinForms.BunifuDropdown.BorderThickness.Thin;
+            this.androArch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.androArch.DropDownTextAlign = Bunifu.UI.WinForms.BunifuDropdown.TextAlign.Left;
+            this.androArch.FillDropDown = true;
+            this.androArch.FillIndicator = false;
+            this.androArch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.androArch.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.androArch.ForeColor = System.Drawing.Color.White;
+            this.androArch.FormattingEnabled = true;
+            this.androArch.Icon = null;
+            this.androArch.IndicatorAlignment = Bunifu.UI.WinForms.BunifuDropdown.Indicator.Right;
+            this.androArch.IndicatorColor = System.Drawing.Color.White;
+            this.androArch.IndicatorLocation = Bunifu.UI.WinForms.BunifuDropdown.Indicator.Right;
+            this.androArch.ItemBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(93)))), ((int)(((byte)(130)))));
+            this.androArch.ItemBorderColor = System.Drawing.Color.White;
+            this.androArch.ItemForeColor = System.Drawing.Color.White;
+            this.androArch.ItemHeight = 26;
+            this.androArch.ItemHighLightColor = System.Drawing.Color.DodgerBlue;
+            this.androArch.ItemHighLightForeColor = System.Drawing.Color.White;
+            this.androArch.Items.AddRange(new object[] {
+            "Default (Dump all)",
+            "ARMv7 only",
+            "ARM64 only"});
+            this.androArch.ItemTopMargin = 3;
+            this.androArch.Location = new System.Drawing.Point(12, 233);
+            this.androArch.Name = "androArch";
+            this.androArch.Size = new System.Drawing.Size(165, 32);
+            this.androArch.TabIndex = 66;
+            this.androArch.Text = null;
+            this.androArch.TextAlignment = Bunifu.UI.WinForms.BunifuDropdown.TextAlign.Left;
+            this.androArch.TextLeftMargin = 5;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Century Gothic", 9.75F);
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(9, 212);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(96, 17);
+            this.label1.TabIndex = 67;
+            this.label1.Text = "Android arch:";
+            // 
             // FormGUI
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(25)))), ((int)(((byte)(31)))));
-            this.ClientSize = new System.Drawing.Size(692, 467);
-            this.Controls.Add(this.iOSSwitch);
+            this.ClientSize = new System.Drawing.Size(692, 482);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.androArch);
             this.Controls.Add(this.aboutPicBox);
             this.Controls.Add(this.settingsPicBox);
             this.Controls.Add(this.panel7);
@@ -667,9 +645,6 @@
             this.Controls.Add(this.CodeRegistrationTxtBox);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.platformLbl3);
-            this.Controls.Add(this.platformLbl2);
-            this.Controls.Add(this.platformLbl1);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.datFileLbl);
             this.Controls.Add(this.exeFileLbl);
@@ -710,9 +685,6 @@
         private System.Windows.Forms.Label exeFileLbl;
         private System.Windows.Forms.Label titleLbl;
         private Bunifu.Framework.UI.BunifuFlatButton selDatFile;
-        private System.Windows.Forms.Label platformLbl1;
-        private System.Windows.Forms.Label platformLbl3;
-        private System.Windows.Forms.Label platformLbl2;
         private Bunifu.Framework.UI.BunifuImageButton closeBtn;
         private Bunifu.Framework.UI.BunifuImageButton minimizeBtn;
         private System.Windows.Forms.Label label9;
@@ -733,8 +705,9 @@
         public Bunifu.Framework.UI.BunifuMetroTextbox datFileTxtBox;
         public Bunifu.Framework.UI.BunifuMetroTextbox outputTxtBox;
         private System.Windows.Forms.PictureBox settingsPicBox;
-        internal Bunifu.UI.WinForms.BunifuToggleSwitch iOSSwitch;
         internal System.Windows.Forms.RichTextBox richTextBoxLogs;
         private System.Windows.Forms.PictureBox aboutPicBox;
+        private Bunifu.UI.WinForms.BunifuDropdown androArch;
+        private System.Windows.Forms.Label label1;
     }
 }

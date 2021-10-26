@@ -370,7 +370,7 @@ namespace Il2CppDumper
                 }
                 catch (Exception e)
                 {
-                    FormGUI.WriteLine("ERROR: Some errors in dumping");
+                    FormGUI.Log("ERROR: Some errors in dumping");
                     writer.Write("/*");
                     writer.Write(e);
                     writer.Write("*/\n}\n");

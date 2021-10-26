@@ -42,6 +42,9 @@ namespace Il2CppDumper
 
         string Version = null;
 
+        //Nobody mod 32-bit iOS binary so the switch has been removed, and forced 64-bit dump
+        bool use64bitMach_O = true;
+
         public FormGUI()
         {
             InitializeComponent();
@@ -99,11 +102,11 @@ namespace Il2CppDumper
             string Mach_O = "2";
             Invoke(new Action(delegate ()
             {
-                if (!iOSSwitch.Value)
+                if (!use64bitMach_O)
                     Mach_O = "1";
             }));
 
-            LogOutput("Read config...");
+            this.Log("Read config...");
             if (File.Exists(realPath + "config.json"))
             {
                 config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Application.StartupPath + Path.DirectorySeparatorChar + @"config.json"));
@@ -111,14 +114,14 @@ namespace Il2CppDumper
             else
             {
                 config = new Config();
-                LogOutput("config.json file does not exist. Using defaults", Color.Yellow);
+                Log("config.json file does not exist. Using defaults", Color.Yellow);
             }
 
-            LogOutput("Initializing metadata...");
+            this.Log("Initializing metadata...");
             var metadataBytes = File.ReadAllBytes(metadataPath);
             metadata = new Metadata(new MemoryStream(metadataBytes));
-            LogOutput($"Metadata Version: {metadata.Version}");
-            LogOutput("Initializing il2cpp file...");
+            this.Log($"Metadata Version: {metadata.Version}");
+            this.Log("Initializing il2cpp file...");
             var il2cppBytes = File.ReadAllBytes(il2cppPath);
             var il2cppMagic = BitConverter.ToUInt32(il2cppBytes, 0);
             var il2CppMemory = new MemoryStream(il2cppBytes);
@@ -173,7 +176,7 @@ namespace Il2CppDumper
 
             var version = config.ForceIl2CppVersion ? config.ForceVersion : metadata.Version;
             il2Cpp.SetProperties(version, metadata.maxMetadataUsages);
-            LogOutput($"Il2Cpp Version: {il2Cpp.Version}");
+            this.Log($"Il2Cpp Version: {il2Cpp.Version}");
             if (il2Cpp.Version >= 27 && il2Cpp is ElfBase elf && elf.IsDumped)
             {
                 FormDump form = new FormDump();
@@ -182,11 +185,11 @@ namespace Il2CppDumper
                 if (form.ShowDialog() == DialogResult.OK)
                 {
                     metadata.Address = Convert.ToUInt64(form.ReturnedText, 16);
-                    LogOutput("Inputted address: " + metadata.Address.ToString("X"));
+                    this.Log("Inputted address: " + metadata.Address.ToString("X"));
                 }
             }
 
-            LogOutput("Searching...");
+            this.Log("Searching...");
             try
             {
                 var flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length, metadata.imageDefs.Length);
@@ -194,7 +197,7 @@ namespace Il2CppDumper
                 {
                     if (!flag && il2Cpp is PE)
                     {
-                        LogOutput("Use custom PE loader");
+                        this.Log("Use custom PE loader");
                         il2Cpp = PELoader.Load(il2cppPath);
                         il2Cpp.SetProperties(version, metadata.maxMetadataUsages);
                         flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length, metadata.imageDefs.Length);
@@ -210,7 +213,7 @@ namespace Il2CppDumper
                 }
                 if (!flag)
                 {
-                    LogOutput("ERROR: Can't use auto mode to process file, input offset pointers to try manual mode.", Color.Yellow);
+                    Log("ERROR: Can't use auto mode to process file, input offset pointers to try manual mode.", Color.Yellow);
                     var codeRegistration = Convert.ToUInt64(CodeRegistrationTxtBox.Text, 16);
                     var metadataRegistration = Convert.ToUInt64(metadataRegistrationTxtBox.Text, 16);
                     il2Cpp.Init(codeRegistration, metadataRegistration);
@@ -219,8 +222,8 @@ namespace Il2CppDumper
             }
             catch (Exception ex)
             {
-                LogOutput("An error occurred while processing.", Color.Orange);
-                LogOutput(ex.ToString(), Color.Orange);
+                Log("An error occurred while processing.", Color.Orange);
+                Log(ex.ToString(), Color.Orange);
                 return false;
             }
             return true;
@@ -228,23 +231,30 @@ namespace Il2CppDumper
 
         private void Dump(Metadata metadata, Il2Cpp il2Cpp, string outputDir)
         {
-            WriteLine("Dumping...");
+            Log("Dumping...");
             var executor = new Il2CppExecutor(metadata, il2Cpp);
             var decompiler = new Il2CppDecompiler(executor);
             decompiler.Decompile(config, outputDir);
-            WriteLine("Done!");
+            Log("Done!");
             if (config.GenerateStruct)
             {
-                WriteLine("Generate struct...");
-                var scriptGenerator = new StructGenerator(executor);
-                scriptGenerator.WriteScript(outputDir);
-                WriteLine("Done!");
+                Log("Generate struct...");
+                try
+                {
+                    var scriptGenerator = new StructGenerator(executor);
+                    scriptGenerator.WriteScript(outputDir);
+                    Log("Done!");
+                }
+                catch
+                {
+                    Log("There was an error trying to generate struct. Skipped", Color.Orange);
+                }
             }
             if (config.GenerateDummyDll)
             {
-                WriteLine("Generate dummy dll...");
+                Log("Generate dummy dll...");
                 DummyAssemblyExporter.Export(executor, outputDir, config.DummyDllAddToken);
-                WriteLine("Done!");
+                Log("Done!");
                 Directory.SetCurrentDirectory(realPath); //Fix read-only directory permission
             }
         }
@@ -264,13 +274,13 @@ namespace Il2CppDumper
 
                         if (!String.IsNullOrEmpty(remoteVersion) && !remoteVersion.Contains(Version))
                         {
-                            LogOutput("A new version is available: " + remoteVersion, Color.Lime);
-                            LogOutput("https://repo.andnixsh.com/tools/il2cppdumper/Il2CppDumperGUI.zip", Color.Lime);
+                            Log("A new version is available: " + remoteVersion, Color.Lime);
+                            Log("https://repo.andnixsh.com/tools/il2cppdumper/Il2CppDumperGUI.zip", Color.Lime);
                         }
                     }
                     catch
                     {
-                        LogOutput("An error checking for update", Color.Yellow);
+                        Log("An error checking for update", Color.Yellow);
                     }
                 }
             });
@@ -283,7 +293,7 @@ namespace Il2CppDumper
         #endregion
 
         #region Auto Dump
-        private async Task iOSDump(string file, string outputPath)
+        private async Task IPADump(string file, string outputPath)
         {
             await Task.Factory.StartNew(() =>
             {
@@ -304,9 +314,9 @@ namespace Il2CppDumper
                             if (Settings.Default.ExtDatChkBox)
                                 metadataFile.ExtractToFile(FileDir(outputPath + "global-metadata.dat"), true);
                             metadataFile.ExtractToFile(tempPath + "global-metadata.dat", true);
-                            if (iOSSwitch.Value)
+                            if (use64bitMach_O)
                             {
-                                LogOutput("----- [Dumping ARM64] -----", Color.Chartreuse);
+                                Log("----- [Dumping ARM64] -----", Color.Chartreuse);
 
                                 if (Settings.Default.ExtBinaryChkBox)
                                     binaryFile.ExtractToFile(FileDir(outputPath + $"/{ipaBinaryName}"), true);
@@ -315,7 +325,7 @@ namespace Il2CppDumper
                             }
                             else
                             {
-                                LogOutput("----- [Dumping ARMv7] -----", Color.Chartreuse);
+                                Log("----- [Dumping ARMv7] -----", Color.Chartreuse);
 
                                 if (Settings.Default.ExtBinaryChkBox)
                                     binaryFile.ExtractToFile(FileDir(outputPath + $"/{ipaBinaryName}"), true);
@@ -324,11 +334,11 @@ namespace Il2CppDumper
                             }
                         }
                         else
-                            LogOutput("This IPA does not contain an IL2CPP application", Color.Yellow);
+                            Log("This IPA does not contain an IL2CPP application", Color.Yellow);
                     }
                     else
                     {
-                        LogOutput("Failed to extract required file. Please extract the files manually", Color.Yellow);
+                        Log("Failed to extract required file. Please extract the files manually", Color.Yellow);
                     }
                 }
             });
@@ -346,12 +356,12 @@ namespace Il2CppDumper
 
                     if (binaryFile == null && metadataPath != null)
                     {
-                        LogOutput("This APK does not contain lib folder. APK has been splitted", Color.Yellow);
+                        Log("This APK does not contain lib folder. APK has been splitted", Color.Yellow);
                         return;
                     }
                     else if (binaryFile != null && metadataPath == null)
                     {
-                        LogOutput("This APK contains il2cpp but does not contain global-metadata.dat. It may be protected or APK has been splitted", Color.Yellow);
+                        Log("This APK contains il2cpp but does not contain global-metadata.dat. It may be protected or APK has been splitted", Color.Yellow);
                         return;
                     }
 
@@ -363,9 +373,9 @@ namespace Il2CppDumper
 
                         foreach (ZipArchiveEntry entry in archive.Entries)
                         {
-                            if (entry.FullName.Equals(@"lib/armeabi-v7a/libil2cpp.so"))
+                            if (entry.FullName.Equals(@"lib/armeabi-v7a/libil2cpp.so") && Settings.Default.AndroArch != 2)
                             {
-                                LogOutput("----- [Dumping ARMv7] -----", Color.Chartreuse);
+                                Log("-----[ Dumping ARMv7 ]-----", Color.Chartreuse);
 
                                 if (Settings.Default.ExtBinaryChkBox)
                                     entry.ExtractToFile(FileDir(outputPath + "\\ARMv7\\libil2cpp.so"), true);
@@ -373,9 +383,9 @@ namespace Il2CppDumper
                                 Dumper(tempPath + "libil2cpparmv7", tempPath + "global-metadata.dat", FileDir(outputPath + "\\ARMv7\\"));
                             }
 
-                            if (entry.FullName.Equals(@"lib/arm64-v8a/libil2cpp.so"))
+                            if (entry.FullName.Equals(@"lib/arm64-v8a/libil2cpp.so") && Settings.Default.AndroArch != 1)
                             {
-                                LogOutput("----- [Dumping ARM64] -----", Color.Chartreuse);
+                                Log("-----[ Dumping ARM64 ]-----", Color.Chartreuse);
 
                                 if (Settings.Default.ExtBinaryChkBox)
                                     entry.ExtractToFile(FileDir(outputPath + "\\ARM64\\libil2cpp.so"), true);
@@ -383,9 +393,9 @@ namespace Il2CppDumper
                                 Dumper(tempPath + "libil2cpparm64", tempPath + "global-metadata.dat", FileDir(outputPath + "\\ARM64\\"));
                             }
 
-                            if (entry.FullName.Equals(@"lib/x86/libil2cpp.so"))
+                            if (entry.FullName.Equals(@"lib/x86/libil2cpp.so") && Settings.Default.AndroArch >= 0)
                             {
-                                LogOutput("Dumping x86...", Color.Chartreuse);
+                                Log("-----[ Dumping x86 ]-----", Color.Chartreuse);
 
                                 if (Settings.Default.ExtBinaryChkBox)
                                     entry.ExtractToFile(FileDir(outputPath + "\\x86\\libil2cpp.so"), true);
@@ -396,7 +406,7 @@ namespace Il2CppDumper
                     }
                     else
                     {
-                        LogOutput("This APK does not contain an IL2CPP application", Color.Yellow);
+                        Log("This APK does not contain an IL2CPP application", Color.Yellow);
                     }
                 }
             });
@@ -404,7 +414,7 @@ namespace Il2CppDumper
 
         private async Task APKSplitDump(string file, string outputPath)
         {
-            LogOutput("----- [Dumping Split APK] -----", Color.Chartreuse);
+            Log("-----[ Dumping Split APK ]-----", Color.Chartreuse);
             await Task.Factory.StartNew(() =>
             {
                 using (ZipArchive archive = ZipFile.OpenRead(file))
@@ -462,7 +472,7 @@ namespace Il2CppDumper
                                     {
                                         if (entry.FullName.Equals("lib/armeabi-v7a/libil2cpp.so"))
                                         {
-                                            WriteLine("Dumping ARMv7...", Color.Chartreuse);
+                                            Log("-----[ Dumping ARMv7... ]-----", Color.Chartreuse);
 
                                             if (Settings.Default.ExtBinaryChkBox)
                                                 entry.ExtractToFile(FileDir(outputPath + "\\ARMv7\\libil2cpp.so"), true);
@@ -472,7 +482,7 @@ namespace Il2CppDumper
 
                                         if (entry.FullName.Equals(@"lib/arm64-v8a/libil2cpp.so"))
                                         {
-                                            WriteLine("Dumping ARM64...", Color.Chartreuse);
+                                            Log("-----[ Dumping ARM64... ]-----", Color.Chartreuse);
 
                                             if (Settings.Default.ExtBinaryChkBox)
                                                 entry.ExtractToFile(FileDir(outputPath + "\\ARM64\\libil2cpp.so"), true);
@@ -482,7 +492,7 @@ namespace Il2CppDumper
 
                                         if (entry.FullName.Equals(@"lib/x86/libil2cpp.so"))
                                         {
-                                            WriteLine("Dumping x86...", Color.Chartreuse);
+                                            Log("-----[ Dumping x86... ]-----", Color.Chartreuse);
 
                                             if (Settings.Default.ExtBinaryChkBox)
                                                 entry.ExtractToFile(FileDir(outputPath + "\\x86\\libil2cpp.so"), true);
@@ -515,7 +525,7 @@ namespace Il2CppDumper
             }
             catch (Exception ex)
             {
-                LogOutput(ex.ToString() + "\n", Color.Orange);
+                Log(ex.ToString() + "\n", Color.Orange);
             }
         }
 
@@ -530,65 +540,65 @@ namespace Il2CppDumper
                     if (File.Exists(guiPath + "ghidra.py"))
                     {
                         File.Copy(guiPath + "ghidra.py", outputPath + "ghidra.py", true);
-                        LogOutput($"Copied ghidra.py");
+                        this.Log($"Copied ghidra.py");
                     }
                     else
-                        LogOutput("ghidra.py does not exist", Color.Yellow);
+                        Log("ghidra.py does not exist", Color.Yellow);
                 }
                 if (Settings.Default.ghidra_with_struct)
                 {
                     if (File.Exists(guiPath + "ghidra_with_struct.py"))
                     {
                         File.Copy(guiPath + "ghidra_with_struct.py", outputPath + "ghidra_with_struct.py", true);
-                        LogOutput($"Copied ghidra_with_struct.py");
+                        this.Log($"Copied ghidra_with_struct.py");
                     }
                     else
-                        LogOutput("ghidra_with_struct.py does not exist", Color.Yellow);
+                        Log("ghidra_with_struct.py does not exist", Color.Yellow);
                 }
                 if (Settings.Default.ida)
                 {
                     if (File.Exists(guiPath + "ida.py"))
                     {
                         File.Copy(guiPath + "ida.py", outputPath + "ida.py", true);
-                        LogOutput($"Copied ida.py");
+                        this.Log($"Copied ida.py");
                     }
                     else
-                        LogOutput("ida.py does not exist", Color.Yellow);
+                        Log("ida.py does not exist", Color.Yellow);
                 }
                 if (Settings.Default.ida_py3)
                 {
                     if (File.Exists(guiPath + "ida_py3.py"))
                     {
                         File.Copy(guiPath + "ida_py3.py", outputPath + "ida_py3.py", true);
-                        LogOutput($"Copied ida_py3.py");
+                        this.Log($"Copied ida_py3.py");
                     }
                     else
-                        LogOutput("ida_py3.py does not exist", Color.Yellow);
+                        Log("ida_py3.py does not exist", Color.Yellow);
                 }
                 if (Settings.Default.ida_with_struct)
                 {
                     if (File.Exists(guiPath + "ida_with_struct.py"))
                     {
                         File.Copy(guiPath + "ida_with_struct.py", outputPath + "ida_with_struct.py", true);
-                        LogOutput($"Copied ida_with_struct.py");
+                        this.Log($"Copied ida_with_struct.py");
                     }
                     else
-                        LogOutput("ida_with_struct.py does not exist", Color.Yellow);
+                        Log("ida_with_struct.py does not exist", Color.Yellow);
                 }
                 if (Settings.Default.ida_with_struct_py3)
                 {
                     if (File.Exists(guiPath + "ida_with_struct_py3.py"))
                     {
                         File.Copy(guiPath + "ida_with_struct_py3.py", outputPath + "ida_with_struct_py3.py", true);
-                        LogOutput($"Copied ida_with_struct_py3.py");
+                        this.Log($"Copied ida_with_struct_py3.py");
                     }
                     else
-                        LogOutput("ida_with_struct_py3.py does not exist", Color.Yellow);
+                        Log("ida_with_struct_py3.py does not exist", Color.Yellow);
                 }
             }
             catch (Exception ex)
             {
-                LogOutput(ex.ToString(), Color.Red);
+                Log(ex.ToString(), Color.Red);
             }
         }
         #endregion
@@ -598,6 +608,7 @@ namespace Il2CppDumper
         {
             try
             {
+                SaveConfig();
                 FormState(State.Running);
 
                 BackColor = Color.FromArgb(21, 25, 31);
@@ -630,7 +641,7 @@ namespace Il2CppDumper
                             richTextBoxLogs.Text = "";
                             if (files.Length > 1)
                             {
-                                LogOutput("Dumping Il2Cpp from splitted APKs...", Color.Cyan);
+                                Log("Dumping Il2Cpp from splitted APKs...", Color.Cyan);
                                 await APKSplitDump(file, outputPath);
                             }
                             else
@@ -642,7 +653,7 @@ namespace Il2CppDumper
                             break;
                         case ".ipa":
                             richTextBoxLogs.Text = "";
-                            await iOSDump(file, outputPath);
+                            await IPADump(file, outputPath);
                             break;
                         default:
                             binFileTxtBox.Text = file;
@@ -656,7 +667,7 @@ namespace Il2CppDumper
 
             catch (Exception ex)
             {
-                LogOutput(ex.ToString());
+                this.Log(ex.ToString());
             }
             FormState(State.Idle);
         }
@@ -698,7 +709,7 @@ namespace Il2CppDumper
                 {
                     SetAllControlsFont(c.Controls);
                 }
-                if (c is Label || c is TextBox)
+                if (c is Label || c is TextBox || c is ComboBox)
                     c.Font = new Font(fonts.Families[0], c.Font.Size, c.Font.Style);
             }
         }
@@ -715,7 +726,7 @@ namespace Il2CppDumper
                 binFileTxtBox.Enabled = false;
                 datFileTxtBox.Enabled = false;
                 outputTxtBox.Enabled = false;
-                iOSSwitch.Enabled = false;
+                androArch.Enabled = false;
             }
             else
             {
@@ -727,7 +738,7 @@ namespace Il2CppDumper
                 binFileTxtBox.Enabled = true;
                 datFileTxtBox.Enabled = true;
                 outputTxtBox.Enabled = true;
-                iOSSwitch.Enabled = true;
+                androArch.Enabled = true;
             }
         }
 
@@ -747,7 +758,8 @@ namespace Il2CppDumper
             binFileTxtBox.Text = Settings.Default.BinaryFileTxtBox;
             datFileTxtBox.Text = Settings.Default.DatFileTxtBox;
             outputTxtBox.Text = Settings.Default.OutputTxtBox;
-            iOSSwitch.Checked = Settings.Default.MachO;
+            androArch.SelectedIndex = Settings.Default.AndroArch;
+
             if (Settings.Default.RememberWindowPosition)
             {
                 Location = Settings.Default.Location;
@@ -758,7 +770,7 @@ namespace Il2CppDumper
             if (IsAdministrator())
             {
                 titleLbl.Text += " - Administrator ";
-                LogOutput("You are running as administrator. Drag and drop will not work\nIf this program is running as administrator by default, change your User Account Control back to default", Color.Yellow);
+                Log("You are running as administrator. Drag and drop will not work\nIf this program is running as administrator by default, change your User Account Control back to default", Color.Yellow);
             }
 
             if (Settings.Default.CheckForUpdate)
@@ -766,16 +778,22 @@ namespace Il2CppDumper
         }
         #endregion
 
-        #region Button click handlers
-        private void closeBtn_Click(object sender, EventArgs e)
+        #region Config
+        private void SaveConfig()
         {
             Settings.Default.BinaryFileTxtBox = binFileTxtBox.Text;
             Settings.Default.DatFileTxtBox = datFileTxtBox.Text;
             Settings.Default.OutputTxtBox = outputTxtBox.Text;
-            Settings.Default.MachO = iOSSwitch.Checked;
             Settings.Default.Location = Location;
-
+            Settings.Default.AndroArch = androArch.SelectedIndex;
             Settings.Default.Save();
+        }
+        #endregion
+
+        #region Button click handlers
+        private void closeBtn_Click(object sender, EventArgs e)
+        {
+            SaveConfig();
             Application.Exit();
         }
 
@@ -796,20 +814,20 @@ namespace Il2CppDumper
             richTextBoxLogs.Text = "";
             if (!Directory.Exists(outputTxtBox.Text))
             {
-                LogOutput("Output directory does not exist", Color.Orange);
+                Log("Output directory does not exist", Color.Orange);
                 return;
             }
 
             //Check of bin or dat file exists
             if (binFileTxtBox.Text == "")
             {
-                LogOutput("Executable file is not selected", Color.Orange);
+                Log("Executable file is not selected", Color.Orange);
                 return;
             }
 
             if (datFileTxtBox.Text == "")
             {
-                LogOutput("Metadata-global.dat file is not selected", Color.Orange);
+                Log("Metadata-global.dat file is not selected", Color.Orange);
                 return;
             }
 
@@ -882,18 +900,18 @@ namespace Il2CppDumper
         #endregion
 
         #region Logging
-        public static void WriteLine(string text)
+        public static void Log(string text)
         {
-            main.LogOutput(text);
+            main.Log(text);
         }
 
-        public static void WriteLine(string text, object text2)
+        public static void Log(string text, object text2)
         {
-            main.LogOutput(string.Format(text, text2));
+            main.Log(string.Format(text, text2));
         }
 
         //Color list /*http://www.flounder.com/csharp_color_table.htm*/
-        public void LogOutput(string text, Color? color = null)
+        public void Log(string text, Color? color = null)
         {
             Invoke(new Action(delegate ()
             {

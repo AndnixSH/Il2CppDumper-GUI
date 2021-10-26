@@ -59,7 +59,7 @@ namespace Il2CppDumper
                         var cryptID = ReadUInt32();
                         if (cryptID != 0)
                         {
-                            FormGUI.WriteLine("ERROR: This Mach-O executable is encrypted and cannot be processed.");
+                            FormGUI.Log("ERROR: This Mach-O executable is encrypted and cannot be processed.");
                         }
                         break;
                 }
@@ -122,8 +122,8 @@ namespace Il2CppDumper
                                 Position = rsubaddr + 14;
                                 buff = buff.Concat(ReadBytes(4)).ToArray();
                                 var codeRegistration = DecodeMov(buff) + subaddr + 22u;
-                                FormGUI.WriteLine("CodeRegistration : {0:x}", codeRegistration);
-                                FormGUI.WriteLine("MetadataRegistration : {0:x}", metadataRegistration);
+                                FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
+                                FormGUI.Log("MetadataRegistration : {0:x}", metadataRegistration);
                                 Init(codeRegistration, metadataRegistration);
                                 return true;
                             }
@@ -162,8 +162,8 @@ namespace Il2CppDumper
                                 Position = rsubaddr + 14;
                                 buff = buff.Concat(ReadBytes(4)).ToArray();
                                 var codeRegistration = DecodeMov(buff) + subaddr + 26u;
-                                FormGUI.WriteLine("CodeRegistration : {0:x}", codeRegistration);
-                                FormGUI.WriteLine("MetadataRegistration : {0:x}", metadataRegistration);
+                                FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
+                                FormGUI.Log("MetadataRegistration : {0:x}", metadataRegistration);
                                 Init(codeRegistration, metadataRegistration);
                                 return true;
                             }
