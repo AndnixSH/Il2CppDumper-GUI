@@ -14,6 +14,8 @@ Note that my C# codes are not the best hehe
 
 # Download links
 
+Note: Antivirus may flag this tool as malcious, it is false positive and you should not worry about it. They flag all modding tools you need as malcious, this is their business, this is their way to make money. Please don't always believe in Antivirus, thanks
+
 - https://sbupload.com/folder/188/Il2CppDumper
 
 - https://www.mediafire.com/folder/x3or31t30o5t1/Il2CppDumper_GUI
@@ -21,6 +23,23 @@ Note that my C# codes are not the best hehe
 - https://mega.nz/folder/vBJQgZSL#ZsmqAg1B56zBdheIw8Uzkg
 
 - https://app.box.com/s/30ksq8uw787iz72xzdz270dtp9ojohmy
+
+# Protected games
+If you can't dump, try the following methods
+
+- https://platinmods.com/threads/how-to-use-riru-il2cppdumper-to-dump-protected-games-magisk-root-only.134254/
+
+- https://platinmods.com/threads/how-to-use-auto-il2cppdumper-to-dump-protected-games-no-root.134194/
+
+- https://platinmods.com/threads/protected-il2cpp-dumping-tutorial.130649/
+
+- https://platinmods.com/threads/how-to-dump-protected-libil2cpp-libue4-game-metadata-file-and-other-non-unity-games-new-method.129433/
+
+- https://guidedhacking.com/threads/how-to-dump-protected-il2cpp-games-on-android.17617/
+
+- https://github.com/djkaty/Il2CppInspector (Il2CppInspector partially support decrypting some protected games)
+
+If none of these method helps, maybe do some reversing and decrypt it by yourself
 
 # Credits
 
