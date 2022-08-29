@@ -33,6 +33,8 @@ namespace Il2CppDumper
             script4ChkBox.Checked = Properties.Settings.Default.ida_py3;
             script5ChkBox.Checked = Properties.Settings.Default.ida_with_struct;
             script6ChkBox.Checked = Properties.Settings.Default.ida_with_struct_py3;
+            scriptGhiWasmChkBox.Checked = Properties.Settings.Default.ghidra_wasm;
+            scriptHeader2GhidraChkBox.Checked = Properties.Settings.Default.il2cpp_header_to_ghidra;
         }
 
         private void closeBtn_Click(object sender, EventArgs e)
@@ -60,8 +62,12 @@ namespace Il2CppDumper
             Properties.Settings.Default.ida_py3 = script4ChkBox.Checked;
             Properties.Settings.Default.ida_with_struct = script5ChkBox.Checked;
             Properties.Settings.Default.ida_with_struct_py3 = script6ChkBox.Checked;
+            Properties.Settings.Default.ghidra_wasm = scriptGhiWasmChkBox.Checked;
+            Properties.Settings.Default.il2cpp_header_to_ghidra = scriptHeader2GhidraChkBox.Checked;
 
             Properties.Settings.Default.Save();
+
+            Dispose();
         }
     }
 }

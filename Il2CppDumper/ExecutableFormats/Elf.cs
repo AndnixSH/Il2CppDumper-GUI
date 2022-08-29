@@ -26,12 +26,13 @@ namespace Il2CppDumper
         public Elf(Stream stream) : base(stream)
         {
             Is32Bit = true;
-            elfHeader = ReadClass<Elf32_Ehdr>();
+            Load();
+        }
+
+        protected override void Load()
+        {
+            elfHeader = ReadClass<Elf32_Ehdr>(0);
             programSegment = ReadClassArray<Elf32_Phdr>(elfHeader.e_phoff, elfHeader.e_phnum);
-            if (!CheckSection())
-            {
-                GetDumpAddress();
-            }
             if (IsDumped)
             {
                 FixedProgramSegment();
@@ -53,7 +54,7 @@ namespace Il2CppDumper
             }
         }
 
-        public bool CheckSection()
+        protected override bool CheckSection()
         {
             try
             {
@@ -91,7 +92,6 @@ namespace Il2CppDumper
             }
             return addr - phdr.p_offset + phdr.p_vaddr;
         }
-
 
         public override bool Search()
         {
@@ -134,10 +134,10 @@ namespace Il2CppDumper
                     if (elfHeader.e_machine == EM_ARM)
                     {
                         Position = result + 0x14;
-                        codeRegistration = ReadUInt32() + result + 0xcu + (uint)DumpAddr;
+                        codeRegistration = ReadUInt32() + result + 0xcu + (uint)ImageBase;
                         Position = result + 0x10;
                         var ptr = ReadUInt32() + result + 0x8;
-                        Position = MapVATR(ptr + DumpAddr);
+                        Position = MapVATR(ptr + ImageBase);
                         metadataRegistration = ReadUInt32();
                     }
                 }
@@ -191,10 +191,48 @@ namespace Il2CppDumper
         {
             try
             {
+                var symbolCount = 0u;
+                var hash = dynamicSection.FirstOrDefault(x => x.d_tag == DT_HASH);
+                if (hash != null)
+                {
+                    var addr = MapVATR(hash.d_un);
+                    Position = addr;
+                    var nbucket = ReadUInt32();
+                    var nchain = ReadUInt32();
+                    symbolCount = nchain;
+                }
+                else
+                {
+                    hash = dynamicSection.First(x => x.d_tag == DT_GNU_HASH);
+                    var addr = MapVATR(hash.d_un);
+                    Position = addr;
+                    var nbuckets = ReadUInt32();
+                    var symoffset = ReadUInt32();
+                    var bloom_size = ReadUInt32();
+                    var bloom_shift = ReadUInt32();
+                    var buckets_address = addr + 16 + (4 * bloom_size);
+                    var buckets = ReadClassArray<uint>(buckets_address, nbuckets);
+                    var last_symbol = buckets.Max();
+                    if (last_symbol < symoffset)
+                    {
+                        symbolCount = symoffset;
+                    }
+                    else
+                    {
+                        var chains_base_address = buckets_address + 4 * nbuckets;
+                        Position = chains_base_address + (last_symbol - symoffset) * 4;
+                        while (true)
+                        {
+                            var chain_entry = ReadUInt32();
+                            ++last_symbol;
+                            if ((chain_entry & 1) != 0)
+                                break;
+                        }
+                        symbolCount = last_symbol;
+                    }
+                }
                 var dynsymOffset = MapVATR(dynamicSection.First(x => x.d_tag == DT_SYMTAB).d_un);
-                var dynstrOffset = MapVATR(dynamicSection.First(x => x.d_tag == DT_STRTAB).d_un);
-                var dynsymSize = dynstrOffset - dynsymOffset;
-                symbolTable = ReadClassArray<Elf32_Sym>(dynsymOffset, (long)dynsymSize / 16);
+                symbolTable = ReadClassArray<Elf32_Sym>(dynsymOffset, symbolCount);
             }
             catch
             {
@@ -236,28 +274,35 @@ namespace Il2CppDumper
 
         private bool CheckProtection()
         {
-            //.init_proc
-            if (dynamicSection.Any(x => x.d_tag == DT_INIT))
+            try
             {
-                FormGUI.Log("WARNING: find .init_proc");
-                return true;
-            }
-            //JNI_OnLoad
-            var dynstrOffset = MapVATR(dynamicSection.First(x => x.d_tag == DT_STRTAB).d_un);
-            foreach (var symbol in symbolTable)
-            {
-                var name = ReadStringToNull(dynstrOffset + symbol.st_name);
-                switch (name)
+                //.init_proc
+                if (dynamicSection.Any(x => x.d_tag == DT_INIT))
                 {
-                    case "JNI_OnLoad":
-                        FormGUI.Log("WARNING: find JNI_OnLoad");
-                        return true;
+                    FormGUI.Log("WARNING: find .init_proc");
+                    return true;
+                }
+                //JNI_OnLoad
+                var dynstrOffset = MapVATR(dynamicSection.First(x => x.d_tag == DT_STRTAB).d_un);
+                foreach (var symbol in symbolTable)
+                {
+                    var name = ReadStringToNull(dynstrOffset + symbol.st_name);
+                    switch (name)
+                    {
+                        case "JNI_OnLoad":
+                            FormGUI.Log("WARNING: find JNI_OnLoad");
+                            return true;
+                    }
+                }
+                if (sectionTable != null && sectionTable.Any(x => x.sh_type == SHT_LOUSER))
+                {
+                    FormGUI.Log("WARNING: find SHT_LOUSER section");
+                    return true;
                 }
             }
-            if (sectionTable != null && sectionTable.Any(x => x.sh_type == SHT_LOUSER))
+            catch
             {
-                FormGUI.Log("WARNING: find SHT_LOUSER section");
-                return true;
+                // ignored
             }
             return false;
         }
@@ -266,7 +311,7 @@ namespace Il2CppDumper
         {
             if (IsDumped)
             {
-                return pointer - DumpAddr;
+                return pointer - ImageBase;
             }
             return pointer;
         }
@@ -279,7 +324,7 @@ namespace Il2CppDumper
                 var phdr = programSegment[i];
                 phdr.p_offset = phdr.p_vaddr;
                 Write(phdr.p_offset);
-                phdr.p_vaddr += (uint)DumpAddr;
+                phdr.p_vaddr += (uint)ImageBase;
                 Write(phdr.p_vaddr);
                 Position += 4;
                 phdr.p_filesz = phdr.p_memsz;
@@ -306,7 +351,7 @@ namespace Il2CppDumper
                     case DT_JMPREL:
                     case DT_INIT_ARRAY:
                     case DT_FINI_ARRAY:
-                        dyn.d_un += (uint)DumpAddr;
+                        dyn.d_un += (uint)ImageBase;
                         Write(dyn.d_un);
                         break;
                 }
@@ -339,7 +384,7 @@ namespace Il2CppDumper
             }
             var data = dataList.ToArray();
             var exec = execList.ToArray();
-            var sectionHelper = new SectionHelper(this, methodCount, typeDefinitionsCount, maxMetadataUsages, imageCount);
+            var sectionHelper = new SectionHelper(this, methodCount, typeDefinitionsCount, metadataUsagesCount, imageCount);
             sectionHelper.SetSection(SearchSectionType.Exec, exec);
             sectionHelper.SetSection(SearchSectionType.Data, data);
             sectionHelper.SetSection(SearchSectionType.Bss, data);

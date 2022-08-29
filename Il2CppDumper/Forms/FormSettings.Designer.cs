@@ -66,6 +66,10 @@
             this.script1ChkBox = new Bunifu.UI.WinForms.BunifuCheckBox();
             this.extDatChkBox = new Bunifu.UI.WinForms.BunifuCheckBox();
             this.extBinaryChkBox = new Bunifu.UI.WinForms.BunifuCheckBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.scriptGhiWasmChkBox = new Bunifu.UI.WinForms.BunifuCheckBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.scriptHeader2GhidraChkBox = new Bunifu.UI.WinForms.BunifuCheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.closeBtn)).BeginInit();
             this.Panel.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -150,7 +154,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel4.Location = new System.Drawing.Point(0, 33);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1, 317);
+            this.panel4.Size = new System.Drawing.Size(1, 388);
             this.panel4.TabIndex = 59;
             // 
             // panel5
@@ -159,7 +163,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel5.Location = new System.Drawing.Point(0, 0);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1, 317);
+            this.panel5.Size = new System.Drawing.Size(1, 388);
             this.panel5.TabIndex = 29;
             // 
             // panel7
@@ -167,7 +171,7 @@
             this.panel7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(119)))), ((int)(((byte)(215)))));
             this.panel7.Controls.Add(this.panel6);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel7.Location = new System.Drawing.Point(1, 349);
+            this.panel7.Location = new System.Drawing.Point(1, 420);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(651, 1);
             this.panel7.TabIndex = 61;
@@ -187,7 +191,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(651, 33);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1, 316);
+            this.panel2.Size = new System.Drawing.Size(1, 387);
             this.panel2.TabIndex = 62;
             // 
             // Ok
@@ -237,7 +241,7 @@
             this.Ok.IdleIconLeftImage = null;
             this.Ok.IdleIconRightImage = null;
             this.Ok.IndicateFocus = false;
-            this.Ok.Location = new System.Drawing.Point(231, 285);
+            this.Ok.Location = new System.Drawing.Point(221, 352);
             this.Ok.Name = "Ok";
             this.Ok.OnDisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191)))));
             this.Ok.OnDisabledState.BorderRadius = 1;
@@ -347,7 +351,7 @@
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(337, 104);
+            this.label6.Location = new System.Drawing.Point(337, 134);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(146, 17);
             this.label6.TabIndex = 64;
@@ -358,7 +362,7 @@
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.ForeColor = System.Drawing.Color.White;
-            this.label8.Location = new System.Drawing.Point(337, 137);
+            this.label8.Location = new System.Drawing.Point(337, 167);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(48, 17);
             this.label8.TabIndex = 64;
@@ -369,7 +373,7 @@
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label9.ForeColor = System.Drawing.Color.White;
-            this.label9.Location = new System.Drawing.Point(337, 171);
+            this.label9.Location = new System.Drawing.Point(337, 201);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(77, 17);
             this.label9.TabIndex = 64;
@@ -380,7 +384,7 @@
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label11.ForeColor = System.Drawing.Color.White;
-            this.label11.Location = new System.Drawing.Point(337, 206);
+            this.label11.Location = new System.Drawing.Point(337, 236);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(125, 17);
             this.label11.TabIndex = 64;
@@ -391,7 +395,7 @@
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label12.ForeColor = System.Drawing.Color.White;
-            this.label12.Location = new System.Drawing.Point(337, 241);
+            this.label12.Location = new System.Drawing.Point(337, 271);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(154, 17);
             this.label12.TabIndex = 64;
@@ -585,7 +589,7 @@
             this.script6ChkBox.CheckState = Bunifu.UI.WinForms.BunifuCheckBox.CheckStates.Checked;
             this.script6ChkBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.script6ChkBox.CustomCheckmarkImage = null;
-            this.script6ChkBox.Location = new System.Drawing.Point(608, 238);
+            this.script6ChkBox.Location = new System.Drawing.Point(608, 268);
             this.script6ChkBox.MinimumSize = new System.Drawing.Size(17, 17);
             this.script6ChkBox.Name = "script6ChkBox";
             this.script6ChkBox.OnCheck.BorderColor = System.Drawing.Color.DodgerBlue;
@@ -638,7 +642,7 @@
             this.script5ChkBox.CheckState = Bunifu.UI.WinForms.BunifuCheckBox.CheckStates.Checked;
             this.script5ChkBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.script5ChkBox.CustomCheckmarkImage = null;
-            this.script5ChkBox.Location = new System.Drawing.Point(608, 203);
+            this.script5ChkBox.Location = new System.Drawing.Point(608, 233);
             this.script5ChkBox.MinimumSize = new System.Drawing.Size(17, 17);
             this.script5ChkBox.Name = "script5ChkBox";
             this.script5ChkBox.OnCheck.BorderColor = System.Drawing.Color.DodgerBlue;
@@ -691,7 +695,7 @@
             this.script4ChkBox.CheckState = Bunifu.UI.WinForms.BunifuCheckBox.CheckStates.Unchecked;
             this.script4ChkBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.script4ChkBox.CustomCheckmarkImage = null;
-            this.script4ChkBox.Location = new System.Drawing.Point(608, 168);
+            this.script4ChkBox.Location = new System.Drawing.Point(608, 198);
             this.script4ChkBox.MinimumSize = new System.Drawing.Size(17, 17);
             this.script4ChkBox.Name = "script4ChkBox";
             this.script4ChkBox.OnCheck.BorderColor = System.Drawing.Color.DodgerBlue;
@@ -744,7 +748,7 @@
             this.script3ChkBox.CheckState = Bunifu.UI.WinForms.BunifuCheckBox.CheckStates.Unchecked;
             this.script3ChkBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.script3ChkBox.CustomCheckmarkImage = null;
-            this.script3ChkBox.Location = new System.Drawing.Point(608, 133);
+            this.script3ChkBox.Location = new System.Drawing.Point(608, 163);
             this.script3ChkBox.MinimumSize = new System.Drawing.Size(17, 17);
             this.script3ChkBox.Name = "script3ChkBox";
             this.script3ChkBox.OnCheck.BorderColor = System.Drawing.Color.DodgerBlue;
@@ -797,7 +801,7 @@
             this.script2ChkBox.CheckState = Bunifu.UI.WinForms.BunifuCheckBox.CheckStates.Unchecked;
             this.script2ChkBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.script2ChkBox.CustomCheckmarkImage = null;
-            this.script2ChkBox.Location = new System.Drawing.Point(608, 100);
+            this.script2ChkBox.Location = new System.Drawing.Point(608, 130);
             this.script2ChkBox.MinimumSize = new System.Drawing.Size(17, 17);
             this.script2ChkBox.Name = "script2ChkBox";
             this.script2ChkBox.OnCheck.BorderColor = System.Drawing.Color.DodgerBlue;
@@ -991,30 +995,162 @@
             this.extBinaryChkBox.ThreeState = false;
             this.extBinaryChkBox.ToolTipText = null;
             // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.ForeColor = System.Drawing.Color.White;
+            this.label14.Location = new System.Drawing.Point(337, 102);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(115, 17);
+            this.label14.TabIndex = 64;
+            this.label14.Text = "ghidra_wasm.py";
+            // 
+            // scriptGhiWasmChkBox
+            // 
+            this.scriptGhiWasmChkBox.AllowBindingControlAnimation = true;
+            this.scriptGhiWasmChkBox.AllowBindingControlColorChanges = false;
+            this.scriptGhiWasmChkBox.AllowBindingControlLocation = true;
+            this.scriptGhiWasmChkBox.AllowCheckBoxAnimation = false;
+            this.scriptGhiWasmChkBox.AllowCheckmarkAnimation = true;
+            this.scriptGhiWasmChkBox.AllowOnHoverStates = true;
+            this.scriptGhiWasmChkBox.AutoCheck = true;
+            this.scriptGhiWasmChkBox.BackColor = System.Drawing.Color.Transparent;
+            this.scriptGhiWasmChkBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("scriptGhiWasmChkBox.BackgroundImage")));
+            this.scriptGhiWasmChkBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.scriptGhiWasmChkBox.BindingControlPosition = Bunifu.UI.WinForms.BunifuCheckBox.BindingControlPositions.Right;
+            this.scriptGhiWasmChkBox.BorderRadius = 12;
+            this.scriptGhiWasmChkBox.Checked = false;
+            this.scriptGhiWasmChkBox.CheckState = Bunifu.UI.WinForms.BunifuCheckBox.CheckStates.Unchecked;
+            this.scriptGhiWasmChkBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.scriptGhiWasmChkBox.CustomCheckmarkImage = null;
+            this.scriptGhiWasmChkBox.Location = new System.Drawing.Point(608, 98);
+            this.scriptGhiWasmChkBox.MinimumSize = new System.Drawing.Size(17, 17);
+            this.scriptGhiWasmChkBox.Name = "scriptGhiWasmChkBox";
+            this.scriptGhiWasmChkBox.OnCheck.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.scriptGhiWasmChkBox.OnCheck.BorderRadius = 12;
+            this.scriptGhiWasmChkBox.OnCheck.BorderThickness = 2;
+            this.scriptGhiWasmChkBox.OnCheck.CheckBoxColor = System.Drawing.Color.DodgerBlue;
+            this.scriptGhiWasmChkBox.OnCheck.CheckmarkColor = System.Drawing.Color.White;
+            this.scriptGhiWasmChkBox.OnCheck.CheckmarkThickness = 2;
+            this.scriptGhiWasmChkBox.OnDisable.BorderColor = System.Drawing.Color.LightGray;
+            this.scriptGhiWasmChkBox.OnDisable.BorderRadius = 12;
+            this.scriptGhiWasmChkBox.OnDisable.BorderThickness = 2;
+            this.scriptGhiWasmChkBox.OnDisable.CheckBoxColor = System.Drawing.Color.Transparent;
+            this.scriptGhiWasmChkBox.OnDisable.CheckmarkColor = System.Drawing.Color.LightGray;
+            this.scriptGhiWasmChkBox.OnDisable.CheckmarkThickness = 2;
+            this.scriptGhiWasmChkBox.OnHoverChecked.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
+            this.scriptGhiWasmChkBox.OnHoverChecked.BorderRadius = 12;
+            this.scriptGhiWasmChkBox.OnHoverChecked.BorderThickness = 2;
+            this.scriptGhiWasmChkBox.OnHoverChecked.CheckBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
+            this.scriptGhiWasmChkBox.OnHoverChecked.CheckmarkColor = System.Drawing.Color.White;
+            this.scriptGhiWasmChkBox.OnHoverChecked.CheckmarkThickness = 2;
+            this.scriptGhiWasmChkBox.OnHoverUnchecked.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
+            this.scriptGhiWasmChkBox.OnHoverUnchecked.BorderRadius = 12;
+            this.scriptGhiWasmChkBox.OnHoverUnchecked.BorderThickness = 1;
+            this.scriptGhiWasmChkBox.OnHoverUnchecked.CheckBoxColor = System.Drawing.Color.Transparent;
+            this.scriptGhiWasmChkBox.OnUncheck.BorderColor = System.Drawing.Color.DarkGray;
+            this.scriptGhiWasmChkBox.OnUncheck.BorderRadius = 12;
+            this.scriptGhiWasmChkBox.OnUncheck.BorderThickness = 1;
+            this.scriptGhiWasmChkBox.OnUncheck.CheckBoxColor = System.Drawing.Color.Transparent;
+            this.scriptGhiWasmChkBox.Size = new System.Drawing.Size(21, 21);
+            this.scriptGhiWasmChkBox.Style = Bunifu.UI.WinForms.BunifuCheckBox.CheckBoxStyles.Bunifu;
+            this.scriptGhiWasmChkBox.TabIndex = 67;
+            this.scriptGhiWasmChkBox.ThreeState = false;
+            this.scriptGhiWasmChkBox.ToolTipText = null;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.ForeColor = System.Drawing.Color.White;
+            this.label16.Location = new System.Drawing.Point(337, 307);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(189, 17);
+            this.label16.TabIndex = 64;
+            this.label16.Text = "il2cpp_header_to_ghidra.py";
+            // 
+            // scriptHeader2GhidraChkBox
+            // 
+            this.scriptHeader2GhidraChkBox.AllowBindingControlAnimation = true;
+            this.scriptHeader2GhidraChkBox.AllowBindingControlColorChanges = false;
+            this.scriptHeader2GhidraChkBox.AllowBindingControlLocation = true;
+            this.scriptHeader2GhidraChkBox.AllowCheckBoxAnimation = false;
+            this.scriptHeader2GhidraChkBox.AllowCheckmarkAnimation = true;
+            this.scriptHeader2GhidraChkBox.AllowOnHoverStates = true;
+            this.scriptHeader2GhidraChkBox.AutoCheck = true;
+            this.scriptHeader2GhidraChkBox.BackColor = System.Drawing.Color.Transparent;
+            this.scriptHeader2GhidraChkBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("scriptHeader2GhidraChkBox.BackgroundImage")));
+            this.scriptHeader2GhidraChkBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.scriptHeader2GhidraChkBox.BindingControlPosition = Bunifu.UI.WinForms.BunifuCheckBox.BindingControlPositions.Right;
+            this.scriptHeader2GhidraChkBox.BorderRadius = 12;
+            this.scriptHeader2GhidraChkBox.Checked = true;
+            this.scriptHeader2GhidraChkBox.CheckState = Bunifu.UI.WinForms.BunifuCheckBox.CheckStates.Checked;
+            this.scriptHeader2GhidraChkBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.scriptHeader2GhidraChkBox.CustomCheckmarkImage = null;
+            this.scriptHeader2GhidraChkBox.Location = new System.Drawing.Point(608, 304);
+            this.scriptHeader2GhidraChkBox.MinimumSize = new System.Drawing.Size(17, 17);
+            this.scriptHeader2GhidraChkBox.Name = "scriptHeader2GhidraChkBox";
+            this.scriptHeader2GhidraChkBox.OnCheck.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.scriptHeader2GhidraChkBox.OnCheck.BorderRadius = 12;
+            this.scriptHeader2GhidraChkBox.OnCheck.BorderThickness = 2;
+            this.scriptHeader2GhidraChkBox.OnCheck.CheckBoxColor = System.Drawing.Color.DodgerBlue;
+            this.scriptHeader2GhidraChkBox.OnCheck.CheckmarkColor = System.Drawing.Color.White;
+            this.scriptHeader2GhidraChkBox.OnCheck.CheckmarkThickness = 2;
+            this.scriptHeader2GhidraChkBox.OnDisable.BorderColor = System.Drawing.Color.LightGray;
+            this.scriptHeader2GhidraChkBox.OnDisable.BorderRadius = 12;
+            this.scriptHeader2GhidraChkBox.OnDisable.BorderThickness = 2;
+            this.scriptHeader2GhidraChkBox.OnDisable.CheckBoxColor = System.Drawing.Color.Transparent;
+            this.scriptHeader2GhidraChkBox.OnDisable.CheckmarkColor = System.Drawing.Color.LightGray;
+            this.scriptHeader2GhidraChkBox.OnDisable.CheckmarkThickness = 2;
+            this.scriptHeader2GhidraChkBox.OnHoverChecked.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
+            this.scriptHeader2GhidraChkBox.OnHoverChecked.BorderRadius = 12;
+            this.scriptHeader2GhidraChkBox.OnHoverChecked.BorderThickness = 2;
+            this.scriptHeader2GhidraChkBox.OnHoverChecked.CheckBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
+            this.scriptHeader2GhidraChkBox.OnHoverChecked.CheckmarkColor = System.Drawing.Color.White;
+            this.scriptHeader2GhidraChkBox.OnHoverChecked.CheckmarkThickness = 2;
+            this.scriptHeader2GhidraChkBox.OnHoverUnchecked.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
+            this.scriptHeader2GhidraChkBox.OnHoverUnchecked.BorderRadius = 12;
+            this.scriptHeader2GhidraChkBox.OnHoverUnchecked.BorderThickness = 1;
+            this.scriptHeader2GhidraChkBox.OnHoverUnchecked.CheckBoxColor = System.Drawing.Color.Transparent;
+            this.scriptHeader2GhidraChkBox.OnUncheck.BorderColor = System.Drawing.Color.DarkGray;
+            this.scriptHeader2GhidraChkBox.OnUncheck.BorderRadius = 12;
+            this.scriptHeader2GhidraChkBox.OnUncheck.BorderThickness = 1;
+            this.scriptHeader2GhidraChkBox.OnUncheck.CheckBoxColor = System.Drawing.Color.Transparent;
+            this.scriptHeader2GhidraChkBox.Size = new System.Drawing.Size(21, 21);
+            this.scriptHeader2GhidraChkBox.Style = Bunifu.UI.WinForms.BunifuCheckBox.CheckBoxStyles.Bunifu;
+            this.scriptHeader2GhidraChkBox.TabIndex = 67;
+            this.scriptHeader2GhidraChkBox.ThreeState = false;
+            this.scriptHeader2GhidraChkBox.ToolTipText = null;
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(25)))), ((int)(((byte)(31)))));
-            this.ClientSize = new System.Drawing.Size(652, 350);
+            this.ClientSize = new System.Drawing.Size(652, 421);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.updateChkBox);
             this.Controls.Add(this.winPosCheckBox);
             this.Controls.Add(this.autoSetDirCheck);
+            this.Controls.Add(this.scriptHeader2GhidraChkBox);
             this.Controls.Add(this.script6ChkBox);
             this.Controls.Add(this.script5ChkBox);
             this.Controls.Add(this.script4ChkBox);
             this.Controls.Add(this.script3ChkBox);
+            this.Controls.Add(this.scriptGhiWasmChkBox);
             this.Controls.Add(this.script2ChkBox);
             this.Controls.Add(this.script1ChkBox);
             this.Controls.Add(this.extDatChkBox);
+            this.Controls.Add(this.label16);
             this.Controls.Add(this.extBinaryChkBox);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
+            this.Controls.Add(this.label14);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.label5);
@@ -1077,5 +1213,9 @@
         private Bunifu.UI.WinForms.BunifuCheckBox script6ChkBox;
         private System.Windows.Forms.Label label13;
         private Bunifu.UI.WinForms.BunifuCheckBox extDatChkBox;
+        private System.Windows.Forms.Label label14;
+        private Bunifu.UI.WinForms.BunifuCheckBox scriptGhiWasmChkBox;
+        private System.Windows.Forms.Label label16;
+        private Bunifu.UI.WinForms.BunifuCheckBox scriptHeader2GhidraChkBox;
     }
 }

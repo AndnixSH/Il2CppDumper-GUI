@@ -106,7 +106,7 @@ namespace Il2CppDumper
                     Mach_O = "1";
             }));
 
-            this.Log("Read config...");
+            Log("Read config...");
             if (File.Exists(realPath + "config.json"))
             {
                 config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Application.StartupPath + Path.DirectorySeparatorChar + @"config.json"));
@@ -117,11 +117,11 @@ namespace Il2CppDumper
                 Log("config.json file does not exist. Using defaults", Color.Yellow);
             }
 
-            this.Log("Initializing metadata...");
+            Log("Initializing metadata...");
             var metadataBytes = File.ReadAllBytes(metadataPath);
             metadata = new Metadata(new MemoryStream(metadataBytes));
-            this.Log($"Metadata Version: {metadata.Version}");
-            this.Log("Initializing il2cpp file...");
+            Log($"Metadata Version: {metadata.Version}");
+            Log("Initializing il2cpp file...");
             var il2cppBytes = File.ReadAllBytes(il2cppPath);
             var il2cppMagic = BitConverter.ToUInt32(il2cppBytes, 0);
             var il2CppMemory = new MemoryStream(il2cppBytes);
@@ -173,23 +173,36 @@ namespace Il2CppDumper
                     il2Cpp = new Macho(il2CppMemory);
                     break;
             }
-
             var version = config.ForceIl2CppVersion ? config.ForceVersion : metadata.Version;
-            il2Cpp.SetProperties(version, metadata.maxMetadataUsages);
-            this.Log($"Il2Cpp Version: {il2Cpp.Version}");
-            if (il2Cpp.Version >= 27 && il2Cpp is ElfBase elf && elf.IsDumped)
+            il2Cpp.SetProperties(version, metadata.metadataUsagesCount);
+            Log($"Il2Cpp Version: {il2Cpp.Version}");
+            if (config.ForceDump || il2Cpp.CheckDump())
             {
-                FormDump form = new FormDump();
-                form.dumpNoteLbl.Text = "Input global-metadata.dat dump address:";
-                form.Message = 0;
-                if (form.ShowDialog() == DialogResult.OK)
+                if (il2Cpp is ElfBase elf)
                 {
-                    metadata.Address = Convert.ToUInt64(form.ReturnedText, 16);
-                    this.Log("Inputted address: " + metadata.Address.ToString("X"));
+                    FormDump form = new FormDump();
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        var DumpAddr = Convert.ToUInt64(form.ReturnedText, 16);
+                        Log("Inputted address: " + DumpAddr.ToString("X"));
+                        if (DumpAddr != 0)
+                        {
+                            il2Cpp.ImageBase = DumpAddr;
+                            il2Cpp.IsDumped = true;
+                            if (!config.NoRedirectedPointer)
+                            {
+                                elf.Reload();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        il2Cpp.IsDumped = true;
+                    }
                 }
             }
 
-            this.Log("Searching...");
+            Log("Searching...");
             try
             {
                 var flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length, metadata.imageDefs.Length);
@@ -197,9 +210,9 @@ namespace Il2CppDumper
                 {
                     if (!flag && il2Cpp is PE)
                     {
-                        this.Log("Use custom PE loader");
+                        Log("Use custom PE loader");
                         il2Cpp = PELoader.Load(il2cppPath);
-                        il2Cpp.SetProperties(version, metadata.maxMetadataUsages);
+                        il2Cpp.SetProperties(version, metadata.metadataUsagesCount);
                         flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length, metadata.imageDefs.Length);
                     }
                 }
@@ -213,11 +226,16 @@ namespace Il2CppDumper
                 }
                 if (!flag)
                 {
-                    Log("ERROR: Can't use auto mode to process file, input offset pointers to try manual mode.", Color.Yellow);
+                    Log("ERROR: Can't use auto mode to process file, trying manual mode...", Color.Yellow);
                     var codeRegistration = Convert.ToUInt64(CodeRegistrationTxtBox.Text, 16);
                     var metadataRegistration = Convert.ToUInt64(metadataRegistrationTxtBox.Text, 16);
                     il2Cpp.Init(codeRegistration, metadataRegistration);
-                    return true;
+                }
+                if (il2Cpp.Version >= 27 && il2Cpp.IsDumped)
+                {
+                    var typeDef = metadata.typeDefs[0];
+                    var il2CppType = il2Cpp.types[typeDef.byvalTypeIndex];
+                    metadata.ImageBase = il2CppType.data.typeHandle - metadata.header.typeDefinitionsOffset;
                 }
             }
             catch (Exception ex)
@@ -540,7 +558,7 @@ namespace Il2CppDumper
                     if (File.Exists(guiPath + "ghidra.py"))
                     {
                         File.Copy(guiPath + "ghidra.py", outputPath + "ghidra.py", true);
-                        this.Log($"Copied ghidra.py");
+                        Log("Copied ghidra.py");
                     }
                     else
                         Log("ghidra.py does not exist", Color.Yellow);
@@ -550,7 +568,7 @@ namespace Il2CppDumper
                     if (File.Exists(guiPath + "ghidra_with_struct.py"))
                     {
                         File.Copy(guiPath + "ghidra_with_struct.py", outputPath + "ghidra_with_struct.py", true);
-                        this.Log($"Copied ghidra_with_struct.py");
+                        Log("Copied ghidra_with_struct.py");
                     }
                     else
                         Log("ghidra_with_struct.py does not exist", Color.Yellow);
@@ -560,7 +578,7 @@ namespace Il2CppDumper
                     if (File.Exists(guiPath + "ida.py"))
                     {
                         File.Copy(guiPath + "ida.py", outputPath + "ida.py", true);
-                        this.Log($"Copied ida.py");
+                        Log($"Copied ida.py");
                     }
                     else
                         Log("ida.py does not exist", Color.Yellow);
@@ -570,7 +588,7 @@ namespace Il2CppDumper
                     if (File.Exists(guiPath + "ida_py3.py"))
                     {
                         File.Copy(guiPath + "ida_py3.py", outputPath + "ida_py3.py", true);
-                        this.Log($"Copied ida_py3.py");
+                        Log("Copied ida_py3.py");
                     }
                     else
                         Log("ida_py3.py does not exist", Color.Yellow);
@@ -580,7 +598,7 @@ namespace Il2CppDumper
                     if (File.Exists(guiPath + "ida_with_struct.py"))
                     {
                         File.Copy(guiPath + "ida_with_struct.py", outputPath + "ida_with_struct.py", true);
-                        this.Log($"Copied ida_with_struct.py");
+                        Log("Copied ida_with_struct.py");
                     }
                     else
                         Log("ida_with_struct.py does not exist", Color.Yellow);
@@ -590,10 +608,30 @@ namespace Il2CppDumper
                     if (File.Exists(guiPath + "ida_with_struct_py3.py"))
                     {
                         File.Copy(guiPath + "ida_with_struct_py3.py", outputPath + "ida_with_struct_py3.py", true);
-                        this.Log($"Copied ida_with_struct_py3.py");
+                        Log("Copied ida_with_struct_py3.py");
                     }
                     else
                         Log("ida_with_struct_py3.py does not exist", Color.Yellow);
+                }
+                if (Settings.Default.ghidra_wasm)
+                {
+                    if (File.Exists(guiPath + "ghidra_wasm.py"))
+                    {
+                        File.Copy(guiPath + "ghidra_wasm.py", outputPath + "ghidra_wasm.py", true);
+                        Log("Copied ghidra_wasm.py");
+                    }
+                    else
+                        Log("ghidra_wasm does not exist", Color.Yellow);
+                }
+                if (Settings.Default.ghidra_wasm)
+                {
+                    if (File.Exists(guiPath + "il2cpp_header_to_ghidra.py"))
+                    {
+                        File.Copy(guiPath + "il2cpp_header_to_ghidra.py", outputPath + "il2cpp_header_to_ghidra.py", true);
+                        Log("Copied il2cpp_header_to_ghidra.py");
+                    }
+                    else
+                        Log("il2cpp_header_to_ghidra does not exist", Color.Yellow);
                 }
             }
             catch (Exception ex)
@@ -667,7 +705,7 @@ namespace Il2CppDumper
 
             catch (Exception ex)
             {
-                this.Log(ex.ToString());
+                Log(ex.ToString());
             }
             FormState(State.Idle);
         }

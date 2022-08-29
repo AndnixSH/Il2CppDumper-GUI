@@ -9,18 +9,18 @@ namespace Il2CppDumper
         private Il2Cpp il2Cpp;
         private int methodCount;
         private int typeDefinitionsCount;
-        private long maxMetadataUsages;
+        private long metadataUsagesCount;
         private int imageCount;
         public List<SearchSection> exec;
         public List<SearchSection> data;
         public List<SearchSection> bss;
 
-        public SectionHelper(Il2Cpp il2Cpp, int methodCount, int typeDefinitionsCount, long maxMetadataUsages, int imageCount)
+        public SectionHelper(Il2Cpp il2Cpp, int methodCount, int typeDefinitionsCount, long metadataUsagesCount, int imageCount)
         {
             this.il2Cpp = il2Cpp;
             this.methodCount = methodCount;
             this.typeDefinitionsCount = typeDefinitionsCount;
-            this.maxMetadataUsages = maxMetadataUsages;
+            this.metadataUsagesCount = metadataUsagesCount;
             this.imageCount = imageCount;
         }
 
@@ -220,7 +220,8 @@ namespace Il2CppDumper
             foreach (var section in data)
             {
                 il2Cpp.Position = section.offset;
-                while (il2Cpp.Position < section.offsetEnd)
+                var end = Math.Min(section.offsetEnd, il2Cpp.Length) - il2Cpp.PointerSize;
+                while (il2Cpp.Position < end)
                 {
                     var addr = il2Cpp.Position;
                     if (il2Cpp.ReadIntPtr() == typeDefinitionsCount)
@@ -231,7 +232,7 @@ namespace Il2CppDumper
                             var pointer = il2Cpp.MapVATR(il2Cpp.ReadUIntPtr());
                             if (CheckPointerRangeDataRa(pointer))
                             {
-                                var pointers = il2Cpp.ReadClassArray<ulong>(pointer, maxMetadataUsages);
+                                var pointers = il2Cpp.ReadClassArray<ulong>(pointer, metadataUsagesCount);
                                 if (CheckPointerRangeBssVa(pointers))
                                 {
                                     return addr - il2Cpp.PointerSize * 12 - section.offset + section.address;
@@ -255,7 +256,8 @@ namespace Il2CppDumper
             foreach (var section in data)
             {
                 il2Cpp.Position = section.offset;
-                while (il2Cpp.Position < section.offsetEnd - il2Cpp.PointerSize)
+                var end = Math.Min(section.offsetEnd, il2Cpp.Length) - il2Cpp.PointerSize;
+                while (il2Cpp.Position < end)
                 {
                     var addr = il2Cpp.Position;
                     if (il2Cpp.ReadIntPtr() == typeDefinitionsCount)
@@ -333,12 +335,34 @@ namespace Il2CppDumper
                         va = FindReference(va);
                         if (va != 0ul)
                         {
-                            for (int i = 0; i < imageCount; i++)
+                            if (il2Cpp.Version >= 27)
                             {
-                                var va2 = FindReference(va - (ulong)i * il2Cpp.PointerSize);
-                                if (va2 != 0ul)
+                                for (int i = imageCount - 1; i >= 0; i--)
                                 {
-                                    return va2 - il2Cpp.PointerSize * 13;
+                                    var va2 = FindReference(va - (ulong)i * il2Cpp.PointerSize);
+                                    if (va2 != 0ul)
+                                    {
+                                        il2Cpp.Position = il2Cpp.MapVATR(va2 - il2Cpp.PointerSize);
+                                        if (il2Cpp.ReadIntPtr() == imageCount)
+                                        {
+                                            if (il2Cpp.Version >= 29)
+                                            {
+                                                return va2 - il2Cpp.PointerSize * 14;
+                                            }
+                                            return va2 - il2Cpp.PointerSize * 13;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                for (int i = 0; i < imageCount; i++)
+                                {
+                                    var va2 = FindReference(va - (ulong)i * il2Cpp.PointerSize);
+                                    if (va2 != 0ul)
+                                    {
+                                        return va2 - il2Cpp.PointerSize * 13;
+                                    }
                                 }
                             }
                         }
@@ -353,7 +377,8 @@ namespace Il2CppDumper
             foreach (var dataSec in data)
             {
                 il2Cpp.Position = dataSec.offset;
-                while (il2Cpp.Position < dataSec.offsetEnd - il2Cpp.PointerSize)
+                var end = Math.Min(dataSec.offsetEnd, il2Cpp.Length) - il2Cpp.PointerSize;
+                while (il2Cpp.Position < end)
                 {
                     var offset = il2Cpp.Position;
                     if (il2Cpp.ReadUIntPtr() == addr)

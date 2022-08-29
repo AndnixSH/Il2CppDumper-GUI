@@ -30,23 +30,27 @@ namespace Il2CppDumper
         public ulong ccwMarshalingFunctions;
         public long genericMethodPointersCount;
         public ulong genericMethodPointers;
-        [Version(Min = 24.4, Max = 24.4)]
+        [Version(Min = 24.5, Max = 24.5)]
         [Version(Min = 27.1)]
         public ulong genericAdjustorThunks;
         public long invokerPointersCount;
         public ulong invokerPointers;
-        [Version(Max = 24.4)]
+        [Version(Max = 24.5)]
         public long customAttributeCount;
-        [Version(Max = 24.4)]
+        [Version(Max = 24.5)]
         public ulong customAttributeGenerators;
         [Version(Min = 21, Max = 22)]
         public long guidCount;
         [Version(Min = 21, Max = 22)]
         public ulong guids; // Il2CppGuid
         [Version(Min = 22)]
-        public long unresolvedVirtualCallCount;
+        public long unresolvedVirtualCallCount; //29.1 unresolvedIndirectCallCount;
         [Version(Min = 22)]
         public ulong unresolvedVirtualCallPointers;
+        [Version(Min = 29.1)]
+        public ulong unresolvedInstanceCallPointers;
+        [Version(Min = 29.1)]
+        public ulong unresolvedStaticCallPointers;
         [Version(Min = 23)]
         public ulong interopDataCount;
         [Version(Min = 23)]
@@ -128,7 +132,8 @@ namespace Il2CppDumper
         IL2CPP_TYPE_SENTINEL = 0x41,       /* Sentinel for varargs method signature */
         IL2CPP_TYPE_PINNED = 0x45,       /* Local var that points to pinned object */
 
-        IL2CPP_TYPE_ENUM = 0x55        /* an enumeration */
+        IL2CPP_TYPE_ENUM = 0x55,        /* an enumeration */
+        IL2CPP_TYPE_IL2CPP_TYPE_INDEX = 0xff        /* an index into IL2CPP type metadata table */
     }
 
     public class Il2CppType
@@ -141,14 +146,25 @@ namespace Il2CppDumper
         public uint num_mods { get; set; }
         public uint byref { get; set; }
         public uint pinned { get; set; }
+        public uint valuetype { get; set; }
 
-        public void Init()
+        public void Init(double version)
         {
             attrs = bits & 0xffff;
             type = (Il2CppTypeEnum)((bits >> 16) & 0xff);
-            num_mods = (bits >> 24) & 0x3f;
-            byref = (bits >> 30) & 1;
-            pinned = bits >> 31;
+            if (version >= 27.2)
+            {
+                num_mods = (bits >> 24) & 0x1f;
+                byref = (bits >> 29) & 1;
+                pinned = (bits >> 30) & 1;
+                valuetype = bits >> 31;
+            }
+            else
+            {
+                num_mods = (bits >> 24) & 0x3f;
+                byref = (bits >> 30) & 1;
+                pinned = bits >> 31;
+            }
             data = new Union { dummy = datapoint };
         }
 
@@ -188,7 +204,7 @@ namespace Il2CppDumper
 
     public class Il2CppGenericClass
     {
-        [Version(Max = 24.4)]
+        [Version(Max = 24.5)]
         public long typeDefinitionIndex;    /* the generic type definition */
         [Version(Min = 27)]
         public ulong type;        /* the generic type definition */
@@ -230,7 +246,7 @@ namespace Il2CppDumper
     {
         public int methodIndex;
         public int invokerIndex;
-        [Version(Min = 24.4, Max = 24.4)]
+        [Version(Min = 24.5, Max = 24.5)]
         [Version(Min = 27.1)]
         public int adjustorThunk;
     };
@@ -247,10 +263,10 @@ namespace Il2CppDumper
         public ulong moduleName;
         public long methodPointerCount;
         public ulong methodPointers;
-        [Version(Min = 24.4, Max = 24.4)]
+        [Version(Min = 24.5, Max = 24.5)]
         [Version(Min = 27.1)]
         public long adjustorThunkCount;
-        [Version(Min = 24.4, Max = 24.4)]
+        [Version(Min = 24.5, Max = 24.5)]
         [Version(Min = 27.1)]
         public ulong adjustorThunks;
         public ulong invokerIndices;
@@ -261,7 +277,7 @@ namespace Il2CppDumper
         public long rgctxsCount;
         public ulong rgctxs;
         public ulong debuggerMetadata;
-        [Version(Min = 27)]
+        [Version(Min = 27, Max = 27.2)]
         public ulong customAttributeCacheGenerator;
         [Version(Min = 27)]
         public ulong moduleInitializer;

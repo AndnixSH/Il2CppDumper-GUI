@@ -6,7 +6,7 @@ This is the simple GUI version of Perfare's Il2CppDumper. The GUI is based on Bu
 
 Support drag and drop binary files and DAT for file selection. APK, APKS, XAPK and decrypted IPA file for auto dump
 
-About code updating, I merge manually using Code compare instead using Github's auto merge, because i didn't know how to use Github back then but I will still do as of today, as I don't have time to learn more about merging
+About code updating, I review and merge manually using Code compare instead using Github's feature, because i didn't know how to use Github back then. I will still do it today, because I don't have time to learn more about merging
 
 Bunifu requires to be paid in order to use. If you don't like Bunifu or can't activate Bunifu, try to find shady versions, you know, or reconstuct the UI with the default WinForm layout, or get the non-bunifu project here https://github.com/T5ive/Il2CppDumper-GUI
 

@@ -232,6 +232,7 @@ namespace Il2CppDumper.Properties {
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsProviderAttribute(typeof(Bluegrams.Application.PortableSettingsProvider))]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int AndroArch {
@@ -240,6 +241,32 @@ namespace Il2CppDumper.Properties {
             }
             set {
                 this["AndroArch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsProviderAttribute(typeof(Bluegrams.Application.PortableSettingsProvider))]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ghidra_wasm {
+            get {
+                return ((bool)(this["ghidra_wasm"]));
+            }
+            set {
+                this["ghidra_wasm"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsProviderAttribute(typeof(Bluegrams.Application.PortableSettingsProvider))]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool il2cpp_header_to_ghidra {
+            get {
+                return ((bool)(this["il2cpp_header_to_ghidra"]));
+            }
+            set {
+                this["il2cpp_header_to_ghidra"] = value;
             }
         }
     }

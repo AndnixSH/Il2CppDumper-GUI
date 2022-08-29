@@ -13,7 +13,6 @@ namespace Il2CppDumper
     public partial class FormDump : Form
     {
         public string ReturnedText { get; set; }
-        public int Message { get; set; }
 
         private static FormGUI main;
 
