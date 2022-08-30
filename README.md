@@ -14,15 +14,9 @@ Note that my C# codes are not the best hehe
 
 # Download links
 
-Note: Antivirus may flag this tool as malcious, it is false positive and you should not worry about it. They flag all modding tools you need as malcious, this is their business, this is their way to make money. Please don't always believe in Antivirus, thanks
+Note: Antivirus may flag this tool as malcious, it is false positive and you should not worry about it. They flag all modding tools you need as malcious, this is their business, this is their way to make money.
 
-- https://sbupload.com/folder/188/Il2CppDumper
-
-- https://www.mediafire.com/folder/x3or31t30o5t1/Il2CppDumper_GUI
-
-- https://mega.nz/folder/vBJQgZSL#ZsmqAg1B56zBdheIw8Uzkg
-
-- https://app.box.com/s/30ksq8uw787iz72xzdz270dtp9ojohmy
+- https://github.com/AndnixSH/Il2CppDumper-GUI/releases
 
 # Protected games
 If you can't dump, try the following methods
