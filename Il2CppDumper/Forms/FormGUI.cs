@@ -227,6 +227,11 @@ namespace Il2CppDumper
                 if (!flag)
                 {
                     Log("ERROR: Can't use auto mode to process file, trying manual mode...", Color.Yellow);
+                    if (string.IsNullOrEmpty(CodeRegistrationTxtBox.Text) || string.IsNullOrEmpty(CodeRegistrationTxtBox.Text))
+                    {
+                        Log("CodeRegistration or MetadataRegistration is empty", Color.Orange);
+                        return false;
+                    }
                     var codeRegistration = Convert.ToUInt64(CodeRegistrationTxtBox.Text, 16);
                     var metadataRegistration = Convert.ToUInt64(metadataRegistrationTxtBox.Text, 16);
                     il2Cpp.Init(codeRegistration, metadataRegistration);
