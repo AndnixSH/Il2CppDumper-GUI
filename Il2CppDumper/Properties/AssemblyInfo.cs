@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Il2CppDumper")]
+[assembly: AssemblyTitle("Il2CppDumper GUI")]
 [assembly: AssemblyDescription("GUI version by AndnixSH. This is the fork of Il2CppDumper by Perfare")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b6dd4e87-d002-40b0-9f1e-94de7d71d497")]
+[assembly: Guid("e116ad31-0922-4980-827f-72a6c13f7b00")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -8,7 +8,7 @@
     <ProjectGuid>{B6DD4E87-D002-40B0-9F1E-94DE7D71D497}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Il2CppDumper</RootNamespace>
-    <AssemblyName>Il2CppDumperGUI</AssemblyName>
+    <AssemblyName>Il2CppDumper GUI</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
