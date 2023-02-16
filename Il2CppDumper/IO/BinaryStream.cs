@@ -104,14 +104,10 @@ namespace Il2CppDumper
                     return ReadUInt16();
                 case "Byte":
                     return ReadByte();
-                case "Int64" when Is32Bit:
-                    return (long)ReadInt32();
                 case "Int64":
-                    return ReadInt64();
-                case "UInt64" when Is32Bit:
-                    return (ulong)ReadUInt32();
+                    return ReadIntPtr();
                 case "UInt64":
-                    return ReadUInt64();
+                    return ReadUIntPtr();
                 default:
                     throw new NotSupportedException();
             }
@@ -203,6 +199,11 @@ namespace Il2CppDumper
             return t;
         }
 
+        public T[] ReadClassArray<T>(ulong addr, ulong count) where T : new()
+        {
+            return ReadClassArray<T>(addr, (long)count);
+        }
+
         public T[] ReadClassArray<T>(ulong addr, long count) where T : new()
         {
             Position = addr;
@@ -224,7 +225,7 @@ namespace Il2CppDumper
             return Is32Bit ? ReadInt32() : ReadInt64();
         }
 
-        public ulong ReadUIntPtr()
+        public virtual ulong ReadUIntPtr()
         {
             return Is32Bit ? ReadUInt32() : ReadUInt64();
         }

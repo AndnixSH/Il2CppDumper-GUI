@@ -42,7 +42,8 @@ namespace Il2CppDumper
 
         string Version = null;
 
-        //Nobody mod 32-bit iOS binary so the switch has been removed, and forced 64-bit dump
+        //Nobody mod 32-bit iOS games so the switch has been removed, and forced 64-bit dump
+        //I'll leave the codes here in case someone want to mod 32-bit games
         bool use64bitMach_O = true;
 
         public FormGUI()
