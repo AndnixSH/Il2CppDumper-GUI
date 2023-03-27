@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using System.Collections.Generic;
 
 namespace Il2CppDumper
 {
     public class ScriptJson
     {
-        public List<ScriptMethod> ScriptMethod = new List<ScriptMethod>();
-        public List<ScriptString> ScriptString = new List<ScriptString>();
-        public List<ScriptMetadata> ScriptMetadata = new List<ScriptMetadata>();
-        public List<ScriptMetadataMethod> ScriptMetadataMethod = new List<ScriptMetadataMethod>();
+        public List<ScriptMethod> ScriptMethod = new();
+        public List<ScriptString> ScriptString = new();
+        public List<ScriptMetadata> ScriptMetadata = new();
+        public List<ScriptMetadataMethod> ScriptMetadataMethod = new();
         public ulong[] Addresses;
     }
 

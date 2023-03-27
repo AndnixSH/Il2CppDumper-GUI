@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Il2CppDumper
 {
     public sealed class PE : Il2Cpp
     {
-        private SectionHeader[] sections;
+        private readonly SectionHeader[] sections;
 
         public PE(Stream stream) : base(stream)
         {
