@@ -21,6 +21,8 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	<PublishSingleFile>true</PublishSingleFile>
+	<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>il2cppdumper.ico</ApplicationIcon>
