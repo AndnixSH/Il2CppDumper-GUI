@@ -87,12 +87,12 @@ namespace Il2CppDumper
             SetAllControlsFont(Controls);
 
             //copy context menu
-            ContextMenu contextMenu = new ContextMenu();
-            MenuItem menuItem = new MenuItem();
-            menuItem = new MenuItem("Copy");
+            ContextMenuStrip contextMenu = new ContextMenuStrip();
+            ToolStripMenuItem menuItem = new ToolStripMenuItem();
+            menuItem = new ToolStripMenuItem("Copy");
             menuItem.Click += new EventHandler(CopyAction);
-            contextMenu.MenuItems.Add(menuItem);
-            richTextBoxLogs.ContextMenu = contextMenu;
+            contextMenu.Items.Add(menuItem);
+            richTextBoxLogs.ContextMenuStrip = contextMenu;
 
             main = this;
         }
