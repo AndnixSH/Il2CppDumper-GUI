@@ -40,7 +40,7 @@ namespace Il2CppDumper
         string realPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
         string tempPath = Path.GetTempPath() + "\\";
 
-        string Version = null;
+        string appVersion = null;
 
         //Nobody mod 32-bit iOS games so the switch has been removed, and forced 64-bit dump
         //I'll leave the codes here in case someone want to mod 32-bit games
@@ -52,7 +52,7 @@ namespace Il2CppDumper
 
             //I liked 3 digits better
             string[] versionArray = Assembly.GetExecutingAssembly().GetName().Version.ToString().Split('.');
-            Version = string.Join(".", versionArray.Take(3));
+            appVersion = string.Join(".", versionArray.Take(3));
 
             //Events
             settingsPicBox.MouseLeave += new EventHandler((sender, e) => settingsPicBox.BackColor = Color.FromArgb(0, 0, 0, 0));
@@ -296,10 +296,16 @@ namespace Il2CppDumper
                         WebClient w = new WebClient();
                         string remoteVersion = w.DownloadString("https://repo.andnixsh.com/tools/il2cppdumper/version");
 
-                        if (!String.IsNullOrEmpty(remoteVersion) && !remoteVersion.Contains(Version))
+                        if (!String.IsNullOrEmpty(remoteVersion))
                         {
-                            Log("A new version is available: " + remoteVersion, Color.Lime);
-                            Log("https://repo.andnixsh.com/tools/il2cppdumper/Il2CppDumperGUI.zip", Color.Lime);
+                            Version currentVersion = Version.Parse(appVersion);
+                            Version latestVersion = Version.Parse(remoteVersion);
+
+                            if (latestVersion > currentVersion)
+                            {
+                                Log("A new version is available: " + remoteVersion, Color.Lime);
+                                Log("https://repo.andnixsh.com/tools/il2cppdumper/Il2CppDumperGUI.zip", Color.Lime);
+                            }
                         }
                     }
                     catch
@@ -809,7 +815,7 @@ namespace Il2CppDumper
                 Location = Settings.Default.Location;
             }
 
-            titleLbl.Text += " " + Version;
+            titleLbl.Text += " " + appVersion;
 
             if (IsAdministrator())
             {
