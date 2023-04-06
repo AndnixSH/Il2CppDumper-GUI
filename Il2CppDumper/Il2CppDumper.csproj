@@ -123,6 +123,14 @@
     <AssemblyVersion>2.0.1</AssemblyVersion>
     <FileVersion>2.0.1</FileVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Company></Company>
+    <Description>GUI version by AndnixSH. This is the fork of Il2CppDumper by Perfare</Description>
+    <Copyright>Copyright ©  2022 Perfare</Copyright>
+    <Title>Il2CppDumper GUI</Title>
+    <Authors>AndnixSH, Perfare</Authors>
+    <Product>Il2CppDumper</Product>
+    <PackageId>Il2CppDumper</PackageId>
+    <Version>2.0.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
