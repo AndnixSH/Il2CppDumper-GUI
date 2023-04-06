@@ -269,9 +269,9 @@ namespace Il2CppDumper
                     scriptGenerator.WriteScript(outputDir);
                     Log("Done!");
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Log("There was an error trying to generate struct. Skipped", Color.Orange);
+                    Log("There was an error trying to generate struct: " + ex.ToString(), Color.Orange);
                 }
             }
             if (config.GenerateDummyDll)
