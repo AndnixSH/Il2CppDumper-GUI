@@ -259,6 +259,7 @@ namespace Il2CppDumper
             var executor = new Il2CppExecutor(metadata, il2Cpp);
             var decompiler = new Il2CppDecompiler(executor);
             decompiler.Decompile(config, outputDir);
+
             Log("Done!");
             if (config.GenerateStruct)
             {
