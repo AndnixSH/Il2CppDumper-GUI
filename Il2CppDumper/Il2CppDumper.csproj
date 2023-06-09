@@ -105,8 +105,8 @@
 	</ItemGroup>
 	<PropertyGroup>
 		<PreBuildEvent>rem xcopy $(ProjectDir)Scripts $(ProjectDir)$(OutDir)bin /Y /I /S</PreBuildEvent>
-		<AssemblyVersion>2.0.1</AssemblyVersion>
-		<FileVersion>2.0.1</FileVersion>
+		<AssemblyVersion>2.1.0</AssemblyVersion>
+		<FileVersion>2.1.0</FileVersion>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Company></Company>
 		<Description>GUI version by AndnixSH. This is the fork of Il2CppDumper by Perfare</Description>
@@ -115,7 +115,7 @@
 		<Authors>AndnixSH, Perfare</Authors>
 		<Product>Il2CppDumper</Product>
 		<PackageId>Il2CppDumper</PackageId>
-		<Version>2.0.1</Version>
+		<Version>2.1.0</Version>
 	</PropertyGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
