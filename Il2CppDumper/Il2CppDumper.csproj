@@ -69,10 +69,10 @@
 	<ItemGroup>
 		<PackageReference Include="Bunifu.UI.WinForms" Version="5.3.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.1" />
+		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.2" />
 		<PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
-		<PackageReference Include="Mono.Cecil" Version="0.11.4" />
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.1" />
+		<PackageReference Include="Mono.Cecil" Version="0.11.5" />
 		<PackageReference Include="NETStandard.Library" Version="2.0.3" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="PortableSettingsProvider" Version="0.2.4" />
@@ -96,7 +96,7 @@
 		<PackageReference Include="System.Threading.Timer" Version="4.3.0" />
 		<PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
 		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
-		<PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.410601">
+		<PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 	</ItemGroup>
