@@ -2,6 +2,11 @@
 
 ![Screenshot](https://i.imgur.com/APd7EyO.png)
 
+
+[![](https://img.shields.io/github/downloads/AndnixSH/Il2CppDumper-GUI/total?style=for-the-badge)](https://github.com/AndnixSH/
+Il2CppDumper-GUI/releases) [![](https://img.shields.io/github/v/release/andnixsh/Il2CppDumper-GUI?style=for-the-badge)](https://github.com/AndnixSH/APKToolGUI/releases)
+
+
 This is the simple GUI version of Perfare's Il2CppDumper. The GUI is based on Bunifu Framework because I like dark theme.
 
 Support drag and drop binary files and DAT for file selection. APK, APKS, XAPK and decrypted IPA file for auto dump
