@@ -1,0 +1,47 @@
+﻿<Window x:Class="Il2CppDumper.Forms.InputOffsetForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Il2CppDumper.Forms"
+        mc:Ignorable="d"
+        Title="InputOffsetWindow"
+        Height="143"
+        Width="354"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70" />
+            <RowDefinition Height="35" />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+        <TextBlock TextWrapping="Wrap"
+                   Text="Detected this may be a dump file. If not, it must be protected. Input dump address or input 0 to force continue:"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   TextAlignment="Center" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="235*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="98*" />
+                <ColumnDefinition Width="5" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="dumpAdrTxtBox"
+                     Grid.Column="1"
+                     PreviewTextInput="HexTextBox_PreviewTextInput"
+                     DataObject.Pasting="HexTextBox_Pasting" />
+            <Button x:Name="okBtn"
+                    Grid.Column="3"
+                    Content="OK"
+                    HorizontalContentAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Click="okBtn_Click" />
+        </Grid>
+    </Grid>
+</Window>

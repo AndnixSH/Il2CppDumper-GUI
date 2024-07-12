@@ -10,17 +10,33 @@
 		<UseApplicationTrust>false</UseApplicationTrust>
 		<BootstrapperEnabled>true</BootstrapperEnabled>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<UseWindowsForms>true</UseWindowsForms>
+		<UseWindowsForms>True</UseWindowsForms>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 		<PublishSingleFile>true</PublishSingleFile>
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<Prefer32Bit>false</Prefer32Bit>
+		<Prefer32Bit>false</Prefer32Bit>	
+		<PreBuildEvent>rem xcopy $(ProjectDir)Scripts $(ProjectDir)$(OutDir)bin /Y /I /S</PreBuildEvent>
+		<AssemblyVersion>3.0.0</AssemblyVersion>
+		<FileVersion>3.0.0</FileVersion>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Company></Company>
+		<Description>GUI version by AndnixSH. This is the fork of Il2CppDumper by Perfare</Description>
+		<Copyright>Copyright © AndnixSH 2022 | Original project: Perfare 2016-2023</Copyright>
+		<Title>Il2CppDumper GUIAndnixSH</Title>
+		<Authors>AndnixSH, Perfare</Authors>
+		<Product>Il2CppDumper</Product>
+		<PackageId>Il2CppDumper</PackageId>
+		<Version>3.0.0</Version>
+		<UseWPF>True</UseWPF>
 	</PropertyGroup>
 	<PropertyGroup>
 		<ApplicationIcon>il2cppdumper.ico</ApplicationIcon>
 	</PropertyGroup>
-	<PropertyGroup />
+	<PropertyGroup>
+	  <PackageProjectUrl>https://github.com/AndnixSH/Il2CppDumper-GUI</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/AndnixSH/Il2CppDumper-GUI</RepositoryUrl>
+	</PropertyGroup>
 	<ItemGroup>
 		<None Update="config.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -67,58 +83,30 @@
 		</BootstrapperPackage>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Bunifu.UI.WinForms" Version="5.3.0" />
-		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.2" />
+		<PackageReference Include="DotNetZip" Version="1.16.0" />
 		<PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.1" />
+		<PackageReference Include="ModernWpfUI" Version="0.9.6" />
 		<PackageReference Include="Mono.Cecil" Version="0.11.5" />
-		<PackageReference Include="NETStandard.Library" Version="2.0.3" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="PortableSettingsProvider" Version="0.2.4" />
-		<PackageReference Include="System.AppContext" Version="4.3.0" />
-		<PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
-		<PackageReference Include="System.Console" Version="4.3.1" />
-		<PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-		<PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
-		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
-		<PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
-		<PackageReference Include="System.Net.Primitives" Version="4.3.1" />
-		<PackageReference Include="System.Net.Sockets" Version="4.3.0" />
-		<PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
-		<PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
-		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.1" />
-		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.1" />
-		<PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />
-		<PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
-		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-		<PackageReference Include="System.Threading.AccessControl" Version="7.0.1" />
-		<PackageReference Include="System.Threading.Timer" Version="4.3.0" />
-		<PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
-		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
-		<PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
+		<PackageReference Include="PortableSettingsProvider" Version="0.2.5" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Remove="Utils\OpenFileDialog.cs" />
 	</ItemGroup>
-	<PropertyGroup>
-		<PreBuildEvent>rem xcopy $(ProjectDir)Scripts $(ProjectDir)$(OutDir)bin /Y /I /S</PreBuildEvent>
-		<AssemblyVersion>2.1.0</AssemblyVersion>
-		<FileVersion>2.1.0</FileVersion>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<Company></Company>
-		<Description>GUI version by AndnixSH. This is the fork of Il2CppDumper by Perfare</Description>
-		<Copyright>Copyright © AndnixSH 2022 | Original project: Perfare 2016-2023</Copyright>
-		<Title>Il2CppDumper GUIAndnixSH</Title>
-		<Authors>AndnixSH, Perfare</Authors>
-		<Product>Il2CppDumper</Product>
-		<PackageId>Il2CppDumper</PackageId>
-		<Version>2.1.0</Version>
-	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="il2cppdumper.ico" />
+	  <None Remove="il2cppdumper.png" />
+	</ItemGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Include="App.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Resource Include="il2cppdumper.ico" />
+	  <Resource Include="il2cppdumper.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Settings.Designer.cs">

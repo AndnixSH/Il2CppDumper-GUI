@@ -49,7 +49,7 @@ namespace Il2CppDumper
                 RelocationProcessing();
                 if (CheckProtection())
                 {
-                    FormGUI.Log("ERROR: This file may be protected.");
+                    MainForm.Log("ERROR: This file may be protected.");
                 }
             }
         }
@@ -141,8 +141,8 @@ namespace Il2CppDumper
                         metadataRegistration = ReadUInt32();
                     }
                 }
-                FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
-                FormGUI.Log("MetadataRegistration : {0:x}", metadataRegistration);
+                MainForm.Log("CodeRegistration : {0:x}", codeRegistration);
+                MainForm.Log("MetadataRegistration : {0:x}", metadataRegistration);
                 Init(codeRegistration, metadataRegistration);
                 return true;
             }
@@ -177,13 +177,13 @@ namespace Il2CppDumper
             }
             if (codeRegistration > 0 && metadataRegistration > 0)
             {
-                FormGUI.Log("Detected Symbol !");
-                FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
-                FormGUI.Log("MetadataRegistration : {0:x}", metadataRegistration);
+                MainForm.Log("Detected Symbol !");
+                MainForm.Log("CodeRegistration : {0:x}", codeRegistration);
+                MainForm.Log("MetadataRegistration : {0:x}", metadataRegistration);
                 Init(codeRegistration, metadataRegistration);
                 return true;
             }
-            FormGUI.Log("ERROR: No symbol is detected");
+            MainForm.Log("ERROR: No symbol is detected");
             return false;
         }
 
@@ -242,7 +242,7 @@ namespace Il2CppDumper
 
         private void RelocationProcessing()
         {
-            FormGUI.Log("Applying relocations...");
+            MainForm.Log("Applying relocations...");
             try
             {
                 var reldynOffset = MapVATR(dynamicSection.First(x => x.d_tag == DT_REL).d_un);
@@ -279,7 +279,7 @@ namespace Il2CppDumper
                 //.init_proc
                 if (dynamicSection.Any(x => x.d_tag == DT_INIT))
                 {
-                    FormGUI.Log("WARNING: find .init_proc");
+                    MainForm.Log("WARNING: find .init_proc");
                     return true;
                 }
                 //JNI_OnLoad
@@ -290,13 +290,13 @@ namespace Il2CppDumper
                     switch (name)
                     {
                         case "JNI_OnLoad":
-                            FormGUI.Log("WARNING: find JNI_OnLoad");
+                            MainForm.Log("WARNING: find JNI_OnLoad");
                             return true;
                     }
                 }
                 if (sectionTable != null && sectionTable.Any(x => x.sh_type == SHT_LOUSER))
                 {
-                    FormGUI.Log("WARNING: find SHT_LOUSER section");
+                    MainForm.Log("WARNING: find SHT_LOUSER section");
                     return true;
                 }
             }

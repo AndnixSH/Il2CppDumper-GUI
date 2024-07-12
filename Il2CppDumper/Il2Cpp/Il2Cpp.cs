@@ -71,7 +71,7 @@ namespace Il2CppDumper
                         {
                             Version = 27.1;
                             codeRegistration -= PointerSize;
-                            FormGUI.Log($"Change il2cpp version to: {Version}");
+                            MainForm.Log($"Change il2cpp version to: {Version}");
                         }
                     }
                     if (Version == 24.4)
@@ -81,7 +81,7 @@ namespace Il2CppDumper
                         {
                             Version = 24.5;
                             codeRegistration -= PointerSize;
-                            FormGUI.Log($"Change il2cpp version to: {Version}");
+                            MainForm.Log($"Change il2cpp version to: {Version}");
                         }
                     }
                     if (Version == 24.2)
@@ -90,13 +90,13 @@ namespace Il2CppDumper
                         {
                             Version = 24.3;
                             codeRegistration -= PointerSize * 2;
-                            FormGUI.Log($"Change il2cpp version to: {Version}");
+                            MainForm.Log($"Change il2cpp version to: {Version}");
                         }
                     }
                 }
             }
-            FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
-            FormGUI.Log("MetadataRegistration : {0:x}", metadataRegistration);
+            MainForm.Log("CodeRegistration : {0:x}", codeRegistration);
+            MainForm.Log("MetadataRegistration : {0:x}", metadataRegistration);
             if (codeRegistration != 0 && metadataRegistration != 0)
             {
                 Init(codeRegistration, metadataRegistration);
@@ -112,7 +112,7 @@ namespace Il2CppDumper
             if (Version == 27 && pCodeRegistration.invokerPointersCount > limit) //TODO
             {
                 Version = 27.1;
-                FormGUI.Log($"Change il2cpp version to: {Version}");
+                MainForm.Log($"Change il2cpp version to: {Version}");
                 pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
             }
             if (Version == 27.1)
@@ -136,13 +136,13 @@ namespace Il2CppDumper
             if (Version == 24.4 && pCodeRegistration.invokerPointersCount > limit) //TODO
             {
                 Version = 24.5;
-                FormGUI.Log($"Change il2cpp version to: {Version}");
+                MainForm.Log($"Change il2cpp version to: {Version}");
                 pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
             }
             if (Version == 24.2 && pCodeRegistration.codeGenModules == 0) //TODO
             {
                 Version = 24.3;
-                FormGUI.Log($"Change il2cpp version to: {Version}");
+                MainForm.Log($"Change il2cpp version to: {Version}");
                 pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
             }
             pMetadataRegistration = MapVATR<Il2CppMetadataRegistration>(metadataRegistration);

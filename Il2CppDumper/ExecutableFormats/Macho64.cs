@@ -58,7 +58,7 @@ namespace Il2CppDumper
                         var cryptID = ReadUInt32();
                         if (cryptID != 0)
                         {
-                            FormGUI.Log("ERROR: This Mach-O executable is encrypted and cannot be processed.");
+                            MainForm.Log("ERROR: This Mach-O executable is encrypted and cannot be processed.");
                         }
                         break;
                 }
@@ -228,8 +228,8 @@ namespace Il2CppDumper
             }
             if (codeRegistration != 0 && metadataRegistration != 0)
             {
-                FormGUI.Log("CodeRegistration : {0:x}", codeRegistration);
-                FormGUI.Log("MetadataRegistration : {0:x}", metadataRegistration);
+                MainForm.Log("CodeRegistration : {0:x}", codeRegistration);
+                MainForm.Log("MetadataRegistration : {0:x}", metadataRegistration);
                 Init(codeRegistration, metadataRegistration);
                 return true;
             }
