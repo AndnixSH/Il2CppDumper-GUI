@@ -6,12 +6,8 @@
 		<MapFileExtensions>true</MapFileExtensions>
 		<ApplicationRevision>0</ApplicationRevision>
 		<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-		<IsWebBootstrapper>false</IsWebBootstrapper>
-		<UseApplicationTrust>false</UseApplicationTrust>
 		<BootstrapperEnabled>true</BootstrapperEnabled>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<UseWindowsForms>True</UseWindowsForms>
-		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 		<PublishSingleFile>true</PublishSingleFile>
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 		<PlatformTarget>AnyCPU</PlatformTarget>
@@ -20,15 +16,15 @@
 		<AssemblyVersion>3.0.0</AssemblyVersion>
 		<FileVersion>3.0.0</FileVersion>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<Company></Company>
 		<Description>GUI version by AndnixSH. This is the fork of Il2CppDumper by Perfare</Description>
 		<Copyright>Copyright © AndnixSH 2022 | Original project: Perfare 2016-2023</Copyright>
-		<Title>Il2CppDumper GUIAndnixSH</Title>
+		<Title>Il2CppDumper GUI</Title>
 		<Authors>AndnixSH, Perfare</Authors>
 		<Product>Il2CppDumper</Product>
 		<PackageId>Il2CppDumper</PackageId>
 		<Version>3.0.0</Version>
 		<UseWPF>True</UseWPF>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	</PropertyGroup>
 	<PropertyGroup>
 		<ApplicationIcon>il2cppdumper.ico</ApplicationIcon>
@@ -71,23 +67,11 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-		<BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
-			<Visible>False</Visible>
-			<ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
-			<Install>true</Install>
-		</BootstrapperPackage>
-		<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-			<Visible>False</Visible>
-			<ProductName>.NET Framework 3.5 SP1</ProductName>
-			<Install>false</Install>
-		</BootstrapperPackage>
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="DotNetZip" Version="1.16.0" />
-		<PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
 		<PackageReference Include="ModernWpfUI" Version="0.9.6" />
 		<PackageReference Include="Mono.Cecil" Version="0.11.5" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
 		<PackageReference Include="PortableSettingsProvider" Version="0.2.5" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
 	</ItemGroup>
@@ -97,9 +81,6 @@
 	<ItemGroup>
 	  <None Remove="il2cppdumper.ico" />
 	  <None Remove="il2cppdumper.png" />
-	</ItemGroup>
-	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Include="App.xaml" />
