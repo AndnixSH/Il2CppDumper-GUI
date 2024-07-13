@@ -38,6 +38,7 @@ namespace Il2CppDumper
 
         internal static void CheckDragEnter(this DragEventArgs e, params string[] extensions)
         {
+            e.Handled = true;
             string[] files = e.GetFilesDrop();
             if (extensions.Any(ext => files[0].EndsWith(ext, StringComparison.Ordinal)))
                 e.Effects = DragDropEffects.Copy;
@@ -45,8 +46,23 @@ namespace Il2CppDumper
                 e.Effects = DragDropEffects.None;
         }
 
+        internal static bool CheckDragEnter(this DragEventArgs e)
+        {
+            e.Handled = true;
+            string[] files = e.GetFilesDrop();
+            if (files.Length == 1 && File.Exists(files[0]))
+            {
+                e.Effects = DragDropEffects.Copy;
+                return true;
+            }
+
+            e.Effects = DragDropEffects.None;
+            return false;
+        }
+
         internal static bool CheckDragOver(this DragEventArgs e, params string[] extensions)
         {
+            e.Handled = true;
             string[] files = e.GetFilesDrop();
             if (files.Length == 1 && extensions.Any(ext => files[0].EndsWith(ext, StringComparison.Ordinal)))
             {
@@ -54,12 +70,12 @@ namespace Il2CppDumper
                 return true;
             }
             e.Effects = DragDropEffects.None;
-            e.Handled = true;
             return false;
         }
 
         internal static bool CheckDragOver(this DragEventArgs e)
         {
+            e.Handled = true;
             string[] files = e.GetFilesDrop();
             if (files.Length == 1 && File.Exists(files[0]))
             {
@@ -67,12 +83,12 @@ namespace Il2CppDumper
                 return true;
             }
             e.Effects = DragDropEffects.None;
-            e.Handled = true;
             return false;
         }
 
         internal static bool CheckDragOverFolder(this DragEventArgs e)
         {
+            e.Handled = true;
             string[] files = e.GetFilesDrop();
             if (files.Length == 1 && Directory.Exists(files[0]))
             {
@@ -80,12 +96,12 @@ namespace Il2CppDumper
                 return true;
             }
             e.Effects = DragDropEffects.None;
-            e.Handled = true;
             return false;
         }
 
         internal static bool CheckManyDragOver(this DragEventArgs e, params string[] extensions)
         {
+            e.Handled = true;
             string[] files = e.GetFilesDrop();
             if (extensions.Any(ext => files[0].EndsWith(ext, StringComparison.Ordinal)))
             {
@@ -93,12 +109,12 @@ namespace Il2CppDumper
                 return true;
             }
             e.Effects = DragDropEffects.None;
-            e.Handled = true;
             return false;
         }
 
         internal static bool CheckManyDragOverWithFolders(this DragEventArgs e, params string[] extensions)
         {
+            e.Handled = true;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -113,7 +129,6 @@ namespace Il2CppDumper
             }
 
             e.Effects = DragDropEffects.None;
-            e.Handled = true;
             return false;
         }
 

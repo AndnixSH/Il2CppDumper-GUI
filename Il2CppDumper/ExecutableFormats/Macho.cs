@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -59,7 +60,7 @@ namespace Il2CppDumper
                         var cryptID = ReadUInt32();
                         if (cryptID != 0)
                         {
-                            MainForm.Log("ERROR: This Mach-O executable is encrypted and cannot be processed.");
+                            MainForm.Log("ERROR: This Mach-O executable is encrypted and cannot be processed.", Brushes.Orange);
                         }
                         break;
                 }

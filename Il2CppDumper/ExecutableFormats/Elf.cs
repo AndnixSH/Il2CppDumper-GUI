@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using static Il2CppDumper.ElfConstants;
@@ -49,7 +50,7 @@ namespace Il2CppDumper
                 RelocationProcessing();
                 if (CheckProtection())
                 {
-                    MainForm.Log("ERROR: This file may be protected.");
+                    MainForm.Log("ERROR: This file may be protected.", Brushes.Orange);
                 }
             }
         }
@@ -183,7 +184,7 @@ namespace Il2CppDumper
                 Init(codeRegistration, metadataRegistration);
                 return true;
             }
-            MainForm.Log("ERROR: No symbol is detected");
+            MainForm.Log("ERROR: No symbol is detected", Brushes.Orange);
             return false;
         }
 
@@ -279,7 +280,7 @@ namespace Il2CppDumper
                 //.init_proc
                 if (dynamicSection.Any(x => x.d_tag == DT_INIT))
                 {
-                    MainForm.Log("WARNING: find .init_proc");
+                    MainForm.Log("WARNING: find .init_proc", Brushes.Yellow);
                     return true;
                 }
                 //JNI_OnLoad
@@ -290,13 +291,13 @@ namespace Il2CppDumper
                     switch (name)
                     {
                         case "JNI_OnLoad":
-                            MainForm.Log("WARNING: find JNI_OnLoad");
+                            MainForm.Log("WARNING: find JNI_OnLoad", Brushes.Yellow);
                             return true;
                     }
                 }
                 if (sectionTable != null && sectionTable.Any(x => x.sh_type == SHT_LOUSER))
                 {
-                    MainForm.Log("WARNING: find SHT_LOUSER section");
+                    MainForm.Log("WARNING: find SHT_LOUSER section", Brushes.Yellow);
                     return true;
                 }
             }

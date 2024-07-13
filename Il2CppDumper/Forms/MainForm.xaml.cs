@@ -4,6 +4,7 @@ using Il2CppDumper.Properties;
 using Il2CppDumper.Utils;
 using Ionic.Zip;
 using Newtonsoft.Json;
+using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,8 +37,7 @@ namespace Il2CppDumper
         public static MainForm main { get; private set; }
         string appVersion = null;
 
-        //string realPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\";
-        string realPath = Path.GetDirectoryName(AppContext.BaseDirectory);
+        string basePath = Path.GetDirectoryName(AppContext.BaseDirectory);
         string tempPath = Path.Combine(Path.GetTempPath(), "Il2CppDumper");
         string tempLibFile = Path.Combine(Path.GetTempPath(), "Il2CppDumper", "libil2cpp.so");
 
@@ -96,12 +96,16 @@ namespace Il2CppDumper
             bool isAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
             if (isAdmin)
             {
-                Title += " - Administrator ";
+                Title += " - Administrator";
                 Log("You are running as administrator. Drag and drop will not work\nIf this program is running as administrator by default, change your User Account Control back to default", Brushes.Yellow);
             }
 
+            //Check update
             if (Settings.Default.CheckForUpdate)
                 CheckUpdate();
+
+            if (!Environment.Is64BitProcess && Environment.Is64BitOperatingSystem)
+                Log("Your system is 64-bit but this app is running 32-bit. Please use 64-bit for better experience to avoid out of memory issues", Brushes.Yellow);
         }
 
         #region Il2Cpp dumper
@@ -113,9 +117,9 @@ namespace Il2CppDumper
                 Mach_O = "1";
 
             Log("Read config...");
-            if (File.Exists(realPath + "config.json"))
+            if (File.Exists(basePath + "config.json"))
             {
-                config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(realPath + "config.json"));
+                config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(basePath + "config.json"));
             }
             else
             {
@@ -242,7 +246,7 @@ namespace Il2CppDumper
                 }
                 if (!flag)
                 {
-                    Log("ERROR: Can't use auto mode to process file, trying manual mode...", Brushes.Yellow);
+                    Log("ERROR: Can't use auto mode to process file, trying manual mode...", Brushes.Orange);
                     if (string.IsNullOrEmpty(codeRegistrationTxtBox.Text) || string.IsNullOrEmpty(codeRegistrationTxtBox.Text))
                     {
                         Log("CodeRegistration or MetadataRegistration is empty", Brushes.Orange);
@@ -276,7 +280,7 @@ namespace Il2CppDumper
             var decompiler = new Il2CppDecompiler(executor);
             decompiler.Decompile(config, outputDir);
 
-            Log("Done!");
+            Log("Done!", Brushes.Chartreuse);
             if (config.GenerateStruct)
             {
                 Log("Generate struct...");
@@ -284,7 +288,7 @@ namespace Il2CppDumper
                 {
                     var scriptGenerator = new StructGenerator(executor);
                     scriptGenerator.WriteScript(outputDir);
-                    Log("Done!");
+                    Log("Done!", Brushes.Chartreuse);
                 }
                 catch (Exception ex)
                 {
@@ -295,8 +299,8 @@ namespace Il2CppDumper
             {
                 Log("Generating dummy dll...");
                 DummyAssemblyExporter.Export(executor, outputDir, config.DummyDllAddToken);
-                Log("Done!");
-                Directory.SetCurrentDirectory(realPath); //Fix read-only directory permission
+                Log("Done!", Brushes.Chartreuse);
+                Directory.SetCurrentDirectory(basePath); //Fix read-only directory permission
             }
         }
 
@@ -349,7 +353,7 @@ namespace Il2CppDumper
 
                             if (use64bitMach_O)
                             {
-                                Log("----- [Dumping ARM64] -----", Brushes.Chartreuse);
+                                Log("Dumping ARM64", Brushes.PaleTurquoise);
                                 if (Settings.Default.ExtBinaryChkBox)
                                     binaryFile.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
                                 binaryFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
@@ -357,7 +361,7 @@ namespace Il2CppDumper
                             }
                             else
                             {
-                                Log("----- [Dumping ARMv7] -----", Brushes.Chartreuse);
+                                Log("Dumping ARMv7", Brushes.PaleTurquoise);
 
                                 if (Settings.Default.ExtBinaryChkBox)
                                     binaryFile.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
@@ -421,7 +425,7 @@ namespace Il2CppDumper
                         {
                             if (entry.FileName.Equals(@"lib/armeabi-v7a/libil2cpp.so") && dumpArmv7)
                             {
-                                Log("Dumping ARMv7", Brushes.Chartreuse);
+                                Log("Dumping ARMv7", Brushes.PaleTurquoise);
                                 string archPath = Path.Combine(outputPath, "ARMv7");
 
                                 Directory.CreateDirectory(archPath);
@@ -433,7 +437,7 @@ namespace Il2CppDumper
 
                             if (entry.FileName.Equals(@"lib/arm64-v8a/libil2cpp.so") && dumpArm64)
                             {
-                                Log("Dumping ARM64", Brushes.Chartreuse);
+                                Log("Dumping ARM64", Brushes.PaleTurquoise);
                                 string archPath = Path.Combine(outputPath, "ARM64");
 
                                 Directory.CreateDirectory(archPath);
@@ -445,7 +449,7 @@ namespace Il2CppDumper
 
                             if (entry.FileName.Equals(@"lib/x86/libil2cpp.so") && dumpx86)
                             {
-                                Log("Dumping x86", Brushes.Chartreuse);
+                                Log("Dumping x86", Brushes.PaleTurquoise);
                                 string archPath = Path.Combine(outputPath, "x86");
 
                                 Directory.CreateDirectory(archPath);
@@ -457,7 +461,7 @@ namespace Il2CppDumper
 
                             if (entry.FileName.Equals(@"lib/x86_64/libil2cpp.so") && dumpx86_64)
                             {
-                                Log("Dumping x86_64", Brushes.Chartreuse);
+                                Log("Dumping x86_64", Brushes.PaleTurquoise);
                                 string archPath = Path.Combine(outputPath, "x86_64");
 
                                 Directory.CreateDirectory(archPath);
@@ -489,7 +493,7 @@ namespace Il2CppDumper
                     dumpx86 = archIndex == 3;
                     dumpx86_64 = archIndex == 4;
                 }
-
+                bool metadataFound = false;
                 Log("Extracting files");
                 using (ZipFile archive = ZipFile.Read(file))
                 {
@@ -498,7 +502,7 @@ namespace Il2CppDumper
                     {
                         Debug.WriteLine("Files: " + entryApks.FileName);
 
-                        if (!entryApks.FileName.StartsWith("config.") && entryApks.FileName.EndsWith(".apk"))
+                        if (!entryApks.FileName.StartsWith("config.") && entryApks.FileName.EndsWith(".apk") && !metadataFound)
                         {
                             Log("Checking " + entryApks.FileName);
 
@@ -518,7 +522,7 @@ namespace Il2CppDumper
                                 else
                                 {
                                     Log($"Found global-metadata.dat from {entryApks.FileName}. Extracting", Brushes.Chartreuse);
-
+                                    metadataFound = true;
                                     Directory.CreateDirectory(outputPath);
 
                                     if (Settings.Default.ExtDatChkBox)
@@ -585,88 +589,36 @@ namespace Il2CppDumper
         //Copy python scripts after dump successfully
         private void CopyScripts(string outputPath)
         {
-            var guiPath = AppDomain.CurrentDomain.BaseDirectory;
             try
             {
-                if (Settings.Default.ghidra)
+                var fileSettings = new List<(bool Setting, string FileName)>
                 {
-                    if (File.Exists(guiPath + "ghidra.py"))
-                    {
-                        File.Copy(guiPath + "ghidra.py", outputPath + "ghidra.py", true);
-                        Log("Copied ghidra.py");
-                    }
-                    else
-                        Log("ghidra.py does not exist", Brushes.Yellow);
-                }
-                if (Settings.Default.ghidra_with_struct)
+                    (Settings.Default.ghidra, "ghidra.py"),
+                    (Settings.Default.ghidra_wasm, "ghidra_wasm.py"),
+                    (Settings.Default.ghidra_with_struct, "ghidra_with_struct.py"),
+                    (Settings.Default.hopper, "hopper-py3.py"),
+                    (Settings.Default.ida, "ida.py"),
+                    (Settings.Default.ida_py3, "ida_py3.py"),
+                    (Settings.Default.ida_with_struct, "ida_with_struct.py"),
+                    (Settings.Default.ida_with_struct_py3, "ida_with_struct_py3.py"),
+                    (Settings.Default.il2cpp_header_to_binja, "il2cpp_header_to_binja.py"),
+                    (Settings.Default.il2cpp_header_to_ghidra, "il2cpp_header_to_ghidra.py")
+                };
+
+                foreach (var fileSetting in fileSettings)
                 {
-                    if (File.Exists(guiPath + "ghidra_with_struct.py"))
+                    if (fileSetting.Setting)
                     {
-                        File.Copy(guiPath + "ghidra_with_struct.py", outputPath + "ghidra_with_struct.py", true);
-                        Log("Copied ghidra_with_struct.py");
+                        if (File.Exists(Path.Combine(basePath, fileSetting.FileName)))
+                        {
+                            File.Copy(Path.Combine(basePath, fileSetting.FileName), outputPath + fileSetting.FileName, true);
+                            Log($"Copied {fileSetting.FileName}");
+                        }
+                        else
+                        {
+                            Log($"{fileSetting.FileName} does not exist", Brushes.Yellow);
+                        }
                     }
-                    else
-                        Log("ghidra_with_struct.py does not exist", Brushes.Yellow);
-                }
-                if (Settings.Default.ida)
-                {
-                    if (File.Exists(guiPath + "ida.py"))
-                    {
-                        File.Copy(guiPath + "ida.py", outputPath + "ida.py", true);
-                        Log($"Copied ida.py");
-                    }
-                    else
-                        Log("ida.py does not exist", Brushes.Yellow);
-                }
-                if (Settings.Default.ida_py3)
-                {
-                    if (File.Exists(guiPath + "ida_py3.py"))
-                    {
-                        File.Copy(guiPath + "ida_py3.py", outputPath + "ida_py3.py", true);
-                        Log("Copied ida_py3.py");
-                    }
-                    else
-                        Log("ida_py3.py does not exist", Brushes.Yellow);
-                }
-                if (Settings.Default.ida_with_struct)
-                {
-                    if (File.Exists(guiPath + "ida_with_struct.py"))
-                    {
-                        File.Copy(guiPath + "ida_with_struct.py", outputPath + "ida_with_struct.py", true);
-                        Log("Copied ida_with_struct.py");
-                    }
-                    else
-                        Log("ida_with_struct.py does not exist", Brushes.Yellow);
-                }
-                if (Settings.Default.ida_with_struct_py3)
-                {
-                    if (File.Exists(guiPath + "ida_with_struct_py3.py"))
-                    {
-                        File.Copy(guiPath + "ida_with_struct_py3.py", outputPath + "ida_with_struct_py3.py", true);
-                        Log("Copied ida_with_struct_py3.py");
-                    }
-                    else
-                        Log("ida_with_struct_py3.py does not exist", Brushes.Yellow);
-                }
-                if (Settings.Default.ghidra_wasm)
-                {
-                    if (File.Exists(guiPath + "ghidra_wasm.py"))
-                    {
-                        File.Copy(guiPath + "ghidra_wasm.py", outputPath + "ghidra_wasm.py", true);
-                        Log("Copied ghidra_wasm.py");
-                    }
-                    else
-                        Log("ghidra_wasm does not exist", Brushes.Yellow);
-                }
-                if (Settings.Default.ghidra_wasm)
-                {
-                    if (File.Exists(guiPath + "il2cpp_header_to_ghidra.py"))
-                    {
-                        File.Copy(guiPath + "il2cpp_header_to_ghidra.py", outputPath + "il2cpp_header_to_ghidra.py", true);
-                        Log("Copied il2cpp_header_to_ghidra.py");
-                    }
-                    else
-                        Log("il2cpp_header_to_ghidra does not exist", Brushes.Yellow);
                 }
             }
             catch (Exception ex)
@@ -816,6 +768,14 @@ namespace Il2CppDumper
             }
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            //Auto scroll
+            outputTxtBox.ScrollToHorizontalOffset(double.MaxValue);
+            datFileTxtBox.ScrollToHorizontalOffset(double.MaxValue);
+            binFileTxtBox.ScrollToHorizontalOffset(double.MaxValue);
+        }
+
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.ToString()) { UseShellExecute = true });
@@ -824,10 +784,29 @@ namespace Il2CppDumper
         private void Window_Closed(object sender, EventArgs e)
         {
             SaveConfig();
+
+            if (Directory.Exists(tempPath))
+                Directory.Delete(tempPath, true);
         }
+
         private void LogBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             LogBox.ScrollToVerticalOffset(double.MaxValue);
+        }
+
+        private void binFileTxtBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            binFileTxtBox.ScrollToHorizontalOffset(double.MaxValue);
+        }
+
+        private void datFileTxtBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            datFileTxtBox.ScrollToHorizontalOffset(double.MaxValue);
+        }
+
+        private void outputTxtBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            outputTxtBox.ScrollToHorizontalOffset(double.MaxValue);
         }
         #endregion
 
@@ -879,6 +858,7 @@ namespace Il2CppDumper
 
         private void selBinFile_Click(object sender, RoutedEventArgs e)
         {
+            SaveConfig();
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Il2Cpp binary file|*.*";
             ofd.Title = "Select Il2Cpp binary file";
@@ -910,96 +890,97 @@ namespace Il2CppDumper
 
         private void selOutDir_Click(object sender, RoutedEventArgs e)
         {
-            var fbd = new FolderBrowserDialog();
-            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var fbd = new VistaFolderBrowserDialog();
+            if (fbd.ShowDialog() ?? true)
             {
                 outputTxtBox.Text = fbd.SelectedPath + "\\"; //Show the path in label
             }
         }
-
         #endregion
 
         #region Drag & Drop handlers
-        private void selBinFile_DragLeave(object sender, System.Windows.DragEventArgs e)
+        private void OnDragLeave(object sender, System.Windows.DragEventArgs e)
         {
-            selBinFile.BorderBrush = null;
-        }
-
-        private void selBinFile_DragOver(object sender, System.Windows.DragEventArgs e)
-        {
-            if (e.CheckDragOver())
+            e.Handled = true;
+            if (sender is System.Windows.Controls.TextBox control)
             {
-                selBinFile.BorderThickness = new Thickness(1, 1, 1, 1);
-                selBinFile.BorderBrush = Brushes.PaleTurquoise;
+                control.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#999999"));
+            }
+            else if (sender is System.Windows.Controls.Button button)
+            {
+                button.BorderBrush = null;
             }
         }
 
-        private void selBinFile_Drop(object sender, System.Windows.DragEventArgs e)
+        private void OnDragOver(object sender, System.Windows.DragEventArgs e)
         {
-            string[] files = e.GetFilesDrop();
-            if (File.Exists(files[0]))
-                binFileTxtBox.Text = files[0];
-
-            selBinFile.BorderBrush = null;
-        }
-
-        private void selDatFile_DragLeave(object sender, System.Windows.DragEventArgs e)
-        {
-            selDatFile.BorderBrush = null;
-        }
-
-        private void selDatFile_DragOver(object sender, System.Windows.DragEventArgs e)
-        {
-            if (e.CheckDragOver(".dat"))
+            e.Handled = true;
+            if (sender is System.Windows.Controls.Control control)
             {
-                selDatFile.BorderThickness = new Thickness(1, 1, 1, 1);
-                selDatFile.BorderBrush = Brushes.PaleTurquoise;
+                bool isValid = false;
+                if (control.Tag is string tag)
+                {
+                    switch (tag)
+                    {
+                        case "bin":
+                            isValid = e.CheckDragOver();
+                            break;
+                        case "dat":
+                            isValid = e.CheckDragOver(".dat");
+                            break;
+                        case "folder":
+                            isValid = e.CheckDragOverFolder();
+                            break;
+                        case "start":
+                            isValid = e.CheckManyDragOver(".apk", ".xapk", ".zip", ".apks", ".apkm", ".ipa");
+                            break;
+                    }
+                }
+
+                if (isValid)
+                {
+                    control.BorderThickness = new Thickness(1, 1, 1, 1);
+                    control.BorderBrush = Brushes.PaleTurquoise;
+                }
             }
         }
 
-        private void selDatFile_Drop(object sender, System.Windows.DragEventArgs e)
+        private void OnDrop(object sender, System.Windows.DragEventArgs e)
         {
-            string[] files = e.GetFilesDrop();
-            if (File.Exists(files[0]))
-                datFileTxtBox.Text = files[0];
-
-            selDatFile.BorderBrush = null;
-        }
-
-        private void selOutDir_DragLeave(object sender, System.Windows.DragEventArgs e)
-        {
-            selOutDir.BorderBrush = null;
-        }
-
-        private void selOutDir_DragOver(object sender, System.Windows.DragEventArgs e)
-        {
-            if (e.CheckDragOverFolder())
+            e.Handled = true;
+            if (sender is System.Windows.Controls.Control control)
             {
-                selOutDir.BorderThickness = new Thickness(1, 1, 1, 1);
-                selOutDir.BorderBrush = Brushes.PaleTurquoise;
+                string[] files = e.GetFilesDrop();
+                if (files.Length > 0)
+                {
+                    if (control.Tag is string tag)
+                    {
+                        switch (tag)
+                        {
+                            case "bin":
+                                if (File.Exists(files[0]))
+                                    binFileTxtBox.Text = files[0];
+                                break;
+                            case "dat":
+                                if (File.Exists(files[0]))
+                                    datFileTxtBox.Text = files[0];
+                                break;
+                            case "folder":
+                                if (Directory.Exists(files[0]))
+                                    outputTxtBox.Text = files[0];
+                                break;
+                        }
+                    }
+                }
             }
-        }
 
-        private void selOutDir_Drop(object sender, System.Windows.DragEventArgs e)
-        {
-            string[] files = e.GetFilesDrop();
-            if (Directory.Exists(files[0]))
-                outputTxtBox.Text = files[0];
-
-            selOutDir.BorderBrush = null;
-        }
-
-        private void startBtn_DragLeave(object sender, System.Windows.DragEventArgs e)
-        {
-            startBtn.BorderBrush = null;
-        }
-
-        private void startBtn_DragOver(object sender, System.Windows.DragEventArgs e)
-        {
-            if (e.CheckManyDragOver(".apk", ".xapk", ".zip", ".apks", ".apkm", ".ipa"))
+            if (sender is System.Windows.Controls.TextBox textbox)
             {
-                startBtn.BorderThickness = new Thickness(1, 1, 1, 1);
-                startBtn.BorderBrush = Brushes.PaleTurquoise;
+                textbox.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#999999"));
+            }
+            else if (sender is System.Windows.Controls.Button button)
+            {
+                button.BorderBrush = null;
             }
         }
 

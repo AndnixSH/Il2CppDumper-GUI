@@ -10,7 +10,8 @@
         Width="724"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
-        Closed="Window_Closed">
+        Closed="Window_Closed"
+        Loaded="Window_Loaded">
     <!--ui:ThemeManager.RequestedTheme="Dark"-->
     <Window.Resources>
         <Style TargetType="HeaderedContentControl">
@@ -75,7 +76,13 @@
                                    Style="{StaticResource BodyTextBlockStyle}"
                                    FontWeight="Bold" />
                         <TextBox x:Name="binFileTxtBox"
-                                 Grid.Column="2" />
+                                 Grid.Column="2"
+                                 TextChanged="binFileTxtBox_TextChanged" 
+                                 AllowDrop="True"
+                                 Tag="bin"
+                                 PreviewDragLeave="OnDragLeave"
+                                 PreviewDragOver="OnDragOver"
+                                 PreviewDrop="OnDrop" />
                         <Button x:Name="selBinFile"
                                 AllowDrop="True"
                                 Grid.Column="4"
@@ -84,9 +91,10 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Click="selBinFile_Click"
-                                DragLeave="selBinFile_DragLeave"
-                                DragOver="selBinFile_DragOver"
-                                Drop="selBinFile_Drop" />
+                                Tag="bin"
+                                DragLeave="OnDragLeave"
+                                DragOver="OnDragOver"
+                                Drop="OnDrop" />
                         <!-- global-metadata.dat -->
                         <TextBlock  Margin="0,5,0,0"
                                     Grid.Row="2"
@@ -95,7 +103,12 @@
                                     FontWeight="Bold" />
                         <TextBox x:Name="datFileTxtBox"
                                  Grid.Row="2"
-                                 Grid.Column="2" />
+                                 Grid.Column="2"
+                                 TextChanged="datFileTxtBox_TextChanged"
+                                 Tag="dat"
+                                 PreviewDragLeave="OnDragLeave"
+                                 PreviewDragOver="OnDragOver"
+                                 PreviewDrop="OnDrop" />
                         <Button x:Name="selDatFile"
                                 AllowDrop="True"
                                 Grid.Row="2"
@@ -105,9 +118,10 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Click="selDatFile_Click"
-                                DragLeave="selDatFile_DragLeave"
-                                DragOver="selDatFile_DragOver"
-                                Drop="selDatFile_Drop" />
+                                Tag="dat"
+                                DragLeave="OnDragLeave"
+                                DragOver="OnDragOver"
+                                Drop="OnDrop" />
                         <!-- Output directory -->
                         <TextBlock  Margin="0,5,0,0"
                                     Grid.Row="4"
@@ -115,7 +129,12 @@
                                     Style="{StaticResource BodyTextBlockStyle}" />
                         <TextBox x:Name="outputTxtBox"
                                  Grid.Row="4"
-                                 Grid.Column="2" />
+                                 Grid.Column="2"
+                                 TextChanged="outputTxtBox_TextChanged"
+                                 Tag="folder"
+                                 PreviewDragLeave="OnDragLeave"
+                                 PreviewDragOver="OnDragOver"
+                                 PreviewDrop="OnDrop" />
                         <Button x:Name="selOutDir"
                                 AllowDrop="True"
                                 Grid.Row="4"
@@ -125,9 +144,10 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Click="selOutDir_Click"
-                                DragLeave="selOutDir_DragLeave"
-                                DragOver="selOutDir_DragOver"
-                                Drop="selOutDir_Drop" />
+                                Tag="folder"
+                                DragLeave="OnDragLeave"
+                                DragOver="OnDragOver"
+                                Drop="OnDrop" />
                     </Grid>
                     <Grid Grid.Row="1">
                         <Grid>
@@ -196,8 +216,9 @@
                                 VerticalAlignment="Stretch"
                                 FontSize="16"
                                 Click="startBtn_Click"
-                                DragLeave="startBtn_DragLeave"
-                                DragOver="startBtn_DragOver"
+                                Tag="start"
+                                DragLeave="OnDragLeave"
+                                DragOver="OnDragOver"
                                 Drop="startBtn_Drop" />
                     </Grid>
                     <Grid Grid.Row="3"

@@ -4,20 +4,22 @@
 
 [![](https://img.shields.io/github/downloads/AndnixSH/Il2CppDumper-GUI/total?style=for-the-badge)](https://github.com/AndnixSH/Il2CppDumper-GUI/releases) [![](https://img.shields.io/github/v/release/andnixsh/Il2CppDumper-GUI?style=for-the-badge)](https://github.com/AndnixSH/APKToolGUI/releases)
 
-This is the simple GUI version of Perfare's Il2CppDumper. The GUI is based on Bunifu Framework because I like dark theme. Support drag and drop binary files and DAT for file selection. APK, APKS, XAPK and decrypted IPA file for auto dump
+This is the simple GUI version of Perfare's Il2CppDumper. The GUI is based on Bunifu Framework because I like dark theme. Support drag and drop binary files and global-metadata.dat for file selection. APK, APKS, XAPK, ZIP and decrypted IPA file for auto dump
 
 # Download links
 
-Note: Antivirus may flag this tool as malcious, it is false positive and you should not worry about it. They flag all modding tools you need as malcious, this is their business, this is their way to make money.
+Note: Antivirus may flag this tool as malcious, it is false positive and you should not worry about it. They flag all modding tools you need as malicious, this is their business, this is their way to make money.
 
-- https://github.com/AndnixSH/Il2CppDumper-GUI/releases
+.NET 6.0 Desktop Runtime (Windows): https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+
+Il2CppDumper GUI: https://github.com/AndnixSH/Il2CppDumper-GUI/releases
 
 # Protected games
 If you can't dump, try the following methods
 
-- https://platinmods.com/threads/how-to-use-riru-il2cppdumper-to-dump-protected-games-magisk-root-only.134254/
+- https://www.andnixsh.com/2023/06/how-to-use-zygisk-il2cppdumper-to-dump.html
 
-- https://platinmods.com/threads/how-to-use-auto-il2cppdumper-to-dump-protected-games-no-root.134194/
+- https://www.andnixsh.com/2023/05/how-to-use-auto-il2cppdumper-to-dump.html
 
 - https://platinmods.com/threads/protected-il2cpp-dumping-tutorial.130649/
 
