@@ -11,7 +11,8 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        ui:ThemeManager.RequestedTheme="Dark">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70" />

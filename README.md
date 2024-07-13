@@ -6,11 +6,13 @@
 
 This is the simple GUI version of Perfare's Il2CppDumper. The GUI is based on Bunifu Framework because I like dark theme. Support drag and drop binary files and global-metadata.dat for file selection. APK, APKS, XAPK, ZIP and decrypted IPA file for auto dump
 
+# Requirements
+- Windows 7 and above
+- .NET 6.0 Desktop Runtime (Windows): https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+
 # Download links
 
 Note: Antivirus may flag this tool as malcious, it is false positive and you should not worry about it. They flag all modding tools you need as malicious, this is their business, this is their way to make money.
-
-.NET 6.0 Desktop Runtime (Windows): https://dotnet.microsoft.com/en-us/download/dotnet/6.0
 
 Il2CppDumper GUI: https://github.com/AndnixSH/Il2CppDumper-GUI/releases
 

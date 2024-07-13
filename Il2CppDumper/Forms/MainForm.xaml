@@ -11,7 +11,8 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
         Closed="Window_Closed"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        ui:ThemeManager.RequestedTheme="Dark">
     <!--ui:ThemeManager.RequestedTheme="Dark"-->
     <Window.Resources>
         <Style TargetType="HeaderedContentControl">

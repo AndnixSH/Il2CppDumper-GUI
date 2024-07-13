@@ -959,7 +959,14 @@ namespace Il2CppDumper
                         {
                             case "bin":
                                 if (File.Exists(files[0]))
+                                {
                                     binFileTxtBox.Text = files[0];
+
+                                    if (Settings.Default.AutoSetDir)
+                                    {
+                                        outputTxtBox.Text = Path.GetDirectoryName(binFileTxtBox.Text) + "\\";
+                                    }
+                                }
                                 break;
                             case "dat":
                                 if (File.Exists(files[0]))
