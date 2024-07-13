@@ -1,6 +1,6 @@
 # Il2CppDumper GUI
 
-![Screenshot](https://i.imgur.com/APd7EyO.png)
+![Screenshot](Screenshot.png)
 
 [![](https://img.shields.io/github/downloads/AndnixSH/Il2CppDumper-GUI/total?style=for-the-badge)](https://github.com/AndnixSH/Il2CppDumper-GUI/releases) [![](https://img.shields.io/github/v/release/andnixsh/Il2CppDumper-GUI?style=for-the-badge)](https://github.com/AndnixSH/APKToolGUI/releases)
 
