@@ -16,6 +16,17 @@ Note: Antivirus may flag this tool as malcious, it is false positive and you sho
 
 Il2CppDumper GUI: https://github.com/AndnixSH/Il2CppDumper-GUI/releases
 
+# How to use
+
+Drop APK, APKS, XAPK, ZIP or decrypted IPA file on the Start button to dump
+
+To manually select files, drop binary file and global-metadata.dat on the textboxes or the Select button, or click Select and choose a file. After that, press the start button to dump
+
+To obtain CodeRegistration and MetadataRegistration, read the following tutorials:
+https://tomorrowisnew.com/posts/Finding-CodeRegistration-and-MetadataRegistration/
+
+https://il2cppdumper.com/reverse/examining-the-binary
+
 # Protected games
 If you can't dump, try the following methods
 
