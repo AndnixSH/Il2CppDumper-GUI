@@ -13,16 +13,14 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Prefer32Bit>false</Prefer32Bit>	
 		<PreBuildEvent>rem xcopy $(ProjectDir)Scripts $(ProjectDir)$(OutDir)bin /Y /I /S</PreBuildEvent>
-		<AssemblyVersion>3.0.0</AssemblyVersion>
-		<FileVersion>3.0.0</FileVersion>
+		<FileVersion>$(PackageVersion)</FileVersion>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Description>GUI version by AndnixSH. This is the fork of Il2CppDumper by Perfare</Description>
-		<Copyright>Copyright © AndnixSH 2022 | Original project: Perfare 2016-2023</Copyright>
+		<Copyright>Copyright © AndnixSH 2024 | Original project: Perfare 2016-2024</Copyright>
 		<Title>Il2CppDumper GUI</Title>
 		<Authors>AndnixSH, Perfare</Authors>
 		<Product>Il2CppDumper</Product>
 		<PackageId>Il2CppDumper</PackageId>
-		<Version>3.0.0</Version>
 		<UseWPF>True</UseWPF>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	</PropertyGroup>
@@ -32,6 +30,8 @@
 	<PropertyGroup>
 	  <PackageProjectUrl>https://github.com/AndnixSH/Il2CppDumper-GUI</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/AndnixSH/Il2CppDumper-GUI</RepositoryUrl>
+	  <Version>3.0.1</Version>
+	  <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Update="config.json">

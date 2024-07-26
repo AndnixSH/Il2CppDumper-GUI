@@ -383,6 +383,16 @@ namespace Il2CppDumper
         private async Task APKDump(string file, string outputPath)
         {
             Debug.WriteLine("arch: " + Settings.Default.AndroArch);
+            bool dumpArm64 = true, dumpArmv7 = true, dumpx86 = true, dumpx86_64 = true;
+            int archIndex = Settings.Default.AndroArch;
+            if (archIndex != 0)
+            {
+                dumpArm64 = archIndex == 1;
+                dumpArmv7 = archIndex == 2;
+                dumpx86 = archIndex == 3;
+                dumpx86_64 = archIndex == 4;
+            }
+
             await Task.Factory.StartNew(() =>
             {
                 using (ZipFile archive = ZipFile.Read(file))
@@ -412,63 +422,28 @@ namespace Il2CppDumper
                             metadataFile.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
                         metadataFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
 
-                        bool dumpArm64 = true, dumpArmv7 = true, dumpx86 = true, dumpx86_64 = true;
-                        if (Settings.Default.AndroArch != 0)
+                        var libabi = new List<string> { "armeabi-v7a", "arm64-v8a", "x86", "x86-64" };
+                        foreach (string abi in libabi)
                         {
-                            dumpArm64 = Settings.Default.AndroArch == 1;
-                            dumpArmv7 = Settings.Default.AndroArch == 2;
-                            dumpx86 = Settings.Default.AndroArch == 3;
-                            dumpx86_64 = Settings.Default.AndroArch == 4;
-                        }
+                            bool archMatch = (dumpArm64 && abi == "arm64-v8a") ||
+                                (dumpArmv7 && abi == "armeabi-v7a") ||
+                                (dumpx86_64 && abi == "x86-64") ||
+                                (dumpx86 && abi == "x86");
 
-                        foreach (var entry in archive.Entries)
-                        {
-                            if (entry.FileName.Equals(@"lib/armeabi-v7a/libil2cpp.so") && dumpArmv7)
+                            foreach (var entry in archive.Entries)
                             {
-                                Log("Dumping ARMv7", Brushes.PaleTurquoise);
-                                string archPath = Path.Combine(outputPath, "ARMv7");
+                                if (entry.FileName.Equals(@"lib/" + abi + "/libil2cpp.so") && archMatch)
+                                {
+                                    Debug.WriteLine(@"File: lib/" + abi + "/libil2cpp.so");
+                                    Log($"Dumping {abi}", Brushes.PaleTurquoise);
+                                    string archPath = Path.Combine(outputPath, abi);
 
-                                Directory.CreateDirectory(archPath);
-                                if (Settings.Default.ExtBinaryChkBox)
-                                    entry.Extract(archPath, ExtractExistingFileAction.OverwriteSilently);
-                                binaryFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
-                                Dumper(tempLibFile, Path.Combine(tempPath, "global-metadata.dat"), archPath + "\\");
-                            }
-
-                            if (entry.FileName.Equals(@"lib/arm64-v8a/libil2cpp.so") && dumpArm64)
-                            {
-                                Log("Dumping ARM64", Brushes.PaleTurquoise);
-                                string archPath = Path.Combine(outputPath, "ARM64");
-
-                                Directory.CreateDirectory(archPath);
-                                if (Settings.Default.ExtBinaryChkBox)
-                                    entry.Extract(archPath, ExtractExistingFileAction.OverwriteSilently);
-                                binaryFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
-                                Dumper(tempLibFile, Path.Combine(tempPath, "global-metadata.dat"), archPath + "\\");
-                            }
-
-                            if (entry.FileName.Equals(@"lib/x86/libil2cpp.so") && dumpx86)
-                            {
-                                Log("Dumping x86", Brushes.PaleTurquoise);
-                                string archPath = Path.Combine(outputPath, "x86");
-
-                                Directory.CreateDirectory(archPath);
-                                if (Settings.Default.ExtBinaryChkBox)
-                                    entry.Extract(archPath, ExtractExistingFileAction.OverwriteSilently);
-                                binaryFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
-                                Dumper(tempLibFile, Path.Combine(tempPath, "global-metadata.dat"), archPath + "\\");
-                            }
-
-                            if (entry.FileName.Equals(@"lib/x86_64/libil2cpp.so") && dumpx86_64)
-                            {
-                                Log("Dumping x86_64", Brushes.PaleTurquoise);
-                                string archPath = Path.Combine(outputPath, "x86_64");
-
-                                Directory.CreateDirectory(archPath);
-                                if (Settings.Default.ExtBinaryChkBox)
-                                    entry.Extract(archPath, ExtractExistingFileAction.OverwriteSilently);
-                                binaryFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
-                                Dumper(tempLibFile, Path.Combine(tempPath, "global-metadata.dat"), archPath + "\\");
+                                    Directory.CreateDirectory(archPath);
+                                    if (Settings.Default.ExtBinaryChkBox)
+                                        entry.Extract(archPath, ExtractExistingFileAction.OverwriteSilently);
+                                    entry.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
+                                    Dumper(tempLibFile, Path.Combine(tempPath, "global-metadata.dat"), archPath + "\\");
+                                }
                             }
                         }
                     }
@@ -493,6 +468,7 @@ namespace Il2CppDumper
                     dumpx86 = archIndex == 3;
                     dumpx86_64 = archIndex == 4;
                 }
+
                 bool metadataFound = false;
                 Log("Extracting files");
                 using (ZipFile archive = ZipFile.Read(file))
@@ -532,6 +508,7 @@ namespace Il2CppDumper
                                 //entryBase.Dispose();
                             }
                         }
+
                         var libabi = new List<string> { "armeabi_v7a", "arm64_v8a", "x86", "x86_64" };
                         foreach (string abi in libabi)
                         {
@@ -571,7 +548,7 @@ namespace Il2CppDumper
                                                 Directory.CreateDirectory(archPath);
                                                 if (Settings.Default.ExtBinaryChkBox)
                                                     entry.Extract(archPath, ExtractExistingFileAction.OverwriteSilently);
-                                                binaryFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
+                                                entry.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
                                                 Dumper(tempLibFile, Path.Combine(tempPath, "global-metadata.dat"), archPath + "\\");
                                             }
                                         }
