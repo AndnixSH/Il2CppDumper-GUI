@@ -40,9 +40,9 @@ If you can't dump, try the following methods
 
 - https://guidedhacking.com/threads/how-to-dump-protected-il2cpp-games-on-android.17617/
 
-- https://github.com/djkaty/Il2CppInspector (Il2CppInspector partially support decrypting some protected games)
-
 If none of these method helps, maybe do some reversing and decrypt it by yourself
+
+There will be no help & support of this project, therefore the issue section is closed. Do not under any circumstances try to reach me privately or create unrelated issues on my other projects.
 
 # Credits
 
