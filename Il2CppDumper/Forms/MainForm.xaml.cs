@@ -2,13 +2,13 @@
 using Il2CppDumper.Forms;
 using Il2CppDumper.Properties;
 using Il2CppDumper.Utils;
-using Ionic.Zip;
 using Newtonsoft.Json;
 using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -43,6 +43,7 @@ namespace Il2CppDumper
 
         //Nobody mod 32-bit iOS games so the switch has been removed, and forced 64-bit dump
         //I'll leave the codes here in case someone want to mod 32-bit games
+
         bool use64bitMach_O = true;
 
         public MainForm()
@@ -326,20 +327,23 @@ namespace Il2CppDumper
         {
             await Task.Factory.StartNew(() =>
             {
-                using (ZipFile archive = ZipFile.Read(file))
+                using (ZipArchive archive = ZipFile.OpenRead(file))
                 {
-                    archive.FlattenFoldersOnExtract = true;
-                    var ipaBinaryFolder = archive.Entries.FirstOrDefault(f => f.FileName.StartsWith("Payload/") && f.FileName.Contains(".app/") && f.FileName.Count(x => x == '/') == 2);
+                    var ipaBinaryFolder = archive.Entries.FirstOrDefault(f =>
+                        f.FullName.StartsWith("Payload/") &&
+                        f.FullName.Contains(".app/") &&
+                        f.FullName.Count(x => x == '/') == 2);
 
                     if (ipaBinaryFolder != null)
                     {
                         Regex myRegex3 = new Regex(@"(?<=Payload\/)(.*?)(?=.app\/)", RegexOptions.None);
-                        Match match = myRegex3.Match(ipaBinaryFolder.FileName);
+                        Match match = myRegex3.Match(ipaBinaryFolder.FullName);
 
                         var ipaBinaryName = match.ToString();
-                        var metadataFile = archive.Entries.FirstOrDefault(f => f.FileName == $"Payload/{ipaBinaryName}.app/Data/Managed/Metadata/global-metadata.dat");
-                        var frameworkFile = archive.Entries.FirstOrDefault(f => f.FileName == $"Payload/{ipaBinaryName}.app/Frameworks/UnityFramework.framework/UnityFramework");
-                        var binaryFile = archive.Entries.FirstOrDefault(f => f.FileName == $"Payload/{ipaBinaryName}.app/{ipaBinaryName}");
+                        var metadataFile = archive.Entries.FirstOrDefault(f => f.FullName == $"Payload/{ipaBinaryName}.app/Data/Managed/Metadata/global-metadata.dat");
+                        var frameworkFile = archive.Entries.FirstOrDefault(f => f.FullName == $"Payload/{ipaBinaryName}.app/Frameworks/UnityFramework.framework/UnityFramework");
+                        var binaryFile = archive.Entries.FirstOrDefault(f => f.FullName == $"Payload/{ipaBinaryName}.app/{ipaBinaryName}");
+
                         if (metadataFile != null)
                         {
                             if (frameworkFile != null)
@@ -347,30 +351,34 @@ namespace Il2CppDumper
 
                             Directory.CreateDirectory(outputPath);
 
+                            string tempPath = Path.Combine(Path.GetTempPath(), "IPADump");
+                            Directory.CreateDirectory(tempPath);
+
                             if (Settings.Default.ExtDatChkBox)
-                                metadataFile.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
-                            metadataFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
+                                ZipUtils.ExtractFile(metadataFile, outputPath);
+                            ZipUtils.ExtractFile(metadataFile, tempPath);
 
                             if (use64bitMach_O)
                             {
                                 Log("Dumping ARM64", Brushes.PaleTurquoise);
                                 if (Settings.Default.ExtBinaryChkBox)
-                                    binaryFile.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
-                                binaryFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
-                                Dumper(Path.Combine(tempPath, Path.GetFileName(binaryFile.FileName)), Path.Combine(tempPath, "global-metadata.dat"), outputPath);
+                                    ZipUtils.ExtractFile(binaryFile, outputPath);
+                                ZipUtils.ExtractFile(binaryFile, tempPath);
+                                Dumper(Path.Combine(tempPath, Path.GetFileName(binaryFile.FullName)), Path.Combine(tempPath, "global-metadata.dat"), outputPath);
                             }
                             else
                             {
                                 Log("Dumping ARMv7", Brushes.PaleTurquoise);
-
                                 if (Settings.Default.ExtBinaryChkBox)
-                                    binaryFile.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
-                                binaryFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
-                                Dumper(Path.Combine(tempPath, Path.GetFileName(binaryFile.FileName)), Path.Combine(tempPath, "global-metadata.dat"), outputPath);
+                                    ZipUtils.ExtractFile(binaryFile, outputPath);
+                                ZipUtils.ExtractFile(binaryFile, tempPath);
+                                Dumper(Path.Combine(tempPath, Path.GetFileName(binaryFile.FullName)), Path.Combine(tempPath, "global-metadata.dat"), outputPath);
                             }
                         }
                         else
+                        {
                             Log("This IPA does not contain an IL2CPP application", Brushes.Yellow);
+                        }
                     }
                     else
                     {
@@ -395,22 +403,22 @@ namespace Il2CppDumper
 
             await Task.Factory.StartNew(() =>
             {
-                using (ZipFile archive = ZipFile.Read(file))
+                using (ZipArchive archive = ZipFile.OpenRead(file))
                 {
                     Log("Extracting files");
-                    archive.FlattenFoldersOnExtract = true;
-                    var binaryFile = archive.Entries.FirstOrDefault(f => f.FileName.Contains("libil2cpp.so"));
-                    var metadataPath = archive.Entries.FirstOrDefault(f => f.FileName.Contains("assets/bin/Data/Managed/Resources/"));
-                    var metadataFile = archive.Entries.FirstOrDefault(f => f.FileName == "assets/bin/Data/Managed/Metadata/global-metadata.dat");
+
+                    var binaryFile = archive.Entries.FirstOrDefault(f => f.FullName.Contains("libil2cpp.so"));
+                    var metadataPath = archive.Entries.FirstOrDefault(f => f.FullName.Contains("assets/bin/Data/Managed/Resources/"));
+                    var metadataFile = archive.Entries.FirstOrDefault(f => f.FullName == "assets/bin/Data/Managed/Metadata/global-metadata.dat");
 
                     if (binaryFile == null && metadataPath != null)
                     {
-                        Log("This APK does not contain lib folder. APK has been splitted", Brushes.Yellow);
+                        Log("This APK does not contain lib folder. APK has been split", Brushes.Yellow);
                         return;
                     }
                     else if (binaryFile != null && metadataPath == null)
                     {
-                        Log("This APK is an il2cpp game but does not contain global-metadata.dat. It may be protected or APK has been splitted", Brushes.Yellow);
+                        Log("This APK is an il2cpp game but does not contain global-metadata.dat. It may be protected or APK has been split", Brushes.Yellow);
                         return;
                     }
 
@@ -419,29 +427,29 @@ namespace Il2CppDumper
                         Directory.CreateDirectory(outputPath);
 
                         if (Settings.Default.ExtDatChkBox)
-                            metadataFile.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
-                        metadataFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
+                            ZipUtils.ExtractFile(metadataFile, outputPath);
+                        ZipUtils.ExtractFile(metadataFile, tempPath);
 
                         var libabi = new List<string> { "armeabi-v7a", "arm64-v8a", "x86", "x86-64" };
                         foreach (string abi in libabi)
                         {
                             bool archMatch = (dumpArm64 && abi == "arm64-v8a") ||
-                                (dumpArmv7 && abi == "armeabi-v7a") ||
-                                (dumpx86_64 && abi == "x86-64") ||
-                                (dumpx86 && abi == "x86");
+                                             (dumpArmv7 && abi == "armeabi-v7a") ||
+                                             (dumpx86_64 && abi == "x86-64") ||
+                                             (dumpx86 && abi == "x86");
 
                             foreach (var entry in archive.Entries)
                             {
-                                if (entry.FileName.Equals(@"lib/" + abi + "/libil2cpp.so") && archMatch)
+                                if (entry.FullName.Equals($"lib/{abi}/libil2cpp.so") && archMatch)
                                 {
-                                    Debug.WriteLine(@"File: lib/" + abi + "/libil2cpp.so");
+                                    Debug.WriteLine($"File: lib/{abi}/libil2cpp.so");
                                     Log($"Dumping {abi}", Brushes.PaleTurquoise);
                                     string archPath = Path.Combine(outputPath, abi);
 
                                     Directory.CreateDirectory(archPath);
                                     if (Settings.Default.ExtBinaryChkBox)
-                                        entry.Extract(archPath, ExtractExistingFileAction.OverwriteSilently);
-                                    entry.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
+                                        ZipUtils.ExtractFile(entry, archPath);
+                                    ZipUtils.ExtractFile(entry, tempPath);
                                     Dumper(tempLibFile, Path.Combine(tempPath, "global-metadata.dat"), archPath + "\\");
                                 }
                             }
@@ -470,42 +478,40 @@ namespace Il2CppDumper
                 }
 
                 bool metadataFound = false;
+
                 Log("Extracting files");
-                using (ZipFile archive = ZipFile.Read(file))
+
+                using (ZipArchive archive = ZipFile.OpenRead(file))
                 {
-                    archive.FlattenFoldersOnExtract = true;
                     foreach (var entryApks in archive.Entries)
                     {
-                        Debug.WriteLine("Files: " + entryApks.FileName);
+                        Debug.WriteLine($"Files: {entryApks.FullName}");
 
-                        if (!entryApks.FileName.StartsWith("config.") && entryApks.FileName.EndsWith(".apk") && !metadataFound)
+                        if (!entryApks.FullName.StartsWith("config.") && entryApks.FullName.EndsWith(".apk") && !metadataFound)
                         {
-                            Log("Checking " + entryApks.FileName);
+                            Log($"Checking {entryApks.FullName}");
 
-                            var apkFile = Path.Combine(tempPath, entryApks.FileName);
-                            entryApks.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
+                            var apkFile = Path.Combine(tempPath, entryApks.FullName);
+                            ZipUtils.ExtractFile(entryApks, tempPath);
 
-                            using (ZipFile entryBase = ZipFile.Read(apkFile))
+                            using (ZipArchive entryBase = ZipFile.OpenRead(apkFile))
                             {
-                                entryBase.FlattenFoldersOnExtract = true;
-
-                                var metadataFile = entryBase.Entries.FirstOrDefault(f => f.FileName == "assets/bin/Data/Managed/Metadata/global-metadata.dat");
+                                var metadataFile = entryBase.Entries.FirstOrDefault(f => f.FullName == "assets/bin/Data/Managed/Metadata/global-metadata.dat");
 
                                 if (metadataFile == null)
                                 {
-                                    Log("No global-metadata.dat found in " + entryApks.FileName, Brushes.Yellow);
+                                    Log($"No global-metadata.dat found in {entryApks.FullName}", Brushes.Yellow);
                                 }
                                 else
                                 {
-                                    Log($"Found global-metadata.dat from {entryApks.FileName}. Extracting", Brushes.Chartreuse);
+                                    Log($"Found global-metadata.dat from {entryApks.FullName}. Extracting", Brushes.Chartreuse);
                                     metadataFound = true;
                                     Directory.CreateDirectory(outputPath);
 
                                     if (Settings.Default.ExtDatChkBox)
-                                        metadataFile.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
-                                    metadataFile.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
+                                        ZipUtils.ExtractFile(metadataFile, outputPath);
+                                    ZipUtils.ExtractFile(metadataFile, tempPath);
                                 }
-                                //entryBase.Dispose();
                             }
                         }
 
@@ -513,25 +519,24 @@ namespace Il2CppDumper
                         foreach (string abi in libabi)
                         {
                             bool archMatch = (dumpArm64 && abi == "arm64_v8a") ||
-                                (dumpArmv7 && abi == "armeabi_v7a") ||
-                                (dumpx86_64 && abi == "x86_64") ||
-                                (dumpx86 && abi == "x86");
+                                             (dumpArmv7 && abi == "armeabi_v7a") ||
+                                             (dumpx86_64 && abi == "x86_64") ||
+                                             (dumpx86 && abi == "x86");
 
-                            if (entryApks.FileName.Contains(abi) && entryApks.FileName.EndsWith(".apk") && archMatch)
+                            if (entryApks.FullName.Contains(abi) && entryApks.FullName.EndsWith(".apk") && archMatch)
                             {
-                                Log("Checking " + entryApks.FileName);
+                                Log($"Checking {entryApks.FullName}");
 
-                                var apkFile = Path.Combine(tempPath, entryApks.FileName);
-                                entryApks.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
+                                var apkFile = Path.Combine(tempPath, entryApks.FullName);
+                                ZipUtils.ExtractFile(entryApks, tempPath);
 
-                                using (ZipFile entryBase = ZipFile.Read(apkFile))
+                                using (ZipArchive entryBase = ZipFile.OpenRead(apkFile))
                                 {
-                                    entryBase.FlattenFoldersOnExtract = true;
-                                    var binaryFile = entryBase.Entries.FirstOrDefault(f => f.FileName.Contains("libil2cpp.so"));
+                                    var binaryFile = entryBase.Entries.FirstOrDefault(f => f.FullName.Contains("libil2cpp.so"));
 
                                     if (binaryFile == null)
                                     {
-                                        Log($"The split APK {entryApks.FileName} does not contain libil2cpp.so folder", Brushes.Yellow);
+                                        Log($"The split APK {entryApks.FullName} does not contain libil2cpp.so folder", Brushes.Yellow);
                                         return;
                                     }
                                     else
@@ -540,25 +545,23 @@ namespace Il2CppDumper
 
                                         foreach (var entry in entryBase.Entries)
                                         {
-                                            if (entry.FileName.Contains("libil2cpp.so"))
+                                            if (entry.FullName.Contains("libil2cpp.so"))
                                             {
-                                                Log($"Found libil2cpp.so from {entry.FileName}. Dumping", Brushes.Chartreuse);
+                                                Log($"Found libil2cpp.so from {entry.FullName}. Dumping", Brushes.Chartreuse);
                                                 string archPath = Path.Combine(outputPath, abi);
 
                                                 Directory.CreateDirectory(archPath);
                                                 if (Settings.Default.ExtBinaryChkBox)
-                                                    entry.Extract(archPath, ExtractExistingFileAction.OverwriteSilently);
-                                                entry.Extract(tempPath, ExtractExistingFileAction.OverwriteSilently);
+                                                    ZipUtils.ExtractFile(entry, archPath);
+                                                ZipUtils.ExtractFile(entry, tempPath);
                                                 Dumper(tempLibFile, Path.Combine(tempPath, "global-metadata.dat"), archPath + "\\");
                                             }
                                         }
-                                        entryBase.Dispose();
                                     }
                                 }
                             }
                         }
                     }
-                    archive.Dispose();
                 }
             }).ConfigureAwait(false);
         }
