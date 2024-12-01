@@ -30,7 +30,7 @@
 	<PropertyGroup>
 	  <PackageProjectUrl>https://github.com/AndnixSH/Il2CppDumper-GUI</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/AndnixSH/Il2CppDumper-GUI</RepositoryUrl>
-	  <Version>3.0.1</Version>
+	  <Version>3.0.2</Version>
 	  <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
 	</PropertyGroup>
 	<ItemGroup>
