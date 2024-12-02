@@ -293,14 +293,21 @@ namespace Il2CppDumper
                 }
                 catch (Exception ex)
                 {
-                    Log("There was an error trying to generate struct: " + ex.ToString(), Brushes.Orange);
+                    Log("There was an error trying to generate struct: " + ex.Message, Brushes.Orange);
                 }
             }
             if (config.GenerateDummyDll)
             {
-                Log("Generating dummy dll...");
-                DummyAssemblyExporter.Export(executor, outputDir, config.DummyDllAddToken);
-                Log("Done!", Brushes.Chartreuse);
+                try
+                {
+                    Log("Generating dummy dll...");
+                    DummyAssemblyExporter.Export(executor, outputDir, config.DummyDllAddToken);
+                    Log("Done!", Brushes.Chartreuse);
+                }
+                catch (Exception ex)
+                {
+                    Log("There was an error trying to generate struct: " + ex.Message, Brushes.Orange);
+                }
                 Directory.SetCurrentDirectory(basePath); //Fix read-only directory permission
             }
         }
