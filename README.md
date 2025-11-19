@@ -6,6 +6,10 @@
 
 This is the simple GUI version of Perfare's Il2CppDumper. The GUI is based on Bunifu Framework because I like dark theme. Support drag and drop binary files and global-metadata.dat for file selection. APK, APKS, XAPK, ZIP and decrypted IPA file for auto dump
 
+# NO support
+
+Due to the variety and complexity of protection and encryption methods utilized by many games, I cannot offer support or assistance for this project. Consequently, the Issues section is closed. Currently, only Pull Requests are being accepted. Please refrain from contacting me privately or creating unrelated issues on my other projects.
+
 # Requirements
 - Windows 7 and above
 - .NET 6.0 Desktop Runtime (Windows): https://dotnet.microsoft.com/en-us/download/dotnet/6.0
@@ -41,8 +45,6 @@ If you can't dump, try the following methods
 - https://guidedhacking.com/threads/how-to-dump-protected-il2cpp-games-on-android.17617/
 
 If none of these method helps, maybe do some reversing and decrypt it by yourself
-
-There will be no help & support of this project, therefore the issue section is closed. Do not under any circumstances try to reach me privately or create unrelated issues on my other projects.
 
 # Credits
 
