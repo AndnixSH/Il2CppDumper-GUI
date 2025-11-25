@@ -75,10 +75,10 @@
 	<ItemGroup>
 		<PackageReference Include="ModernWpfUI" Version="0.9.6" />
 		<PackageReference Include="Mono.Cecil" Version="0.11.6" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
 		<PackageReference Include="PortableSettingsProvider" Version="0.2.5" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="10.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Remove="Utils\OpenFileDialog.cs" />
