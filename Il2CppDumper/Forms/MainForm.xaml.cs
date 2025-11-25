@@ -367,7 +367,7 @@ namespace Il2CppDumper
 
                             if (use64bitMach_O)
                             {
-                                Log("Dumping ARM64", Brushes.PaleTurquoise);
+                                Log("> Dumping ARM64", Brushes.PaleTurquoise);
                                 if (Settings.Default.ExtBinaryChkBox)
                                     ZipUtils.ExtractFile(binaryFile, outputPath);
                                 ZipUtils.ExtractFile(binaryFile, tempPath);
@@ -375,7 +375,7 @@ namespace Il2CppDumper
                             }
                             else
                             {
-                                Log("Dumping ARMv7", Brushes.PaleTurquoise);
+                                Log("> Dumping ARMv7", Brushes.PaleTurquoise);
                                 if (Settings.Default.ExtBinaryChkBox)
                                     ZipUtils.ExtractFile(binaryFile, outputPath);
                                 ZipUtils.ExtractFile(binaryFile, tempPath);
@@ -397,6 +397,8 @@ namespace Il2CppDumper
 
         private async Task APKDump(string file, string outputPath)
         {
+            Log($"Opening {file}");
+
             Debug.WriteLine("arch: " + Settings.Default.AndroArch);
             bool dumpArm64 = true, dumpArmv7 = true, dumpx86 = true, dumpx86_64 = true;
             int archIndex = Settings.Default.AndroArch;
@@ -450,7 +452,7 @@ namespace Il2CppDumper
                                 if (entry.FullName.Equals($"lib/{abi}/libil2cpp.so") && archMatch)
                                 {
                                     Debug.WriteLine($"File: lib/{abi}/libil2cpp.so");
-                                    Log($"Dumping {abi}", Brushes.PaleTurquoise);
+                                    Log($"> Dumping {abi}", Brushes.PaleTurquoise);
                                     string archPath = Path.Combine(outputPath, abi);
 
                                     Directory.CreateDirectory(archPath);
@@ -490,6 +492,36 @@ namespace Il2CppDumper
 
                 using (ZipArchive archive = ZipFile.OpenRead(file))
                 {
+                    var obbEntriesOuter = archive.Entries
+                      .Where(e => e.FullName.EndsWith(".obb", StringComparison.OrdinalIgnoreCase))
+                      .ToList();
+                    bool hasObbFile = false;
+                    if (obbEntriesOuter.Count > 0)
+                    {
+                        foreach (var obbEntry in obbEntriesOuter)
+                        {
+                            hasObbFile = true;
+                        }
+                    }
+
+                    if (hasObbFile)
+                    {
+                        Log("OBB file detected. Extracting single APK file...", Brushes.Yellow);
+                        foreach (var entryApk in archive.Entries)
+                        {
+                            if (entryApk.FullName.EndsWith(".apk"))
+                            {
+                                var apkFile = Path.Combine(tempPath, entryApk.FullName);
+
+                                Log($"Extracting {entryApk.FullName} to {apkFile}");
+                                ZipUtils.ExtractFile(entryApk, tempPath);
+
+                                _ = APKDump(apkFile, outputPath);
+                                return;
+                            }
+                        }
+                    }
+
                     foreach (var entryApks in archive.Entries)
                     {
                         Debug.WriteLine($"Files: {entryApks.FullName}");
@@ -1004,6 +1036,7 @@ namespace Il2CppDumper
                         break;
                     case ".apks":
                     case ".xapk":
+                    case ".apkm":
                     case ".zip":
                         await SplitAPKDump(file, outputPath);
                         break;
