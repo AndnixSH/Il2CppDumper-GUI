@@ -191,22 +191,45 @@ namespace Il2CppDumper
                 var relaTable = ReadClassArray<Elf64_Rela>(relaOffset, relaSize / 24L);
                 foreach (var rela in relaTable)
                 {
-                    var type = rela.r_info & 0xffffffff;
-                    var sym = rela.r_info >> 32;
-                    (ulong value, bool recognized) result = (type, elfHeader.e_machine) switch
+                    // Process each relocation independently: a single malformed entry
+                    // (bad symbol index, unmapped offset) must not abort the whole
+                    // loop, otherwise later data pointers - including the il2cpp
+                    // metadataRegistration.types array - would be left unrelocated and
+                    // every type lookup would read garbage.
+                    try
                     {
-                        (R_AARCH64_ABS64, EM_AARCH64) => (symbolTable[sym].st_value + rela.r_addend, true),
-                        (R_AARCH64_RELATIVE, EM_AARCH64) => (rela.r_addend, true),
+                        var type = rela.r_info & 0xffffffff;
+                        var sym = rela.r_info >> 32;
+                        var symValue = 0ul;
+                        var needsSym = (type == R_AARCH64_ABS64 && elfHeader.e_machine == EM_AARCH64)
+                            || (type == R_X86_64_64 && elfHeader.e_machine == EM_X86_64);
+                        if (needsSym)
+                        {
+                            if (symbolTable == null || sym >= (ulong)symbolTable.Length)
+                            {
+                                continue;
+                            }
+                            symValue = symbolTable[sym].st_value;
+                        }
+                        (ulong value, bool recognized) result = (type, elfHeader.e_machine) switch
+                        {
+                            (R_AARCH64_ABS64, EM_AARCH64) => (symValue + rela.r_addend, true),
+                            (R_AARCH64_RELATIVE, EM_AARCH64) => (rela.r_addend, true),
 
-                        (R_X86_64_64, EM_X86_64) => (symbolTable[sym].st_value + rela.r_addend, true),
-                        (R_X86_64_RELATIVE, EM_X86_64) => (rela.r_addend, true),
+                            (R_X86_64_64, EM_X86_64) => (symValue + rela.r_addend, true),
+                            (R_X86_64_RELATIVE, EM_X86_64) => (rela.r_addend, true),
 
-                        _ => (0, false)
-                    };
-                    if (result.recognized)
+                            _ => (0, false)
+                        };
+                        if (result.recognized)
+                        {
+                            Position = MapVATR(rela.r_offset);
+                            Write(result.value);
+                        }
+                    }
+                    catch
                     {
-                        Position = MapVATR(rela.r_offset);
-                        Write(result.value);
+                        // skip this relocation, keep processing the rest
                     }
                 }
             }

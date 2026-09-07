@@ -13,8 +13,8 @@ Due to the variety and complexity of protection and encryption methods utilized 
 # Features
 - Complete DLL restore (except code), can be used to extract MonoBehaviour and MonoScript
 - Supports ELF, ELF64, Mach-O, PE, NSO and WASM format
-- Supports Unity 5.3 - 6000
-- Supports Metadata 16 - 39
+- Supports Unity 5.3 - 6000.5
+- Supports Metadata 16 - 39 and 104 - 110 (Unity 6000.5+)
 - Supports generate IDA, Ghidra and Binary Ninja scripts to help them better analyze il2cpp files
 - Supports generate structures header file
 - Supports Android memory dumped libil2cpp.so file to bypass protection
@@ -127,6 +127,8 @@ Please note that the executable file for the PC platform is `GameAssembly.dll` o
 Il2CppDumper detected that the executable file has been protected, use `GameGuardian` to dump `libil2cpp.so` from the game memory, then use Il2CppDumper to load and follow the prompts, can bypass most protections.
 
 # Credits
+
+- Mika Cybertron (Unity 6000.5 / Metadata v104 - v110 support)
 
 - Axey (Unity 6 / Metadata v39 upgrade, performance options)
 

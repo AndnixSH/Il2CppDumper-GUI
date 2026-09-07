@@ -44,7 +44,10 @@ namespace Il2CppDumper
                 foreach (var imageDef in metadata.imageDefs)
                 {
                     var imageDefName = metadata.GetStringFromIndex(imageDef.nameIndex);
-                    var codeGenModule = il2Cpp.codeGenModules[imageDefName];
+                    if (!il2Cpp.TryGetCodeGenModule(imageDefName, out var codeGenModule))
+                    {
+                        continue;
+                    }
                     if (imageDef.customAttributeCount > 0)
                     {
                         var pointers = il2Cpp.ReadClassArray<ulong>(il2Cpp.MapVATR(codeGenModule.customAttributeCacheGenerator), imageDef.customAttributeCount);
@@ -99,6 +102,12 @@ namespace Il2CppDumper
                         else
                         {
                             typeDef = GetTypeDefinitionFromIl2CppType(il2CppType);
+                        }
+                        if (typeDef == null)
+                        {
+                            // Unresolvable type reference (out-of-range klassIndex in
+                            // protected metadata) - emit a placeholder instead of throwing.
+                            return "object";
                         }
                         if (typeDef.declaringTypeIndex != -1)
                         {
@@ -241,7 +250,10 @@ namespace Il2CppDumper
             Il2CppRGCTXDefinition[] collection = null;
             if (il2Cpp.Version >= 24.2)
             {
-                il2Cpp.rgctxsDictionary[imageName].TryGetValue(typeDef.token, out collection);
+                if (il2Cpp.TryGetRGCTXDataDictionary(imageName, out var rgctxs))
+                {
+                    rgctxs.TryGetValue(typeDef.token, out collection);
+                }
             }
             else
             {
@@ -259,7 +271,10 @@ namespace Il2CppDumper
             Il2CppRGCTXDefinition[] collection = null;
             if (il2Cpp.Version >= 24.2)
             {
-                il2Cpp.rgctxsDictionary[imageName].TryGetValue(methodDef.token, out collection);
+                if (il2Cpp.TryGetRGCTXDataDictionary(imageName, out var rgctxs))
+                {
+                    rgctxs.TryGetValue(methodDef.token, out collection);
+                }
             }
             else
             {
@@ -294,13 +309,29 @@ namespace Il2CppDumper
         {
             if (il2Cpp.Version >= 27 && il2Cpp.IsDumped)
             {
-                var offset = il2CppType.data.typeHandle - metadata.ImageBase - metadata.header.typeDefinitionsOffset;
+                var typeDefinitionsOffset = metadata.Version >= 38
+                    ? (ulong)metadata.header.typeDefinitions.offset
+                    : metadata.header.typeDefinitionsOffset;
+                var offset = il2CppType.data.typeHandle - metadata.ImageBase - typeDefinitionsOffset;
                 var index = offset / (ulong)metadata.SizeOf(typeof(Il2CppTypeDefinition));
+                if (index >= (ulong)metadata.typeDefs.Length)
+                {
+                    return null;
+                }
                 return metadata.typeDefs[index];
             }
             else
             {
-                return metadata.typeDefs[il2CppType.data.klassIndex];
+                // Bounds-guard the klassIndex: protected/obfuscated binaries can yield
+                // type entries whose klassIndex points outside the typeDefs table.
+                // Return null so callers can substitute a placeholder instead of
+                // throwing an IndexOutOfRangeException that aborts the whole dump.
+                var klassIndex = il2CppType.data.klassIndex;
+                if (klassIndex < 0 || klassIndex >= metadata.typeDefs.Length)
+                {
+                    return null;
+                }
+                return metadata.typeDefs[klassIndex];
             }
         }
 
@@ -308,7 +339,10 @@ namespace Il2CppDumper
         {
             if (il2Cpp.Version >= 27 && il2Cpp.IsDumped)
             {
-                var offset = il2CppType.data.genericParameterHandle - metadata.ImageBase - metadata.header.genericParametersOffset;
+                var genericParametersOffset = metadata.Version >= 38
+                    ? (ulong)metadata.header.genericParameters.offset
+                    : metadata.header.genericParametersOffset;
+                var offset = il2CppType.data.genericParameterHandle - metadata.ImageBase - genericParametersOffset;
                 var index = offset / (ulong)metadata.SizeOf(typeof(Il2CppGenericParameter));
                 return metadata.genericParameters[index];
             }
@@ -336,6 +370,106 @@ namespace Il2CppDumper
             else
             {
                 value = pointer;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Reads an enum field constant from the field-default blob without using
+        /// the compressed integer encoding used by normal metadata/custom-attribute
+        /// blobs. Unity 6 metadata can describe an enum field through the enum type,
+        /// while the stored constant is the underlying primitive value.
+        /// </summary>
+        public bool TryGetEnumFieldDefaultValue(Il2CppTypeDefinition enumTypeDef, int fieldIndex, out object value)
+        {
+            value = null;
+
+            if (enumTypeDef == null || !enumTypeDef.IsEnum)
+            {
+                return false;
+            }
+
+            if (fieldIndex < 0 || fieldIndex >= metadata.fieldDefs.Length)
+            {
+                return false;
+            }
+
+            if (!metadata.GetFieldDefaultValueFromIndex(fieldIndex, out var fieldDefault) ||
+                fieldDefault.dataIndex < 0)
+            {
+                return false;
+            }
+
+            // Find value__, which determines the enum's underlying integral type.
+            var fieldStart = enumTypeDef.fieldStart;
+            var fieldEnd = fieldStart + enumTypeDef.field_count;
+            Il2CppType underlyingType = null;
+
+            for (var i = fieldStart; i < fieldEnd; i++)
+            {
+                var def = metadata.fieldDefs[i];
+                if (metadata.GetStringFromIndex(def.nameIndex) != "value__")
+                {
+                    continue;
+                }
+
+                if (def.typeIndex >= 0 && def.typeIndex < il2Cpp.types.Length)
+                {
+                    underlyingType = il2Cpp.types[def.typeIndex];
+                }
+                break;
+            }
+
+            if (underlyingType == null)
+            {
+                return false;
+            }
+
+            var pointer = metadata.GetDefaultValueFromIndex(fieldDefault.dataIndex);
+            metadata.Position = pointer;
+            var reader = metadata.Reader;
+
+            try
+            {
+                switch (underlyingType.type)
+                {
+                    case Il2CppTypeEnum.IL2CPP_TYPE_BOOLEAN:
+                        value = reader.ReadBoolean();
+                        return true;
+                    case Il2CppTypeEnum.IL2CPP_TYPE_I1:
+                        value = reader.ReadSByte();
+                        return true;
+                    case Il2CppTypeEnum.IL2CPP_TYPE_U1:
+                        value = reader.ReadByte();
+                        return true;
+                    case Il2CppTypeEnum.IL2CPP_TYPE_I2:
+                        value = reader.ReadInt16();
+                        return true;
+                    case Il2CppTypeEnum.IL2CPP_TYPE_U2:
+                        value = reader.ReadUInt16();
+                        return true;
+                    case Il2CppTypeEnum.IL2CPP_TYPE_I4:
+                        value = reader.ReadInt32();
+                        return true;
+                    case Il2CppTypeEnum.IL2CPP_TYPE_U4:
+                        value = reader.ReadUInt32();
+                        return true;
+                    case Il2CppTypeEnum.IL2CPP_TYPE_I8:
+                        value = reader.ReadInt64();
+                        return true;
+                    case Il2CppTypeEnum.IL2CPP_TYPE_U8:
+                        value = reader.ReadUInt64();
+                        return true;
+                    case Il2CppTypeEnum.IL2CPP_TYPE_CHAR:
+                        value = reader.ReadChar();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            catch (EndOfStreamException)
+            {
+                value = null;
                 return false;
             }
         }
@@ -432,13 +566,17 @@ namespace Il2CppDumper
                         for (int i = 0; i < arrayLen; i++)
                         {
                             var elementType = arrayElementType;
+                            var elementEnumType = enumType;
                             if (arrayElementsAreDifferent == 1)
                             {
-                                elementType = ReadEncodedTypeEnum(reader, out enumType);
+                                elementType = ReadEncodedTypeEnum(reader, out elementEnumType);
                             }
-                            GetConstantValueFromBlob(elementType, reader, out var data);
+                            if (!GetConstantValueFromBlob(elementType, reader, out var data) || data == null)
+                            {
+                                data = new BlobValue();
+                            }
                             data.il2CppTypeEnum = elementType;
-                            data.EnumType = enumType;
+                            data.EnumType = elementEnumType;
                             array[i] = data;
                         }
                         value.Value = array;
@@ -455,8 +593,13 @@ namespace Il2CppDumper
                         value.Value = il2Cpp.types[typeIndex];
                     }
                     return true;
+                case Il2CppTypeEnum.IL2CPP_TYPE_CLASS:
+                case Il2CppTypeEnum.IL2CPP_TYPE_OBJECT:
+                case Il2CppTypeEnum.IL2CPP_TYPE_GENERICINST:
+                case Il2CppTypeEnum.IL2CPP_TYPE_VALUETYPE:
+                    value.Value = null;
+                    return true;
                 default:
-                    value = null;
                     return false;
             }
         }

@@ -24,7 +24,7 @@ namespace Il2CppDumper
         public string GetStringCustomAttributeData()
         {
             BaseStream.Position = ctorBuffer;
-            var ctorIndex = ReadInt32();
+            var ctorIndex = ReadCtorIndex();
             var methodDef = metadata.methodDefs[ctorIndex];
             var typeDef = metadata.typeDefs[methodDef.declaringType];
             ctorBuffer = BaseStream.Position;
@@ -68,6 +68,22 @@ namespace Il2CppDumper
             }
         }
 
+        /// <summary>
+        /// Reads one constructor entry. Up to metadata v39 this is a plain method
+        /// index; from v104 (Unity 6000.5) it is an encoded metadata-usage token
+        /// (usage kind in the top 3 bits, method index shifted left with the low
+        /// bit set), so decode it the same way as other metadata usages.
+        /// </summary>
+        private int ReadCtorIndex()
+        {
+            var raw = ReadUInt32();
+            if (Metadata.GetEncodedIndexType(raw) != 0)
+            {
+                return (int)metadata.GetDecodedMethodIndex(raw);
+            }
+            return (int)raw;
+        }
+
         private string AttributeDataToString(BlobValue blobValue)
         {
             //TODO enum
@@ -100,7 +116,7 @@ namespace Il2CppDumper
             var visitor = new CustomAttributeReaderVisitor();
 
             BaseStream.Position = ctorBuffer;
-            var ctorIndex = ReadInt32();
+            var ctorIndex = ReadCtorIndex();
             visitor.CtorIndex = ctorIndex;
             var methodDef = metadata.methodDefs[ctorIndex];
             var typeDef = metadata.typeDefs[methodDef.declaringType];
@@ -160,7 +176,11 @@ namespace Il2CppDumper
             memberIndex = -(memberIndex + 1);
 
             var typeIndex = this.ReadCompressedUInt32();
-            var declaringClass = metadata.typeDefs[typeIndex];
+            // Up to metadata v39 the declaring class is a TypeDefinitionIndex; from
+            // v104 (Unity 6000.5) it is a TypeIndex into the Il2CppType table.
+            var declaringClass = metadata.Version >= 104
+                ? executor.GetTypeDefinitionFromIl2CppType(executor.il2Cpp.types[typeIndex])
+                : metadata.typeDefs[typeIndex];
 
             return (declaringClass, memberIndex);
         }

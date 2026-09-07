@@ -19,13 +19,6 @@ namespace Il2CppDumper
         private readonly MethodInfo readClassArray;
         private readonly Dictionary<Type, MethodInfo> genericMethodCache;
         private readonly Dictionary<FieldInfo, VersionAttribute[]> attributeCache;
-        private readonly Dictionary<FieldInfo, IndexAttribute> indexAttributeCache;
-
-        /// <summary>
-        /// Variable-width index sizes for the current metadata file. Defaults to
-        /// all 4-byte widths; populated from the header for metadata version 38+.
-        /// </summary>
-        public IndexWidths IndexSizes = new IndexWidths();
 
         public BinaryStream(Stream input)
         {
@@ -36,7 +29,6 @@ namespace Il2CppDumper
             readClassArray = GetType().GetMethod("ReadClassArray", new[] { typeof(long) });
             genericMethodCache = new();
             attributeCache = new();
-            indexAttributeCache = new();
         }
 
         public bool ReadBoolean() => reader.ReadBoolean();
@@ -114,28 +106,6 @@ namespace Il2CppDumper
             };
         }
 
-        /// <summary>
-        /// Reads a variable-width metadata index. Widths of 1 and 2 bytes use the
-        /// all-ones value (0xFF / 0xFFFF) as the "invalid" (-1) sentinel, matching
-        /// the il2cpp runtime. A width of 4 is a plain signed int32.
-        /// </summary>
-        public int ReadVariableIndex(byte width)
-        {
-            switch (width)
-            {
-                case 1:
-                    var b = ReadByte();
-                    return b == byte.MaxValue ? -1 : b;
-                case 2:
-                    var s = ReadUInt16();
-                    return s == ushort.MaxValue ? -1 : s;
-                case 4:
-                    return ReadInt32();
-                default:
-                    throw new NotSupportedException($"Invalid variable index width: {width}");
-            }
-        }
-
         public T ReadClass<T>(ulong addr) where T : new()
         {
             Position = addr;
@@ -181,21 +151,6 @@ namespace Il2CppDumper
                     var fieldType = i.FieldType;
                     if (fieldType.IsPrimitive)
                     {
-                        // Metadata v38+: some int32 index fields are stored with a
-                        // variable on-disk width derived from the table sizes.
-                        if (Version >= 38)
-                        {
-                            if (!indexAttributeCache.TryGetValue(i, out var indexAttribute))
-                            {
-                                indexAttribute = i.GetCustomAttribute<IndexAttribute>();
-                                indexAttributeCache.Add(i, indexAttribute);
-                            }
-                            if (indexAttribute != null && indexAttribute.Kind != IndexKind.None)
-                            {
-                                i.SetValue(t, ReadVariableIndex(IndexSizes.Get(indexAttribute.Kind)));
-                                continue;
-                            }
-                        }
                         i.SetValue(t, ReadPrimitive(fieldType));
                     }
                     else if (fieldType.IsEnum)

@@ -166,7 +166,7 @@ namespace Il2CppDumper
 
         private void RelocationProcessing()
         {
-            Console.WriteLine("Applying relocations...");
+            MainForm.Log("Applying relocations...");
             try
             {
                 var relaOffset = MapVATR(dynamicSection.First(x => x.d_tag == DT_RELA).d_un);

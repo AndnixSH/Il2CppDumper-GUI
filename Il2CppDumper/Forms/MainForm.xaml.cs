@@ -206,7 +206,7 @@ namespace Il2CppDumper
                     break;
             }
             var version = config.ForceIl2CppVersion ? config.ForceVersion : metadata.Version;
-            il2Cpp.SetProperties(version, metadata.metadataUsagesCount);
+            il2Cpp.SetProperties(version, metadata.metadataUsagesCount, metadata);
             Log($"Il2Cpp Version: {il2Cpp.Version}");
             if (config.ForceDump || il2Cpp.CheckDump())
             {
@@ -254,7 +254,7 @@ namespace Il2CppDumper
                     {
                         Log("Use custom PE loader");
                         il2Cpp = PELoader.Load(il2cppPath);
-                        il2Cpp.SetProperties(version, metadata.metadataUsagesCount);
+                        il2Cpp.SetProperties(version, metadata.metadataUsagesCount, metadata);
                         flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length, metadata.imageDefs.Length);
                     }
                 }
@@ -282,7 +282,10 @@ namespace Il2CppDumper
                 {
                     var typeDef = metadata.typeDefs[0];
                     var il2CppType = il2Cpp.types[typeDef.byvalTypeIndex];
-                    metadata.ImageBase = il2CppType.data.typeHandle - metadata.header.typeDefinitionsOffset;
+                    var typeDefinitionsOffset = metadata.Version >= 38
+                        ? (ulong)metadata.header.typeDefinitions.offset
+                        : metadata.header.typeDefinitionsOffset;
+                    metadata.ImageBase = il2CppType.data.typeHandle - typeDefinitionsOffset;
                 }
             }
             catch (Exception ex)
