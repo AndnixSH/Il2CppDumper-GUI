@@ -21,6 +21,8 @@ namespace Il2CppDumper
         private readonly Dictionary<Il2CppGenericParameter, GenericParameter> genericParameterDic = new();
         private readonly MethodDefinition attributeAttribute;
         private readonly TypeReference stringType;
+        private readonly TypeReference systemEnumType;
+        private readonly TypeReference systemTypeType;
         private readonly TypeSystem typeSystem;
         private readonly Dictionary<int, FieldDefinition> fieldDefinitionDic = new();
         private readonly Dictionary<int, PropertyDefinition> propertyDefinitionDic = new();
@@ -45,6 +47,11 @@ namespace Il2CppDumper
             var tokenAttribute = dummyMD.Types.First(x => x.Name == "TokenAttribute").Methods[0];
             stringType = dummyMD.TypeSystem.String;
             typeSystem = dummyMD.TypeSystem;
+            // System.Enum and System.Type are not part of Cecil's TypeSystem. Build
+            // them against the same core library the primitives use, so the dummy
+            // DLLs never reference the core library of the runtime running the dumper.
+            systemEnumType = new TypeReference("System", "Enum", dummyMD, typeSystem.CoreLibrary);
+            systemTypeType = new TypeReference("System", "Type", dummyMD, typeSystem.CoreLibrary);
 
             var resolver = new MyAssemblyResolver();
             var moduleParameters = new ModuleParameters
@@ -195,7 +202,7 @@ namespace Il2CppDumper
                     if (typeDef.IsEnum)
                     {
                         typeDefinition.BaseType =
-                            typeDefinition.Module.ImportReference(typeof(System.Enum));
+                            Import(typeDefinition.Module, systemEnumType);
                     }
 
                     //interfaces
@@ -952,7 +959,7 @@ namespace Il2CppDumper
             {
                 if (blobValue.il2CppTypeEnum == Il2CppTypeEnum.IL2CPP_TYPE_IL2CPP_TYPE_INDEX)
                 {
-                    val = new CustomAttributeArgument(memberReference.Module.ImportReference(typeof(Type)), GetTypeReference(memberReference, (Il2CppType)val));
+                    val = new CustomAttributeArgument(Import(memberReference.Module, systemTypeType), GetTypeReference(memberReference, (Il2CppType)val));
                 }
                 else
                 {

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<OutputType>WinExe</OutputType>
 		<AssemblyName>Il2CppDumper GUI</AssemblyName>
 		<MapFileExtensions>true</MapFileExtensions>
@@ -78,7 +78,6 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
 		<PackageReference Include="PortableSettingsProvider" Version="0.2.5" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="10.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Remove="Utils\OpenFileDialog.cs" />

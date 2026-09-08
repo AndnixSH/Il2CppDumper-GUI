@@ -28,7 +28,7 @@ Due to the variety and complexity of protection and encryption methods utilized 
 
 # Requirements
 - Windows 7 and above
-- .NET 6.0 Desktop Runtime (Windows): https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+- .NET 10.0 Desktop Runtime (Windows): https://dotnet.microsoft.com/en-us/download/dotnet/10.0
 
 # Download links
 
