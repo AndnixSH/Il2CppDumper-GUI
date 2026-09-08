@@ -1,38 +1,92 @@
 ﻿using Mono.Cecil;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Il2CppDumper
 {
     public static class DummyAssemblyExporter
     {
-        public static void Export(Il2CppExecutor il2CppExecutor, string outputDir, bool addToken)
+        // Deterministic output: the same input produces byte-identical DLLs, which
+        // also lets a parallel export be verified against a sequential one.
+        private static readonly WriterParameters writerParameters = new()
+        {
+            DeterministicMvid = true,
+            Timestamp = 0
+        };
+
+        // Enum underlying types by (scope, full name); Resolve() is expensive and
+        // the same attribute argument types recur across every assembly.
+        private static readonly ConcurrentDictionary<string, TypeReference> enumUnderlyingTypeCache = new();
+
+        public static void Export(Il2CppExecutor il2CppExecutor, string outputDir, bool addToken, int workerThreads = 0)
         {
             Directory.SetCurrentDirectory(outputDir);
             if (Directory.Exists("DummyDll"))
                 Directory.Delete("DummyDll", true);
             Directory.CreateDirectory("DummyDll");
             Directory.SetCurrentDirectory("DummyDll");
+            var dummyDllDir = Directory.GetCurrentDirectory();
+            var stopwatch = Stopwatch.StartNew();
             var dummy = new DummyAssemblyGenerator(il2CppExecutor, addToken);
-            foreach (var assembly in dummy.Assemblies)
+            MainForm.Log($"DummyDll: built {dummy.Assemblies.Count} assemblies in {stopwatch.Elapsed.TotalSeconds:F1}s");
+            enumUnderlyingTypeCache.Clear();
+            long sanitizeTicks = 0, writeTicks = 0, diskTicks = 0;
+            var failures = 0;
+            // Each assembly is sanitized and written on its own; definitions in the
+            // other modules are only read, so the assemblies can be processed in
+            // parallel.
+            var threads = workerThreads > 0 ? workerThreads : Environment.ProcessorCount;
+            if (!Environment.Is64BitProcess)
+            {
+                // Every in-flight assembly holds its full image in memory; a 32-bit
+                // process runs out of address space long before it runs out of cores.
+                threads = Math.Min(threads, 2);
+            }
+            var options = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = threads
+            };
+            stopwatch.Restart();
+            Parallel.ForEach(dummy.Assemblies, options, assembly =>
             {
                 try
                 {
+                    var step = Stopwatch.StartNew();
                     SanitizeConstants(assembly);
                     SanitizeMemberReferences(assembly);
                     SanitizeCustomAttributes(assembly);
+                    Interlocked.Add(ref sanitizeTicks, step.ElapsedTicks);
 
+                    step.Restart();
                     var assemblyBytes = WriteAssembly(assembly);
-                    File.WriteAllBytes(assembly.MainModule.Name, assemblyBytes);
+                    Interlocked.Add(ref writeTicks, step.ElapsedTicks);
+
+                    step.Restart();
+                    File.WriteAllBytes(Path.Combine(dummyDllDir, assembly.MainModule.Name), assemblyBytes);
+                    Interlocked.Add(ref diskTicks, step.ElapsedTicks);
                 }
                 catch (System.Exception ex)
                 {
                     // Never let one malformed assembly stop the remaining
                     // DummyDll files from being generated.
+                    Interlocked.Increment(ref failures);
                     MainForm.Log($"WARNING: Failed to write {assembly.MainModule.Name}: {ex.Message}");
                 }
-            }
+            });
+            // Per-step times are summed over all worker threads, so they can exceed the wall time.
+            MainForm.Log($"DummyDll: wrote {dummy.Assemblies.Count - failures} files in {stopwatch.Elapsed.TotalSeconds:F1}s " +
+                $"({options.MaxDegreeOfParallelism} threads; thread time: sanitize {TicksToSeconds(sanitizeTicks):F1}s, " +
+                $"build {TicksToSeconds(writeTicks):F1}s, disk {TicksToSeconds(diskTicks):F1}s)");
+        }
+
+        private static double TicksToSeconds(long ticks)
+        {
+            return (double)ticks / Stopwatch.Frequency;
         }
 
         private static byte[] WriteAssembly(AssemblyDefinition assembly)
@@ -65,7 +119,7 @@ namespace Il2CppDumper
         private static byte[] WriteAssemblyToBytes(AssemblyDefinition assembly)
         {
             using var stream = new MemoryStream();
-            assembly.Write(stream);
+            assembly.Write(stream, writerParameters);
             return stream.ToArray();
         }
 
@@ -400,6 +454,24 @@ namespace Il2CppDumper
             {
                 return false;
             }
+            // Only a class or value type reference can be an enum; primitives,
+            // strings, arrays and generic instances never need resolving.
+            if (type.MetadataType != MetadataType.ValueType && type.MetadataType != MetadataType.Class)
+            {
+                return false;
+            }
+            var cacheKey = (type.Scope?.Name ?? string.Empty) + "|" + type.FullName;
+            if (enumUnderlyingTypeCache.TryGetValue(cacheKey, out underlyingType))
+            {
+                return underlyingType != null;
+            }
+            underlyingType = ResolveEnumUnderlyingType(type);
+            enumUnderlyingTypeCache[cacheKey] = underlyingType;
+            return underlyingType != null;
+        }
+
+        private static TypeReference ResolveEnumUnderlyingType(TypeReference type)
+        {
             TypeDefinition typeDefinition;
             try
             {
@@ -407,21 +479,20 @@ namespace Il2CppDumper
             }
             catch
             {
-                return false;
+                return null;
             }
             if (typeDefinition == null || !typeDefinition.IsEnum)
             {
-                return false;
+                return null;
             }
             foreach (var field in typeDefinition.Fields)
             {
                 if (field.Name == "value__")
                 {
-                    underlyingType = field.FieldType;
-                    return underlyingType != null;
+                    return field.FieldType;
                 }
             }
-            return false;
+            return null;
         }
 
         private static object ConvertEnumValue(TypeReference underlyingType, object value)

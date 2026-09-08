@@ -451,6 +451,18 @@ namespace Il2CppDumper
 
         private int[] ReadMetadataIndexArray(Il2CppSectionMetadata section, int indexSize)
         {
+            // Flat index tables do not always use the width implied by the table
+            // they point into (e.g. nested type indices stay 4 bytes even when
+            // the type definition index is 2 bytes), so trust the on-disk element
+            // size whenever the section describes it.
+            if (section.count > 0 && section.sectionSize > 0)
+            {
+                var elementSize = section.sectionSize / section.count;
+                if (elementSize == 1 || elementSize == 2 || elementSize == 4)
+                {
+                    indexSize = elementSize;
+                }
+            }
             Position = (ulong)section.offset;
             var result = new int[section.count];
             for (var i = 0; i < result.Length; i++)

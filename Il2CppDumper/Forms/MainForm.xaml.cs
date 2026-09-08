@@ -35,6 +35,8 @@ namespace Il2CppDumper
     {
         private static Config config;
         public static MainForm main { get; private set; }
+        // Elapsed time of the running dump, shown as [mm:ss.fff] in front of every log line.
+        private static readonly Stopwatch dumpTimer = new();
         string appVersion = null;
 
         string basePath = Path.GetDirectoryName(AppContext.BaseDirectory);
@@ -338,7 +340,7 @@ namespace Il2CppDumper
                 try
                 {
                     Log("Generating dummy dll...");
-                    DummyAssemblyExporter.Export(executor, outputDir, config.DummyDllAddToken);
+                    DummyAssemblyExporter.Export(executor, outputDir, config.DummyDllAddToken, optWorkerThreads);
                     Log("Done!", Brushes.Chartreuse);
                 }
                 catch (Exception ex)
@@ -739,6 +741,11 @@ namespace Il2CppDumper
         {
             if (!String.IsNullOrEmpty(text))
             {
+                if (dumpTimer.IsRunning)
+                {
+                    var elapsed = dumpTimer.Elapsed;
+                    text = $"[{(int)elapsed.TotalMinutes:00}:{elapsed.Seconds:00}.{elapsed.Milliseconds:000}] {text}";
+                }
                 Debug.WriteLine(text);
 
                 if (!Dispatcher.CheckAccess())
@@ -888,6 +895,7 @@ namespace Il2CppDumper
         {
             SaveConfig();
             LogBox.Document.Blocks.Clear();
+            dumpTimer.Restart();
             if (!Directory.Exists(outputTxtBox.Text))
             {
                 Log("Output directory does not exist", Brushes.Orange);
@@ -921,6 +929,7 @@ namespace Il2CppDumper
                 Dumper(binFile, datFile, outputPath);
             });
 
+            dumpTimer.Stop();
             ActionButtonsEnabled = true;
         }
 
@@ -1069,6 +1078,7 @@ namespace Il2CppDumper
             startBtn.BorderBrush = null;
             ActionButtonsEnabled = false;
             LogBox.Document.Blocks.Clear();
+            dumpTimer.Restart();
             SaveConfig();
             string[] files = e.GetFilesDrop();
             foreach (var file in files)
@@ -1104,6 +1114,7 @@ namespace Il2CppDumper
                 if (Settings.Default.AutoSetDir)
                     outputTxtBox.Text = Path.GetDirectoryName(file) + "\\";
             }
+            dumpTimer.Stop();
             ActionButtonsEnabled = true;
         }
         #endregion
