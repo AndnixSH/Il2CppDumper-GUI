@@ -344,10 +344,10 @@
                 <ui:SimpleStackPanel>
                     <TextBlock Text="Il2CppDumper GUI is a tool for reverse engineering Unity games built with IL2CPP. It restores symbols and recovers class, method, and field information from libil2cpp.so / GameAssembly.dll together with the global-metadata.dat file, then exports C# dumps, headers, and scripts you can use in Ghidra, IDA, and other tools."
                                TextWrapping="Wrap"
-                               FontWeight="SemiBold"
                                Margin="0,0,0,10" />
-                    <TextBlock Text="Axey (v3.1 Unity 6 / metadata v39 upgrade, performance options) &#x0a;&#x0a;AndnixSH (GUI design)&#x0a;&#x0a;Perfare (Il2CppDumper)&#x0a;&#x0a;djkaty (Helped me fixing an issue and I used some codes from her's Il2CppInspector)&#x0a;&#x0a;T5ive (Using some of his codes)&#x0a;"/>
-                    <TextBlock Text="Source code:" />
+                    <TextBlock Text="Credits:" FontWeight="SemiBold" FontSize="18" />
+                    <TextBlock Text="AndnixSH (GUI design)&#x0a;&#x0a;Mika Cybertron (Unity 6000.5 / Metadata v104 - v110 support)&#x0a;&#x0a;Axey (v3.1 Unity 6 / metadata v39 upgrade, performance options) &#x0a;&#x0a;Perfare (Il2CppDumper)&#x0a;&#x0a;djkaty (Il2CppInspector + Helped me fixing a bug in GUI)&#x0a;&#x0a;T5ive (Il2CppDumper-GUI alternative)&#x0a;"/>
+                    <TextBlock Text="Source code:" FontWeight="SemiBold" FontSize="18" />
                     <TextBlock HorizontalAlignment="Left">
 
                        

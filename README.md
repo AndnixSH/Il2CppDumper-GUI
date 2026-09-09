@@ -128,14 +128,14 @@ Il2CppDumper detected that the executable file has been protected, use `GameGuar
 
 # Credits
 
-- Mika Cybertron (Unity 6000.5 / Metadata v104 - v110 support)
+- AndnixSH (GUI design)
 
-- Axey (Unity 6 / Metadata v39 upgrade, performance options)
+- [Mika Cybertron](https://github.com/MikaCybertron) (Unity 6000.5 / Metadata v104 - v110 support)
 
-- AndnixSH (GUI related)
+- [Axey](https://platinmods.com/members/axey.63365/) (Unity 6 / Metadata v39 upgrade, performance options)
 
 - Perfare [Il2CppDumper](https://github.com/Perfare/Il2CppDumper)
 
-- djkaty (Helped me fixing an issue and I used some codes from her's [Il2CppInspector](https://github.com/djkaty/Il2CppInspector/)
+- djkaty ([Il2CppInspector](https://github.com/djkaty/Il2CppInspector/ + Helped me fixing a bug in GUI)
 
-- T5ive (Using some of his codes) [Il2CppDumper-GUI](https://github.com/T5ive/Il2CppDumper-GUI)
+- T5ive [Il2CppDumper-GUI alternative](https://github.com/T5ive/Il2CppDumper-GUI)
