@@ -118,6 +118,8 @@ namespace Il2CppDumper
         public Il2CppSectionMetadata events; // Il2CppEventDefinition
         [Version(Min = 38)]
         public Il2CppSectionMetadata properties; // Il2CppPropertyDefinition
+        [Version(Min = 111)]
+        public Il2CppSectionMetadata methodSignatures; // blob: return type, parameter count, parameter types
         [Version(Min = 38)]
         public Il2CppSectionMetadata methods; // Il2CppMethodDefinition
         [Version(Min = 38)]
@@ -371,6 +373,11 @@ namespace Il2CppDumper
         public ushort iflags;
         public ushort slot;
         public ushort parameterCount;
+        // v111+: offset of this method's signature (return type and parameter
+        // types) in the methodSignatures blob; returnType and parameterCount are
+        // filled in from it.
+        [Version(Min = 111)]
+        public int signatureOffset;
     }
 
     public class Il2CppParameterDefinition

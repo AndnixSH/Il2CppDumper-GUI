@@ -13,8 +13,8 @@ Due to the variety and complexity of protection and encryption methods utilized 
 # Features
 - Complete DLL restore (except code), can be used to extract MonoBehaviour and MonoScript
 - Supports ELF, ELF64, Mach-O, PE, NSO and WASM format
-- Supports Unity 5.3 - 6000.5
-- Supports Metadata 16 - 39 and 104 - 110 (Unity 6000.5+)
+- Supports Unity 5.3 - 6000.7
+- Supports Metadata 16 - 39 and 104 - 111 (Unity 6000.5 - 6000.7)
 - Supports generate IDA, Ghidra and Binary Ninja scripts to help them better analyze il2cpp files
 - Supports generate structures header file
 - Supports Android memory dumped libil2cpp.so file to bypass protection

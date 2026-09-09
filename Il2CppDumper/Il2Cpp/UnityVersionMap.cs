@@ -16,9 +16,10 @@ namespace Il2CppDumper
             // Order matters: check the most specific sub-versions first.
             return metadataVersion switch
             {
-                >= 110 => "newer than 6000.5 (metadata v110+)",
-                >= 108 => "newer than 6000.5 (metadata v108)",
-                >= 106 => "6000.5.0f1+",
+                >= 111 => "6000.7.0a6+",
+                >= 108 => "6000.6.0f1+",
+                >= 107 => "6000.5.5f1+",
+                >= 106 => "6000.5.0f1 - 6000.5.4f1",
                 >= 105 => "6000.5.0a5 - 6000.5.0b*",
                 >= 104 => "6000.5.0a1 - 6000.5.0a4",
                 >= 39 => "6000.3.0b1+",

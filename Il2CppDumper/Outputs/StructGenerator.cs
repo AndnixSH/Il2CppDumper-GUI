@@ -810,10 +810,12 @@ namespace Il2CppDumper
             {
                 var vTableIndex = typeDef.vtableStart + i;
                 var encodedMethodIndex = metadata.vtableMethods[vTableIndex];
-                var usage = Metadata.GetEncodedIndexType(encodedMethodIndex);
+                // The usage kind must be mapped per version: il2cpp 106.1+ (and
+                // metadata v108+) dropped one member of the usage enum.
+                var usage = metadata.GetEncodedIndexTypeForVersion(encodedMethodIndex);
                 var index = metadata.GetDecodedMethodIndex(encodedMethodIndex);
                 Il2CppMethodDefinition methodDef;
-                if (usage == 6) //kIl2CppMetadataUsageMethodRef
+                if (usage == (uint)Il2CppMetadataUsage.kIl2CppMetadataUsageMethodRef)
                 {
                     var methodSpec = il2Cpp.methodSpecs[index];
                     methodDef = metadata.methodDefs[methodSpec.methodDefinitionIndex];
@@ -852,7 +854,7 @@ namespace Il2CppDumper
                     structInfo.RGCTXs.Add(structRGCTXInfo);
                     structRGCTXInfo.Type = definitionData.type;
                     Il2CppRGCTXDefinitionData rgctxDefData;
-                    if (il2Cpp.Version >= 27.2)
+                    if (il2Cpp.Version >= 27.2 && il2Cpp.Version < 108)
                     {
                         rgctxDefData = il2Cpp.MapVATR<Il2CppRGCTXDefinitionData>(definitionData._data);
                     }
@@ -898,7 +900,7 @@ namespace Il2CppDumper
                     rgctxs.Add(structRGCTXInfo);
                     structRGCTXInfo.Type = definitionData.type;
                     Il2CppRGCTXDefinitionData rgctxDefData;
-                    if (il2Cpp.Version >= 27.2)
+                    if (il2Cpp.Version >= 27.2 && il2Cpp.Version < 108)
                     {
                         rgctxDefData = il2Cpp.MapVATR<Il2CppRGCTXDefinitionData>(definitionData._data);
                     }

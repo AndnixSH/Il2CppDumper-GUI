@@ -96,6 +96,10 @@ namespace Il2CppDumper
                 methodDefs = ReadMetadataClassArray<Il2CppMethodDefinition>(header.methods);
                 parameterDefs = ReadMetadataClassArray<Il2CppParameterDefinition>(header.parameters);
                 fieldDefs = ReadMetadataClassArray<Il2CppFieldDefinition>(header.fields);
+                if (Version >= 111)
+                {
+                    ApplyMethodSignatures();
+                }
             }
             else
             {
@@ -243,7 +247,7 @@ namespace Il2CppDumper
                 genericMethodFunctionsDefinitionsWithAdjustor = ReadMetadataClassArray<Il2CppGenericMethodFunctionsDefinitionsWithAdjustor>(header.genericMethodFunctionsDefinitionsWithAdjustor);
                 invokerIndices = ReadMetadataIndexArray(header.invokerIndices, invokerTableIndexSize);
                 rgctxRanges = ReadMetadataClassArray<Il2CppTokenRangePair>(header.rgctxRanges);
-                rgctxEntries = ReadMetadataClassArray<Il2CppRGCTXDefinition>(header.rgctxValues);
+                rgctxEntries = ReadRgctxDefinitions(header.rgctxValues);
             }
             if (Version >= 110)
             {
@@ -336,6 +340,35 @@ namespace Il2CppDumper
             return ReadClass<T>();
         }
 
+        /// <summary>
+        /// v108+ stores RGCTX definitions in the metadata as a 1-byte data type
+        /// followed by a 4-byte metadata index (no binary pointer any more).
+        /// </summary>
+        private Il2CppRGCTXDefinition[] ReadRgctxDefinitions(Il2CppSectionMetadata section)
+        {
+            var result = new Il2CppRGCTXDefinition[section.count];
+            if (section.count == 0)
+            {
+                return result;
+            }
+            var elementSize = section.sectionSize / section.count;
+            Position = (ulong)section.offset;
+            for (var i = 0; i < result.Length; i++)
+            {
+                var start = Position;
+                var type = ReadByte();
+                var data = ReadUInt32();
+                result[i] = new Il2CppRGCTXDefinition
+                {
+                    type_post29 = type,
+                    _data = data,
+                    data = new Il2CppRGCTXDefinitionData { rgctxDataDummy = (int)data }
+                };
+                Position = start + (ulong)elementSize;
+            }
+            return result;
+        }
+
         private Il2CppGlobalMetadataHeader ReadMetadataHeaderV38()
         {
             Position = 0;
@@ -347,8 +380,13 @@ namespace Il2CppDumper
                 stringLiteralData = ReadClass<Il2CppSectionMetadata>(),
                 strings = ReadClass<Il2CppSectionMetadata>(),
                 events = ReadClass<Il2CppSectionMetadata>(),
-                properties = ReadClass<Il2CppSectionMetadata>(),
-                methods = ReadClass<Il2CppSectionMetadata>(),
+                properties = ReadClass<Il2CppSectionMetadata>()
+            };
+            if (Version >= 111)
+                result.methodSignatures = ReadClass<Il2CppSectionMetadata>();
+            result.methods = ReadClass<Il2CppSectionMetadata>();
+            var rest = new Il2CppGlobalMetadataHeader
+            {
                 parameterDefaultValues = ReadClass<Il2CppSectionMetadata>(),
                 fieldDefaultValues = ReadClass<Il2CppSectionMetadata>(),
                 fieldAndParameterDefaultValueData = ReadClass<Il2CppSectionMetadata>(),
@@ -364,6 +402,20 @@ namespace Il2CppDumper
                 interfaceOffsets = ReadClass<Il2CppSectionMetadata>(),
                 typeDefinitions = ReadClass<Il2CppSectionMetadata>()
             };
+            result.parameterDefaultValues = rest.parameterDefaultValues;
+            result.fieldDefaultValues = rest.fieldDefaultValues;
+            result.fieldAndParameterDefaultValueData = rest.fieldAndParameterDefaultValueData;
+            result.fieldMarshaledSizes = rest.fieldMarshaledSizes;
+            result.parameters = rest.parameters;
+            result.fields = rest.fields;
+            result.genericParameters = rest.genericParameters;
+            result.genericParameterConstraints = rest.genericParameterConstraints;
+            result.genericContainers = rest.genericContainers;
+            result.nestedTypes = rest.nestedTypes;
+            result.interfaces = rest.interfaces;
+            result.vtableMethods = rest.vtableMethods;
+            result.interfaceOffsets = rest.interfaceOffsets;
+            result.typeDefinitions = rest.typeDefinitions;
             if (Version >= 104)
                 result.typeInlineArrays = ReadClass<Il2CppSectionMetadata>();
             result.images = ReadClass<Il2CppSectionMetadata>();
@@ -537,27 +589,96 @@ namespace Il2CppDumper
             token = Version < 110 ? ReadUInt32() : 0
         };
 
-        private Il2CppMethodDefinition ReadMethodDefinition() => new()
+        private Il2CppMethodDefinition ReadMethodDefinition()
         {
-            nameIndex = ReadUInt32(),
-            declaringType = ReadMetadataIndex(typeDefinitionIndexSize),
-            returnType = ReadMetadataIndex(typeIndexSize),
-            returnParameterToken = ReadInt32(),
-            parameterStart = ReadMetadataIndex(parameterIndexSize),
-            genericContainerIndex = ReadMetadataIndex(genericContainerIndexSize),
-            token = Version < 110 ? ReadUInt32() : 0,
-            flags = ReadUInt16(),
-            iflags = ReadUInt16(),
-            slot = ReadUInt16(),
-            parameterCount = ReadUInt16()
-        };
+            if (Version >= 111)
+            {
+                // v111 moved the return type and the parameter types into the
+                // methodSignatures blob; see ApplyMethodSignatures.
+                return new Il2CppMethodDefinition
+                {
+                    nameIndex = ReadUInt32(),
+                    declaringType = ReadMetadataIndex(typeDefinitionIndexSize),
+                    parameterStart = ReadMetadataIndex(parameterIndexSize),
+                    genericContainerIndex = ReadMetadataIndex(genericContainerIndexSize),
+                    flags = ReadUInt16(),
+                    iflags = ReadUInt16(),
+                    slot = ReadUInt16(),
+                    signatureOffset = ReadInt32()
+                };
+            }
+            return new Il2CppMethodDefinition
+            {
+                nameIndex = ReadUInt32(),
+                declaringType = ReadMetadataIndex(typeDefinitionIndexSize),
+                returnType = ReadMetadataIndex(typeIndexSize),
+                returnParameterToken = ReadInt32(),
+                parameterStart = ReadMetadataIndex(parameterIndexSize),
+                genericContainerIndex = ReadMetadataIndex(genericContainerIndexSize),
+                token = Version < 110 ? ReadUInt32() : 0,
+                flags = ReadUInt16(),
+                iflags = ReadUInt16(),
+                slot = ReadUInt16(),
+                parameterCount = ReadUInt16()
+            };
+        }
 
-        private Il2CppParameterDefinition ReadParameterDefinition() => new()
+        private Il2CppParameterDefinition ReadParameterDefinition()
         {
-            nameIndex = ReadUInt32(),
-            token = ReadUInt32(),
-            typeIndex = ReadMetadataIndex(typeIndexSize)
-        };
+            if (Version >= 111)
+            {
+                // v111 keeps only the name here; the type comes from the method
+                // signature blob (see ApplyMethodSignatures).
+                return new Il2CppParameterDefinition
+                {
+                    nameIndex = ReadUInt32()
+                };
+            }
+            return new Il2CppParameterDefinition
+            {
+                nameIndex = ReadUInt32(),
+                token = ReadUInt32(),
+                typeIndex = ReadMetadataIndex(typeIndexSize)
+            };
+        }
+
+        /// <summary>
+        /// v111+: every method's signature lives in the methodSignatures blob as
+        /// [return TypeIndex][parameter count: 1 byte][parameter TypeIndex...],
+        /// each TypeIndex using the variable type index width. Copy the values
+        /// into the method and parameter definitions so the rest of the dumper
+        /// keeps working unchanged.
+        /// </summary>
+        private void ApplyMethodSignatures()
+        {
+            var section = header.methodSignatures;
+            if (section == null || section.sectionSize <= 0)
+            {
+                return;
+            }
+            var blobStart = (ulong)section.offset;
+            var blobEnd = blobStart + (ulong)section.sectionSize;
+            foreach (var methodDef in methodDefs)
+            {
+                if (methodDef.signatureOffset < 0 || blobStart + (ulong)methodDef.signatureOffset >= blobEnd)
+                {
+                    methodDef.returnType = -1;
+                    continue;
+                }
+                Position = blobStart + (ulong)methodDef.signatureOffset;
+                methodDef.returnType = ReadMetadataIndex(typeIndexSize);
+                methodDef.parameterCount = ReadByte();
+                for (var i = 0; i < methodDef.parameterCount; i++)
+                {
+                    var typeIndex = ReadMetadataIndex(typeIndexSize);
+                    var parameterIndex = methodDef.parameterStart + i;
+                    if (parameterIndex >= 0 && parameterIndex < parameterDefs.Length)
+                    {
+                        parameterDefs[parameterIndex].typeIndex = typeIndex;
+                    }
+                }
+            }
+        }
 
         private Il2CppFieldDefinition ReadFieldDefinition() => new()
         {
@@ -717,7 +838,10 @@ namespace Il2CppDumper
         public uint GetEncodedIndexTypeForVersion(uint index)
         {
             var usage = GetEncodedIndexType(index);
-            if (Version >= 106.1 && usage >= (uint)Il2CppMetadataUsage.kIl2CppMetadataUsageIl2CppType) usage++;
+            // il2cpp 106.1 and metadata v108+ dropped kIl2CppMetadataUsageIl2CppType
+            // from the usage enum; v107 (Unity 6000.5.5) still has the old numbering.
+            var shifted = (Version >= 106.1 && Version < 107) || Version >= 108;
+            if (shifted && usage >= (uint)Il2CppMetadataUsage.kIl2CppMetadataUsageIl2CppType) usage++;
             return usage;
         }
 
@@ -857,8 +981,11 @@ namespace Il2CppDumper
             {
                 if (type == typeof(Il2CppImageDefinition)) return 4 + 4 + typeDefinitionIndexSize + 4 + typeDefinitionIndexSize + 4 + methodIndexSize + 4 + 4 + 4 + (Version >= 108 ? 4 + 4 + 4 + typeDefinitionIndexSize + 4 : 0) + (Version >= 110 ? 4 + 4 + 4 + methodIndexSize : 0);
                 if (type == typeof(Il2CppTypeDefinition)) return 4 + 4 + typeIndexSize + typeIndexSize + typeIndexSize + genericContainerIndexSize + 4 + fieldIndexSize + methodIndexSize + eventIndexSize + propertyIndexSize + nestedTypeIndexSize + interfacesIndexSize + 4 + interfacesIndexSize + 16 + 4 + (Version < 110 ? 4 : 0);
-                if (type == typeof(Il2CppMethodDefinition)) return 4 + typeDefinitionIndexSize + typeIndexSize + 4 + parameterIndexSize + genericContainerIndexSize + (Version < 110 ? 4 : 0) + 8;
-                if (type == typeof(Il2CppParameterDefinition)) return 4 + 4 + typeIndexSize;
+                if (type == typeof(Il2CppMethodDefinition)) return Version >= 111
+                    ? 4 + typeDefinitionIndexSize + parameterIndexSize + genericContainerIndexSize + 6 + 4
+                    : 4 + typeDefinitionIndexSize + typeIndexSize + 4 + parameterIndexSize + genericContainerIndexSize + (Version < 110 ? 4 : 0) + 8;
+                if (type == typeof(Il2CppParameterDefinition)) return Version >= 111 ? 4 : 4 + 4 + typeIndexSize;
+                if (type == typeof(Il2CppRGCTXDefinition) && Version >= 108) return header.rgctxValues != null && header.rgctxValues.count > 0 ? header.rgctxValues.sectionSize / header.rgctxValues.count : 5;
                 if (type == typeof(Il2CppFieldDefinition)) return 4 + typeIndexSize + (Version < 110 ? 4 : 0);
                 if (type == typeof(Il2CppFieldDefaultValue)) return fieldIndexSize + typeIndexSize + defaultValueDataIndexSize;
                 if (type == typeof(Il2CppParameterDefaultValue)) return parameterIndexSize + typeIndexSize + defaultValueDataIndexSize;
